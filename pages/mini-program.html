@@ -297,7 +297,7 @@
                     <div>
                       <div class="flex items-center justify-between mb-3">
                         <p class="text-sm font-semibold" style="color: var(--color-text);">附近暖伴</p>
-                        <span class="text-xs cursor-pointer" style="color: var(--color-primary);" onclick="showToast('更多暖伴功能开发中')">查看更多</span>
+                        <span class="text-xs cursor-pointer" style="color: var(--color-primary);" onclick="showToast('附近暖伴列表已展示全部')">查看更多</span>
                       </div>
                       <div class="space-y-2">
                         <div class="flex items-center gap-3 p-3 rounded-xl cursor-pointer" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" onclick="showToast('李阿姨 · 评分4.9 · 陪伴128次')">
@@ -399,7 +399,7 @@
                         <i data-lucide="chevron-right" style="width: 16px; height: 16px; color: var(--color-text-muted);"></i>
                       </div>
 
-                      <div class="flex items-center gap-3 p-3 rounded-xl cursor-pointer" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" onclick="showToast('设置功能开发中')">
+                      <div class="flex items-center gap-3 p-3 rounded-xl cursor-pointer" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" onclick="openSettingsModal()">
                         <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style="background: var(--color-bg-muted);">
                           <i data-lucide="settings" style="width: 20px; height: 20px; color: var(--color-text-secondary);"></i>
                         </div>
@@ -534,7 +534,7 @@
                         <i data-lucide="chevron-right" style="width: 16px; height: 16px; color: var(--color-text-muted);"></i>
                       </div>
 
-                      <div class="flex items-center gap-3 p-3 rounded-xl cursor-pointer" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" onclick="showToast('设置功能开发中')">
+                      <div class="flex items-center gap-3 p-3 rounded-xl cursor-pointer" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" onclick="openSettingsModal()">
                         <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style="background: var(--color-bg-muted);">
                           <i data-lucide="settings" style="width: 20px; height: 20px; color: var(--color-text-secondary);"></i>
                         </div>
@@ -736,6 +736,97 @@
                 </div>
               </div>
 
+              <!-- Settings Modal -->
+              <div id="modal-settings" class="modal-overlay" style="display:none">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h3 class="text-base font-semibold" style="color: var(--color-text);">设置</h3>
+                    <button onclick="closeModal('modal-settings')" class="modal-close-btn"><i data-lucide="x" style="width:20px;height:20px;"></i></button>
+                  </div>
+                  <div class="modal-body">
+                    <!-- Notification Settings -->
+                    <p class="text-xs font-semibold mb-2" style="color: var(--color-text-secondary);">通知设置</p>
+                    <div class="space-y-2 mb-4">
+                      <div class="flex items-center justify-between p-3 rounded-xl" style="background: var(--color-bg); border: 1px solid var(--color-border-light);">
+                        <div class="flex items-center gap-2">
+                          <i data-lucide="bell" style="width:18px;height:18px;color:var(--color-primary);"></i>
+                          <span class="text-sm" style="color: var(--color-text);">订单通知</span>
+                        </div>
+                        <div class="settings-toggle" data-key="notifyOrder" onclick="toggleSetting(this)">
+                          <span class="toggle-knob"></span>
+                        </div>
+                      </div>
+                      <div class="flex items-center justify-between p-3 rounded-xl" style="background: var(--color-bg); border: 1px solid var(--color-border-light);">
+                        <div class="flex items-center gap-2">
+                          <i data-lucide="heart-pulse" style="width:18px;height:18px;color:var(--state-error);"></i>
+                          <span class="text-sm" style="color: var(--color-text);">健康提醒</span>
+                        </div>
+                        <div class="settings-toggle" data-key="notifyHealth" onclick="toggleSetting(this)">
+                          <span class="toggle-knob"></span>
+                        </div>
+                      </div>
+                      <div class="flex items-center justify-between p-3 rounded-xl" style="background: var(--color-bg); border: 1px solid var(--color-border-light);">
+                        <div class="flex items-center gap-2">
+                          <i data-lucide="megaphone" style="width:18px;height:18px;color:var(--state-warning);"></i>
+                          <span class="text-sm" style="color: var(--color-text);">活动推送</span>
+                        </div>
+                        <div class="settings-toggle" data-key="notifyActivity" onclick="toggleSetting(this)">
+                          <span class="toggle-knob"></span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Privacy Settings -->
+                    <p class="text-xs font-semibold mb-2" style="color: var(--color-text-secondary);">隐私与安全</p>
+                    <div class="space-y-2 mb-4">
+                      <div class="flex items-center justify-between p-3 rounded-xl cursor-pointer" style="background: var(--color-bg); border: 1px solid var(--color-border-light);" onclick="showToast('已开启位置权限管理')">
+                        <div class="flex items-center gap-2">
+                          <i data-lucide="map-pin" style="width:18px;height:18px;color:var(--state-info);"></i>
+                          <span class="text-sm" style="color: var(--color-text);">位置权限</span>
+                        </div>
+                        <i data-lucide="chevron-right" style="width:16px;height:16px;color:var(--color-text-muted);"></i>
+                      </div>
+                      <div class="flex items-center justify-between p-3 rounded-xl" style="background: var(--color-bg); border: 1px solid var(--color-border-light);">
+                        <div class="flex items-center gap-2">
+                          <i data-lucide="shield-check" style="width:18px;height:18px;color:var(--state-success);"></i>
+                          <span class="text-sm" style="color: var(--color-text);">隐藏手机号</span>
+                        </div>
+                        <div class="settings-toggle" data-key="hidePhone" onclick="toggleSetting(this)">
+                          <span class="toggle-knob"></span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Font Size -->
+                    <p class="text-xs font-semibold mb-2" style="color: var(--color-text-secondary);">字体大小</p>
+                    <div class="flex gap-2 mb-4">
+                      <button class="flex-1 py-2 rounded-lg text-sm font-medium font-size-btn" data-size="small" onclick="setFontSize('small')" style="background: var(--color-bg); border: 1px solid var(--color-border-light); color: var(--color-text-secondary);">标准</button>
+                      <button class="flex-1 py-2 rounded-lg text-sm font-medium font-size-btn" data-size="large" onclick="setFontSize('large')" style="background: var(--color-bg); border: 1px solid var(--color-border-light); color: var(--color-text-secondary);">大字</button>
+                      <button class="flex-1 py-2 rounded-lg text-sm font-medium font-size-btn" data-size="xlarge" onclick="setFontSize('xlarge')" style="background: var(--color-bg); border: 1px solid var(--color-border-light); color: var(--color-text-secondary);">超大</button>
+                    </div>
+
+                    <!-- Other -->
+                    <p class="text-xs font-semibold mb-2" style="color: var(--color-text-secondary);">其他</p>
+                    <div class="space-y-2 mb-4">
+                      <div class="flex items-center justify-between p-3 rounded-xl cursor-pointer" style="background: var(--color-bg); border: 1px solid var(--color-border-light);" onclick="showToast('当前版本 v1.0.0')">
+                        <div class="flex items-center gap-2">
+                          <i data-lucide="info" style="width:18px;height:18px;color:var(--color-text-muted);"></i>
+                          <span class="text-sm" style="color: var(--color-text);">关于我们</span>
+                        </div>
+                        <span class="text-xs" style="color: var(--color-text-muted);">v1.0.0</span>
+                      </div>
+                      <div class="flex items-center justify-between p-3 rounded-xl cursor-pointer" style="background: var(--color-bg); border: 1px solid var(--color-border-light);" onclick="clearCache()">
+                        <div class="flex items-center gap-2">
+                          <i data-lucide="trash-2" style="width:18px;height:18px;color:var(--state-error);"></i>
+                          <span class="text-sm" style="color: var(--color-text);">清除缓存</span>
+                        </div>
+                        <i data-lucide="chevron-right" style="width:16px;height:16px;color:var(--color-text-muted);"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <!-- Toast -->
               <div id="toast" class="toast" style="display:none"></div>
 
@@ -901,6 +992,40 @@
         from { transform: translateY(100%); }
         to { transform: translateY(0); }
       }
+
+      /* Settings Toggle Switch */
+      .settings-toggle {
+        width: 40px;
+        height: 22px;
+        border-radius: 9999px;
+        background: var(--color-border);
+        position: relative;
+        cursor: pointer;
+        transition: background var(--transition-fast);
+        flex-shrink: 0;
+      }
+      .settings-toggle.active {
+        background: var(--color-primary);
+      }
+      .settings-toggle .toggle-knob {
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: #fff;
+        transition: transform var(--transition-fast);
+        box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+      }
+      .settings-toggle.active .toggle-knob {
+        transform: translateX(18px);
+      }
+      .font-size-btn.active {
+        background: var(--color-primary) !important;
+        color: var(--color-text-inverse) !important;
+        border-color: var(--color-primary) !important;
+      }
     </style>
 
     <script>
@@ -935,50 +1060,62 @@
       }
 
       /* ===== Initialize Sample Data ===== */
+      var DATA_VERSION = '2';
       function initData() {
+        // Force re-init when data version changes
+        if (localStorage.getItem('sc_data_version') !== DATA_VERSION) {
+          localStorage.removeItem(SK.orders);
+          localStorage.removeItem(SK.profile);
+          localStorage.removeItem(SK.health);
+          localStorage.removeItem(SK.alarms);
+          localStorage.removeItem(SK.volunteer);
+          localStorage.removeItem('sc_settings');
+          localStorage.setItem('sc_data_version', DATA_VERSION);
+        }
         if (!getData(SK.orders)) {
           var now = Date.now();
           saveData(SK.orders, [
             {
               id: 'ORD-001', type: '日常陪伴', status: '待接单',
-              elderName: '李奶奶', address: '朝阳区幸福小区3号楼',
+              elderName: '李奶奶', address: '武汉市武昌区中南路街梅苑小区3栋',
               time: '2026-06-25 09:00', duration: '2小时',
               description: '陪老人散步聊天', volunteer: null,
-              price: 80, createdAt: now - 86400000
+              price: 80, createdAt: now - 86400000, ownerId: null
             },
             {
               id: 'ORD-002', type: '跑腿代办', status: '待接单',
-              elderName: '赵爷爷', address: '海淀区阳光花园5栋',
+              elderName: '赵爷爷', address: '武汉市洪山区珞南街卓刀泉社区5栋',
               time: '2026-06-25 10:00', duration: '1小时',
               description: '帮忙去超市买菜', volunteer: null,
-              price: 50, createdAt: now - 43200000
+              price: 50, createdAt: now - 43200000, ownerId: null
             },
             {
               id: 'ORD-003', type: '数字辅导', status: '待接单',
-              elderName: '孙奶奶', address: '西城区德胜里2号',
+              elderName: '孙奶奶', address: '武汉市江汉区万松街武展社区2号',
               time: '2026-06-24 14:00', duration: '1小时',
               description: '教老人使用微信视频通话', volunteer: null,
-              price: 30, createdAt: now - 3600000
+              price: 30, createdAt: now - 3600000, ownerId: null
             },
             {
               id: 'ORD-004', type: '陪同就医', status: '已完成',
-              elderName: '王奶奶', address: '朝阳区幸福小区3号楼',
+              elderName: '王奶奶', address: '武汉市武昌区中南路街梅苑小区3栋',
               time: '2026-06-23 09:00', duration: '半天',
-              description: '陪同去医院复查', volunteer: VOLUNTEER_NAME,
-              price: 100, createdAt: now - 172800000, completedAt: now - 86400000
+              description: '陪同去武汉大学中南医院复查', volunteer: VOLUNTEER_NAME,
+              price: 100, createdAt: now - 172800000, completedAt: now - 86400000, ownerId: 'U001'
             },
             {
               id: 'ORD-005', type: '日常陪伴', status: '已完成',
-              elderName: '刘大爷', address: '东城区和平里1号',
+              elderName: '刘大爷', address: '武汉市江岸区大智街同安里1号',
               time: '2026-06-22 14:00', duration: '2小时',
               description: '陪老人聊天解闷', volunteer: VOLUNTEER_NAME,
-              price: 80, createdAt: now - 259200000, completedAt: now - 172800000
+              price: 80, createdAt: now - 259200000, completedAt: now - 172800000, ownerId: null
             }
           ]);
         }
         if (!getData(SK.profile)) {
           saveData(SK.profile, {
-            name: '王奶奶', phone: '13888888888', address: '朝阳区幸福小区3号楼',
+            userId: 'U001',
+            name: '王奶奶', phone: '13888888888', address: '武汉市武昌区中南路街梅苑小区3栋',
             emergency: '王小明 13900000000', role: 'nuanjia'
           });
         }
@@ -1070,16 +1207,14 @@
         tabs.forEach(function (t) {
           var tabEl = document.getElementById('tabbar-' + t);
           if (tabEl) {
-            var icon = tabEl.querySelector('i');
+            var icon = tabEl.querySelector('i, svg');
             var span = tabEl.querySelector('span');
             if (t === tab) {
-              icon.style.color = 'var(--color-primary)';
-              span.style.color = 'var(--color-primary)';
-              span.style.fontWeight = '500';
+              if (icon) icon.style.color = 'var(--color-primary)';
+              if (span) { span.style.color = 'var(--color-primary)'; span.style.fontWeight = '600'; }
             } else {
-              icon.style.color = 'var(--color-text-muted)';
-              span.style.color = 'var(--color-text-muted)';
-              span.style.fontWeight = '400';
+              if (icon) icon.style.color = 'var(--color-text-muted)';
+              if (span) { span.style.color = 'var(--color-text-muted)'; span.style.fontWeight = '400'; }
             }
           }
         });
@@ -1152,7 +1287,8 @@
           description: desc || '无特殊说明',
           volunteer: null,
           price: priceMap[type] || 60,
-          createdAt: Date.now()
+          createdAt: Date.now(),
+          ownerId: profile.userId || 'U001'
         };
 
         orders.unshift(newOrder);
@@ -1242,7 +1378,9 @@
           showToast('请填写姓名');
           return;
         }
+        var oldProfile = getData(SK.profile) || {};
         var profile = {
+          userId: oldProfile.userId || 'U001',
           name: name,
           phone: document.getElementById('profile-phone').value.trim(),
           address: document.getElementById('profile-address').value.trim(),
@@ -1252,7 +1390,32 @@
         saveData(SK.profile, profile);
         closeModal('modal-profile');
         showToast('个人信息已保存');
+        // Explicitly update all profile-related UI
+        updateProfileDisplay();
         switchTab(currentTab);
+      }
+
+      /* ===== Update Profile Display (all surfaces) ===== */
+      function updateProfileDisplay() {
+        var profile = getData(SK.profile) || {};
+        var settings = getSettings();
+        // Me tab profile card
+        var avatar = document.getElementById('me-avatar');
+        var nameEl = document.getElementById('me-name');
+        var phoneEl = document.getElementById('me-phone');
+        if (avatar) avatar.textContent = (profile.name || '用').charAt(0);
+        if (nameEl) nameEl.textContent = profile.name || '未设置';
+        if (phoneEl) {
+          var p = profile.phone || '';
+          if (settings.hidePhone) {
+            phoneEl.textContent = '已隐藏';
+          } else {
+            phoneEl.textContent = p ? p.substring(0, 3) + '****' + p.substring(7) : '未绑定';
+          }
+        }
+        // Home tab greeting name
+        var homeName = document.getElementById('nj-home-name');
+        if (homeName) homeName.textContent = (profile.name || '我的') + '的家';
       }
 
       /* ===== Order Detail ===== */
@@ -1427,7 +1590,7 @@
       function renderRecentOrders() {
         var orders = getData(SK.orders) || [];
         var profile = getData(SK.profile) || {};
-        var myOrders = orders.filter(function (o) { return o.elderName === profile.name; });
+        var myOrders = orders.filter(function (o) { return o.ownerId === (profile.userId || 'U001'); });
         var container = document.getElementById('recent-orders');
         if (!container) return;
 
@@ -1454,7 +1617,7 @@
       function renderNuanjiaOrders() {
         var orders = getData(SK.orders) || [];
         var profile = getData(SK.profile) || {};
-        var myOrders = orders.filter(function (o) { return o.elderName === profile.name; });
+        var myOrders = orders.filter(function (o) { return o.ownerId === (profile.userId || 'U001'); });
         var container = document.getElementById('nuanjia-orders-list');
         if (!container) return;
 
@@ -1488,18 +1651,7 @@
 
       /* ===== Render: Nuanjia Me ===== */
       function renderNuanjiaMe() {
-        var profile = getData(SK.profile) || {};
-        var avatar = document.getElementById('me-avatar');
-        var name = document.getElementById('me-name');
-        var phone = document.getElementById('me-phone');
-        var homeName = document.getElementById('nj-home-name');
-        if (avatar) avatar.textContent = (profile.name || '用').charAt(0);
-        if (name) name.textContent = profile.name || '未设置';
-        if (phone) {
-          var p = profile.phone || '';
-          phone.textContent = p ? p.substring(0, 3) + '****' + p.substring(7) : '未绑定';
-        }
-        if (homeName) homeName.textContent = (profile.name || '我的') + '的家';
+        updateProfileDisplay();
       }
 
       /* ===== Render: Nuanban Home ===== */
@@ -1619,6 +1771,65 @@
         var meCount = document.getElementById('me-count');
         if (meIncome) meIncome.textContent = income;
         if (meCount) meCount.textContent = completed.length;
+      }
+
+      /* ===== Settings ===== */
+      function getSettings() {
+        return getData('sc_settings') || {
+          notifyOrder: true, notifyHealth: true, notifyActivity: false, hidePhone: false, fontSize: 'small'
+        };
+      }
+
+      function openSettingsModal() {
+        var s = getSettings();
+        // Apply toggle states
+        var toggles = document.querySelectorAll('#modal-settings .settings-toggle');
+        toggles.forEach(function (t) {
+          var key = t.getAttribute('data-key');
+          if (s[key]) t.classList.add('active');
+          else t.classList.remove('active');
+        });
+        // Apply font size button states
+        var fontBtns = document.querySelectorAll('.font-size-btn');
+        fontBtns.forEach(function (b) {
+          if (b.getAttribute('data-size') === s.fontSize) b.classList.add('active');
+          else b.classList.remove('active');
+        });
+        openModal('modal-settings');
+      }
+
+      function toggleSetting(el) {
+        var key = el.getAttribute('data-key');
+        var s = getSettings();
+        s[key] = !s[key];
+        saveData('sc_settings', s);
+        if (s[key]) el.classList.add('active');
+        else el.classList.remove('active');
+        var labels = { notifyOrder: '订单通知', notifyHealth: '健康提醒', notifyActivity: '活动推送', hidePhone: '隐藏手机号' };
+        showToast(labels[key] + '已' + (s[key] ? '开启' : '关闭'));
+        // If hidePhone toggled, refresh display
+        if (key === 'hidePhone') updateProfileDisplay();
+      }
+
+      function setFontSize(size) {
+        var s = getSettings();
+        s.fontSize = size;
+        saveData('sc_settings', s);
+        var fontBtns = document.querySelectorAll('.font-size-btn');
+        fontBtns.forEach(function (b) {
+          if (b.getAttribute('data-size') === size) b.classList.add('active');
+          else b.classList.remove('active');
+        });
+        var scale = { small: 1, large: 1.12, xlarge: 1.25 };
+        var screen = document.querySelector('.absolute.rounded-\\[40px\\]');
+        if (screen) screen.style.fontSize = (scale[size] || 1) + 'rem';
+        showToast('字体大小已调整');
+      }
+
+      function clearCache() {
+        localStorage.removeItem('sc_alarms');
+        saveData(SK.alarms, []);
+        showToast('缓存已清除');
       }
 
       /* ===== Init ===== */
