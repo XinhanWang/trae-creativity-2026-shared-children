@@ -1,0 +1,1630 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>共享儿女 · 暖陪伴计划</title>
+    <style id="theme-vars">
+/* ===== Brand Design Tokens — 共享儿女 · 暖陪伴计划 ===== */
+/* Warm, human, approachable — like a neighbor's kitchen */
+
+:root {
+  /* --- Color System --- */
+  --color-primary: #D4654A;
+  --color-primary-hover: #BF5A42;
+  --color-primary-light: #F5E6E0;
+  --color-primary-lighter: #FBF5F2;
+  --color-primary-50: rgba(212, 101, 74, 0.08);
+  --color-primary-100: rgba(212, 101, 74, 0.15);
+
+  /* Backgrounds */
+  --color-bg: #FDF9F5;
+  --color-bg-warm: #F8F1E8;
+  --color-bg-card: #FFFFFF;
+  --color-bg-elevated: #FFFFFF;
+  --color-bg-sunken: #F5EDE4;
+  --color-bg-muted: #F0E8DF;
+
+  /* Text */
+  --color-text: #3D2E24;
+  --color-text-secondary: #7A6B5D;
+  --color-text-muted: #A89888;
+  --color-text-inverse: #FFFFFF;
+
+  /* Borders */
+  --color-border: #E8DDD0;
+  --color-border-light: #F0E8DF;
+  --color-border-focus: #D4654A;
+
+  /* State colors */
+  --state-success: #5B8A72;
+  --state-success-bg: #E8F0EB;
+  --state-warning: #E8A838;
+  --state-warning-bg: #FDF3E0;
+  --state-error: #C44D3E;
+  --state-error-bg: #FCEAE8;
+  --state-info: #5B7FA8;
+  --state-info-bg: #EBF0F5;
+
+  /* --- Typography --- */
+  --font-sans: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --font-serif: 'Noto Serif SC', 'Songti SC', Georgia, serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+  --text-5xl: 3rem;
+  --text-6xl: 3.75rem;
+
+  --leading-tight: 1.25;
+  --leading-snug: 1.375;
+  --leading-normal: 1.6;
+  --leading-relaxed: 1.75;
+
+  --tracking-tight: -0.02em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.04em;
+  --tracking-wider: 0.08em;
+
+  /* --- Spacing --- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+
+  /* --- Radius --- */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+
+  /* --- Shadows --- */
+  --shadow-xs: 0 1px 2px rgba(61, 46, 36, 0.04);
+  --shadow-sm: 0 1px 3px rgba(61, 46, 36, 0.05);
+  --shadow-md: 0 2px 8px rgba(61, 46, 36, 0.06);
+  --shadow-lg: 0 4px 16px rgba(61, 46, 36, 0.08);
+  --shadow-xl: 0 8px 32px rgba(61, 46, 36, 0.1);
+
+  /* --- Transitions --- */
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+  --transition-slow: 400ms ease;
+
+  /* --- Z-index --- */
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-overlay: 300;
+  --z-modal: 400;
+  --z-toast: 500;
+  /* --- Phone Frame --- */
+  --color-phone-frame: #1A1A1E;
+  --color-phone-frame-border: #333333;
+  --color-phone-frame-inner: #2A2A2E;
+  --color-phone-frame-shadow: rgba(61, 46, 36, 0.2);
+
+  /* --- Mini Program Capsule --- */
+  --color-capsule-bg: rgba(0, 0, 0, 0.08);
+  --color-capsule-border: rgba(0, 0, 0, 0.12);
+  --color-capsule-btn-bg: rgba(0, 0, 0, 0.06);
+
+  /* --- State Shadows --- */
+  --state-error-shadow: rgba(196, 77, 62, 0.25);
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-primary: var(--color-primary);
+    --color-secondary: var(--state-success);
+    --color-accent: var(--state-warning);
+    --color-border: var(--color-border);
+  }
+  @layer base {
+    body { background: var(--color-background); color: var(--color-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body class="min-h-screen font-sans antialiased">
+    <main class="min-h-screen flex items-center justify-center" style="background: var(--color-bg); padding: var(--space-8);">
+      <div class="flex flex-col lg:flex-row items-center lg:items-start gap-8 lg:gap-16 max-w-7xl mx-auto w-full">
+
+        <!-- Left Info Panel -->
+        <div class="flex-1 max-w-md text-center lg:text-left lg:pt-12">
+          <p class="text-sm font-medium tracking-wider uppercase mb-3" style="color: var(--color-primary); letter-spacing: var(--tracking-wider);">WeChat Mini Program</p>
+          <h1 class="text-4xl lg:text-5xl font-semibold leading-tight mb-4" style="color: var(--color-text); font-family: var(--font-serif); text-wrap: balance; word-break: keep-all;">小程序体验</h1>
+          <p class="text-lg leading-relaxed mb-8" style="color: var(--color-text-secondary);">为老人家庭与志愿者打造的双角色小程序，温暖设计让每一位用户都能轻松上手。点击下方按钮切换不同角色视角。</p>
+
+          <!-- Role Switch Buttons -->
+          <div class="flex flex-col sm:flex-row gap-3 mb-8">
+            <button id="btn-nuanjia" onclick="switchRole('nuanjia')" class="flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-base font-semibold transition-all duration-250" style="background: var(--color-primary); color: var(--color-text-inverse); border: none; cursor: pointer; box-shadow: var(--shadow-sm);">
+              <i data-lucide="home" style="width: 18px; height: 18px;"></i>
+              <span>暖家模式</span>
+            </button>
+            <button id="btn-nuanban" onclick="switchRole('nuanban')" class="flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-base font-semibold transition-all duration-250" style="background: transparent; color: var(--color-text); border: 1px solid var(--color-border); cursor: pointer;">
+              <i data-lucide="heart-handshake" style="width: 18px; height: 18px;"></i>
+              <span>暖伴模式</span>
+            </button>
+          </div>
+
+          <!-- Role Description -->
+          <div id="role-desc" class="rounded-lg p-4" style="background: var(--color-primary-lighter); border: 1px solid var(--color-primary-light);">
+            <p id="role-desc-text" class="text-sm leading-relaxed" style="color: var(--color-text-secondary);">暖家模式面向老人家庭，提供日常陪伴、跑腿代办、数字辅导等服务，支持一键报警与健康档案管理。</p>
+          </div>
+
+          <!-- Feature Highlights -->
+          <div class="mt-8 space-y-3">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style="background: var(--state-success-bg);">
+                <i data-lucide="accessibility" style="width: 16px; height: 16px; color: var(--state-success);"></i>
+              </div>
+              <span class="text-sm" style="color: var(--color-text-secondary);">大字体、高对比度，老人友好设计</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style="background: var(--state-warning-bg);">
+                <i data-lucide="shield-check" style="width: 16px; height: 16px; color: var(--state-warning);"></i>
+              </div>
+              <span class="text-sm" style="color: var(--color-text-secondary);">一键报警，紧急情况快速响应</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style="background: var(--color-primary-light);">
+                <i data-lucide="users" style="width: 16px; height: 16px; color: var(--color-primary);"></i>
+              </div>
+              <span class="text-sm" style="color: var(--color-text-secondary);">暖伴推荐，就近匹配可信志愿者</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phone Mockup -->
+        <div class="shrink-0">
+          <div class="relative" style="width: 390px; height: 800px;">
+            <!-- Phone Frame -->
+            <div class="absolute inset-0 rounded-[48px]" style="background: var(--color-phone-frame); box-shadow: 0 24px 80px var(--color-phone-frame-shadow), 0 0 0 2px var(--color-phone-frame-border), inset 0 0 0 2px var(--color-phone-frame-inner);"></div>
+
+            <!-- Screen Area -->
+            <div class="absolute rounded-[40px] overflow-hidden" style="top: 12px; left: 12px; right: 12px; bottom: 12px; background: var(--color-bg);">
+
+              <!-- Mini Program Navigation Bar -->
+              <div class="flex items-center justify-between px-5 py-2" style="background: var(--color-bg); height: 44px;">
+                <div class="flex items-center gap-2">
+                  <i data-lucide="chevron-left" style="width: 20px; height: 20px; color: var(--color-text);"></i>
+                </div>
+                <span id="mp-title" class="text-sm font-medium truncate" style="color: var(--color-text); max-width: 160px;">共享儿女</span>
+                <!-- System Capsule (微信胶囊按钮) -->
+                <div class="flex items-center w-[87px] h-8 rounded-full px-1 py-1 shrink-0" style="background: var(--color-capsule-bg); border: 0.5px solid var(--color-capsule-border);">
+                  <span class="w-7 h-6 rounded-full flex items-center justify-center" style="background: var(--color-capsule-btn-bg);" aria-label="更多" data-lucide="more-horizontal">···</span>
+                  <span class="w-px shrink-0 border-l" style="background: var(--color-capsule-border);"></span>
+                  <span class="w-7 h-6 rounded-full flex items-center justify-center" style="background: var(--color-capsule-btn-bg);" aria-label="关闭" data-lucide="x">×</span>
+                </div>
+              </div>
+
+              <!-- Scrollable Content Area -->
+              <div class="overflow-y-auto no-scrollbar" style="height: calc(100% - 44px - 60px);">
+
+                <!-- ============================== -->
+                <!-- Nuanjia (Elderly Family) Mode  -->
+                <!-- ============================== -->
+                <div id="mode-nuanjia">
+
+                  <!-- ===== Nuanjia Home Tab ===== -->
+                  <div id="tab-nuanjia-home" class="p-4 space-y-4">
+                    <!-- Greeting -->
+                    <div class="flex items-center justify-between">
+                      <div>
+                        <p class="text-xs" style="color: var(--color-text-muted);" id="nj-greeting">上午好</p>
+                        <p class="text-lg font-semibold" style="color: var(--color-text); font-family: var(--font-serif);" id="nj-home-name">王奶奶的家</p>
+                      </div>
+                      <div class="w-10 h-10 rounded-full flex items-center justify-center cursor-pointer" style="background: var(--color-primary-light);" onclick="showToast('暂无新消息')">
+                        <i data-lucide="bell" style="width: 18px; height: 18px; color: var(--color-primary);"></i>
+                      </div>
+                    </div>
+
+                    <!-- Emergency SOS Button -->
+                    <button onclick="openAlarmModal()" class="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-base transition-transform duration-150" style="background: var(--state-error); color: var(--color-text-inverse); border: none; cursor: pointer; box-shadow: 0 2px 12px var(--state-error-shadow);">
+                      <i data-lucide="phone-call" style="width: 20px; height: 20px;"></i>
+                      <span>一键报警</span>
+                    </button>
+
+                    <!-- Service Categories -->
+                    <div class="grid grid-cols-3 gap-3">
+                      <div class="flex flex-col items-center gap-2 p-3 rounded-xl cursor-pointer transition-transform" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" onclick="openOrderModal('日常陪伴')">
+                        <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: var(--color-primary-light);">
+                          <i data-lucide="coffee" style="width: 20px; height: 20px; color: var(--color-primary);"></i>
+                        </div>
+                        <span class="text-xs font-medium" style="color: var(--color-text);">日常陪伴</span>
+                      </div>
+                      <div class="flex flex-col items-center gap-2 p-3 rounded-xl cursor-pointer transition-transform" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" onclick="openOrderModal('跑腿代办')">
+                        <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: var(--state-success-bg);">
+                          <i data-lucide="shopping-bag" style="width: 20px; height: 20px; color: var(--state-success);"></i>
+                        </div>
+                        <span class="text-xs font-medium" style="color: var(--color-text);">跑腿代办</span>
+                      </div>
+                      <div class="flex flex-col items-center gap-2 p-3 rounded-xl cursor-pointer transition-transform" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" onclick="openOrderModal('数字辅导')">
+                        <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: var(--state-warning-bg);">
+                          <i data-lucide="smartphone" style="width: 20px; height: 20px; color: var(--state-warning);"></i>
+                        </div>
+                        <span class="text-xs font-medium" style="color: var(--color-text);">数字辅导</span>
+                      </div>
+                    </div>
+
+                    <!-- Health Archive Entry -->
+                    <div class="flex items-center gap-3 p-3 rounded-xl cursor-pointer" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" onclick="openHealthModal()">
+                      <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style="background: var(--state-success-bg);">
+                        <i data-lucide="heart-pulse" style="width: 20px; height: 20px; color: var(--state-success);"></i>
+                      </div>
+                      <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium truncate" style="color: var(--color-text);">健康档案</p>
+                        <p class="text-xs truncate" style="color: var(--color-text-muted);">血压、用药、体检记录</p>
+                      </div>
+                      <i data-lucide="chevron-right" style="width: 16px; height: 16px; color: var(--color-text-muted);"></i>
+                    </div>
+
+                    <!-- Nearby Warm Companions -->
+                    <div>
+                      <div class="flex items-center justify-between mb-3">
+                        <p class="text-sm font-semibold" style="color: var(--color-text);">附近暖伴</p>
+                        <span class="text-xs cursor-pointer" style="color: var(--color-primary);" onclick="showToast('更多暖伴功能开发中')">查看更多</span>
+                      </div>
+                      <div class="space-y-2">
+                        <div class="flex items-center gap-3 p-3 rounded-xl cursor-pointer" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" onclick="showToast('李阿姨 · 评分4.9 · 陪伴128次')">
+                          <div class="w-10 h-10 rounded-full shrink-0 flex items-center justify-center" style="background: var(--state-success-bg); color: var(--state-success); font-weight: 600; font-size: 14px;">李</div>
+                          <div class="flex-1 min-w-0">
+                            <p class="text-sm font-medium truncate" style="color: var(--color-text);">李阿姨</p>
+                            <p class="text-xs truncate" style="color: var(--color-text-muted);">距离 500m · 陪伴 128 次</p>
+                          </div>
+                          <div class="flex items-center gap-1 px-2 py-1 rounded-lg" style="background: var(--color-primary-light);">
+                            <i data-lucide="star" style="width: 12px; height: 12px; color: var(--state-warning);"></i>
+                            <span class="text-xs font-medium" style="color: var(--state-warning);">4.9</span>
+                          </div>
+                        </div>
+                        <div class="flex items-center gap-3 p-3 rounded-xl cursor-pointer" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" onclick="showToast('张同学 · 评分4.8 · 陪伴56次')">
+                          <div class="w-10 h-10 rounded-full shrink-0 flex items-center justify-center" style="background: var(--state-warning-bg); color: var(--state-warning); font-weight: 600; font-size: 14px;">张</div>
+                          <div class="flex-1 min-w-0">
+                            <p class="text-sm font-medium truncate" style="color: var(--color-text);">张同学</p>
+                            <p class="text-xs truncate" style="color: var(--color-text-muted);">距离 800m · 陪伴 56 次</p>
+                          </div>
+                          <div class="flex items-center gap-1 px-2 py-1 rounded-lg" style="background: var(--color-primary-light);">
+                            <i data-lucide="star" style="width: 12px; height: 12px; color: var(--state-warning);"></i>
+                            <span class="text-xs font-medium" style="color: var(--state-warning);">4.8</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Recent Orders -->
+                    <div>
+                      <div class="flex items-center justify-between mb-3">
+                        <p class="text-sm font-semibold" style="color: var(--color-text);">最近服务</p>
+                        <span class="text-xs cursor-pointer" style="color: var(--color-primary);" onclick="switchTab('orders')">全部</span>
+                      </div>
+                      <div id="recent-orders"></div>
+                    </div>
+                  </div>
+
+                  <!-- ===== Nuanjia Orders Tab ===== -->
+                  <div id="tab-nuanjia-orders" class="p-4 space-y-4" style="display:none">
+                    <p class="text-sm font-semibold" style="color: var(--color-text);">我的订单</p>
+                    <div id="nuanjia-orders-list" class="space-y-2"></div>
+                  </div>
+
+                  <!-- ===== Nuanjia Me Tab ===== -->
+                  <div id="tab-nuanjia-me" class="p-4 space-y-4" style="display:none">
+                    <!-- Profile Card -->
+                    <div class="flex items-center gap-3 p-4 rounded-xl" style="background: var(--color-primary); color: var(--color-text-inverse);">
+                      <div class="w-12 h-12 rounded-full flex items-center justify-center shrink-0" style="background: rgba(255,255,255,0.2); font-size: 18px; font-weight: 600;" id="me-avatar">王</div>
+                      <div class="flex-1 min-w-0">
+                        <p class="text-base font-semibold truncate" id="me-name">王奶奶</p>
+                        <p class="text-xs truncate" style="opacity: 0.85;" id="me-phone">138****8888</p>
+                      </div>
+                      <button onclick="openProfileModal()" class="text-xs px-3 py-1.5 rounded-lg shrink-0" style="background: rgba(255,255,255,0.2); color: var(--color-text-inverse); border: none; cursor: pointer; font-weight: 500;">编辑</button>
+                    </div>
+
+                    <!-- Function List -->
+                    <div class="space-y-2">
+                      <div class="flex items-center gap-3 p-3 rounded-xl cursor-pointer" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" onclick="openHealthModal()">
+                        <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style="background: var(--state-success-bg);">
+                          <i data-lucide="heart-pulse" style="width: 20px; height: 20px; color: var(--state-success);"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                          <p class="text-sm font-medium" style="color: var(--color-text);">健康档案</p>
+                          <p class="text-xs" style="color: var(--color-text-muted);">查看和编辑健康信息</p>
+                        </div>
+                        <i data-lucide="chevron-right" style="width: 16px; height: 16px; color: var(--color-text-muted);"></i>
+                      </div>
+
+                      <div class="flex items-center gap-3 p-3 rounded-xl cursor-pointer" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" onclick="openAlarmModal()">
+                        <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style="background: var(--state-error-bg);">
+                          <i data-lucide="phone-call" style="width: 20px; height: 20px; color: var(--state-error);"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                          <p class="text-sm font-medium" style="color: var(--color-text);">一键报警</p>
+                          <p class="text-xs" style="color: var(--color-text-muted);">紧急情况快速求助</p>
+                        </div>
+                        <i data-lucide="chevron-right" style="width: 16px; height: 16px; color: var(--color-text-muted);"></i>
+                      </div>
+
+                      <div class="flex items-center gap-3 p-3 rounded-xl cursor-pointer" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" onclick="openAlarmsList()">
+                        <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style="background: var(--state-warning-bg);">
+                          <i data-lucide="bell" style="width: 20px; height: 20px; color: var(--state-warning);"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                          <p class="text-sm font-medium" style="color: var(--color-text);">报警记录</p>
+                          <p class="text-xs" style="color: var(--color-text-muted);">查看历史报警记录</p>
+                        </div>
+                        <i data-lucide="chevron-right" style="width: 16px; height: 16px; color: var(--color-text-muted);"></i>
+                      </div>
+
+                      <div class="flex items-center gap-3 p-3 rounded-xl cursor-pointer" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" onclick="openProfileModal()">
+                        <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style="background: var(--color-primary-light);">
+                          <i data-lucide="user" style="width: 20px; height: 20px; color: var(--color-primary);"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                          <p class="text-sm font-medium" style="color: var(--color-text);">个人信息</p>
+                          <p class="text-xs" style="color: var(--color-text-muted);">编辑姓名、电话、地址</p>
+                        </div>
+                        <i data-lucide="chevron-right" style="width: 16px; height: 16px; color: var(--color-text-muted);"></i>
+                      </div>
+
+                      <div class="flex items-center gap-3 p-3 rounded-xl cursor-pointer" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" onclick="showToast('设置功能开发中')">
+                        <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style="background: var(--color-bg-muted);">
+                          <i data-lucide="settings" style="width: 20px; height: 20px; color: var(--color-text-secondary);"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                          <p class="text-sm font-medium" style="color: var(--color-text);">设置</p>
+                          <p class="text-xs" style="color: var(--color-text-muted);">通知、隐私等</p>
+                        </div>
+                        <i data-lucide="chevron-right" style="width: 16px; height: 16px; color: var(--color-text-muted);"></i>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+
+                <!-- ============================== -->
+                <!-- Nuanban (Volunteer) Mode       -->
+                <!-- ============================== -->
+                <div id="mode-nuanban" style="display: none;">
+
+                  <!-- ===== Nuanban Home Tab ===== -->
+                  <div id="tab-nuanban-home" class="p-4 space-y-4">
+                    <!-- Greeting -->
+                    <div class="flex items-center justify-between">
+                      <div>
+                        <p class="text-xs" style="color: var(--color-text-muted);">下午好</p>
+                        <p class="text-lg font-semibold" style="color: var(--color-text); font-family: var(--font-serif);">暖伴 · 张同学</p>
+                      </div>
+                      <div class="w-10 h-10 rounded-full flex items-center justify-center cursor-pointer" style="background: var(--color-primary-light);" onclick="showToast('暂无新消息')">
+                        <i data-lucide="bell" style="width: 18px; height: 18px; color: var(--color-primary);"></i>
+                      </div>
+                    </div>
+
+                    <!-- Income Stats -->
+                    <div class="grid grid-cols-2 gap-3">
+                      <div class="p-3 rounded-xl" style="background: var(--color-primary-lighter); border: 1px solid var(--color-primary-light);">
+                        <p class="text-xs" style="color: var(--color-text-muted);">本月收入</p>
+                        <p class="text-xl font-semibold" style="color: var(--color-primary); font-variant-numeric: tabular-nums;" id="income-amount">0</p>
+                        <p class="text-xs" style="color: var(--color-text-muted);">元</p>
+                      </div>
+                      <div class="p-3 rounded-xl" style="background: var(--state-success-bg); border: 1px solid var(--state-success-bg);">
+                        <p class="text-xs" style="color: var(--color-text-muted);">服务次数</p>
+                        <p class="text-xl font-semibold" style="color: var(--state-success); font-variant-numeric: tabular-nums;" id="service-count">0</p>
+                        <p class="text-xs" style="color: var(--color-text-muted);">次</p>
+                      </div>
+                    </div>
+
+                    <!-- Available Orders -->
+                    <div>
+                      <div class="flex items-center justify-between mb-3">
+                        <p class="text-sm font-semibold" style="color: var(--color-text);">可接订单</p>
+                        <span class="text-xs cursor-pointer" style="color: var(--color-primary);" onclick="renderNuanbanHome()">刷新</span>
+                      </div>
+                      <div id="available-orders" class="space-y-2"></div>
+                    </div>
+
+                    <!-- Training Entry -->
+                    <div class="flex items-center gap-3 p-3 rounded-xl cursor-pointer" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" onclick="openTrainingModal()">
+                      <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style="background: var(--state-warning-bg);">
+                        <i data-lucide="graduation-cap" style="width: 20px; height: 20px; color: var(--state-warning);"></i>
+                      </div>
+                      <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium truncate" style="color: var(--color-text);">培训中心</p>
+                        <p class="text-xs truncate" style="color: var(--color-text-muted);">提升服务技能，获取认证</p>
+                      </div>
+                      <i data-lucide="chevron-right" style="width: 16px; height: 16px; color: var(--color-text-muted);"></i>
+                    </div>
+                  </div>
+
+                  <!-- ===== Nuanban Orders Tab ===== -->
+                  <div id="tab-nuanban-orders" class="p-4 space-y-4" style="display:none">
+                    <!-- Ongoing -->
+                    <div>
+                      <p class="text-sm font-semibold mb-3" style="color: var(--color-text);">进行中</p>
+                      <div id="ongoing-orders" class="space-y-2"></div>
+                    </div>
+                    <!-- Service Records -->
+                    <div>
+                      <p class="text-sm font-semibold mb-3" style="color: var(--color-text);">服务记录</p>
+                      <div id="service-records" class="space-y-2"></div>
+                    </div>
+                  </div>
+
+                  <!-- ===== Nuanban Me Tab ===== -->
+                  <div id="tab-nuanban-me" class="p-4 space-y-4" style="display:none">
+                    <!-- Volunteer Card -->
+                    <div class="flex items-center gap-3 p-4 rounded-xl" style="background: var(--color-primary); color: var(--color-text-inverse);">
+                      <div class="w-12 h-12 rounded-full flex items-center justify-center shrink-0" style="background: rgba(255,255,255,0.2); font-size: 18px; font-weight: 600;">张</div>
+                      <div class="flex-1 min-w-0">
+                        <p class="text-base font-semibold">张同学</p>
+                        <p class="text-xs" style="opacity: 0.85;">认证暖伴 · 评分 4.8</p>
+                      </div>
+                      <span class="text-xs px-2 py-1 rounded-lg shrink-0" style="background: rgba(255,255,255,0.2);">已认证</span>
+                    </div>
+
+                    <!-- Stats -->
+                    <div class="grid grid-cols-3 gap-2">
+                      <div class="p-3 rounded-xl text-center" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);">
+                        <p class="text-lg font-semibold" style="color: var(--color-primary);" id="me-income">0</p>
+                        <p class="text-xs" style="color: var(--color-text-muted);">总收入(元)</p>
+                      </div>
+                      <div class="p-3 rounded-xl text-center" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);">
+                        <p class="text-lg font-semibold" style="color: var(--state-success);" id="me-count">0</p>
+                        <p class="text-xs" style="color: var(--color-text-muted);">服务次数</p>
+                      </div>
+                      <div class="p-3 rounded-xl text-center" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);">
+                        <p class="text-lg font-semibold" style="color: var(--state-warning);">4.8</p>
+                        <p class="text-xs" style="color: var(--color-text-muted);">评分</p>
+                      </div>
+                    </div>
+
+                    <!-- Function List -->
+                    <div class="space-y-2">
+                      <div class="flex items-center gap-3 p-3 rounded-xl cursor-pointer" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" onclick="openTrainingModal()">
+                        <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style="background: var(--state-warning-bg);">
+                          <i data-lucide="graduation-cap" style="width: 20px; height: 20px; color: var(--state-warning);"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                          <p class="text-sm font-medium" style="color: var(--color-text);">培训中心</p>
+                          <p class="text-xs" style="color: var(--color-text-muted);">查看培训课程</p>
+                        </div>
+                        <i data-lucide="chevron-right" style="width: 16px; height: 16px; color: var(--color-text-muted);"></i>
+                      </div>
+
+                      <div class="flex items-center gap-3 p-3 rounded-xl cursor-pointer" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" onclick="switchTab('orders')">
+                        <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style="background: var(--color-primary-light);">
+                          <i data-lucide="clipboard-list" style="width: 20px; height: 20px; color: var(--color-primary);"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                          <p class="text-sm font-medium" style="color: var(--color-text);">我的订单</p>
+                          <p class="text-xs" style="color: var(--color-text-muted);">进行中和已完成的订单</p>
+                        </div>
+                        <i data-lucide="chevron-right" style="width: 16px; height: 16px; color: var(--color-text-muted);"></i>
+                      </div>
+
+                      <div class="flex items-center gap-3 p-3 rounded-xl cursor-pointer" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" onclick="showToast('设置功能开发中')">
+                        <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style="background: var(--color-bg-muted);">
+                          <i data-lucide="settings" style="width: 20px; height: 20px; color: var(--color-text-secondary);"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                          <p class="text-sm font-medium" style="color: var(--color-text);">设置</p>
+                          <p class="text-xs" style="color: var(--color-text-muted);">通知、隐私等</p>
+                        </div>
+                        <i data-lucide="chevron-right" style="width: 16px; height: 16px; color: var(--color-text-muted);"></i>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+
+              </div>
+
+              <!-- Bottom Tab Bar -->
+              <div class="absolute bottom-0 left-0 right-0 flex items-center justify-around" style="height: 60px; background: var(--color-bg-card); border-top: 1px solid var(--color-border-light);">
+                <div id="tabbar-home" class="flex flex-col items-center gap-0.5 cursor-pointer" onclick="switchTab('home')" style="flex:1;">
+                  <i data-lucide="home" style="width: 20px; height: 20px; color: var(--color-primary);"></i>
+                  <span class="text-xs" style="color: var(--color-primary); font-weight: 500;">首页</span>
+                </div>
+                <div id="tabbar-orders" class="flex flex-col items-center gap-0.5 cursor-pointer" onclick="switchTab('orders')" style="flex:1;">
+                  <i data-lucide="clipboard-list" style="width: 20px; height: 20px; color: var(--color-text-muted);"></i>
+                  <span class="text-xs" style="color: var(--color-text-muted);">订单</span>
+                </div>
+                <div id="tabbar-me" class="flex flex-col items-center gap-0.5 cursor-pointer" onclick="switchTab('me')" style="flex:1;">
+                  <i data-lucide="user" style="width: 20px; height: 20px; color: var(--color-text-muted);"></i>
+                  <span class="text-xs" style="color: var(--color-text-muted);">我的</span>
+                </div>
+              </div>
+
+              <!-- ============ Modals ============ -->
+
+              <!-- Order Create Modal -->
+              <div id="modal-order" class="modal-overlay" style="display:none">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h3 class="text-base font-semibold" style="color: var(--color-text);" id="order-modal-title">创建订单</h3>
+                    <button onclick="closeModal('modal-order')" class="modal-close-btn"><i data-lucide="x" style="width:20px;height:20px;"></i></button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="form-group">
+                      <label>服务类型</label>
+                      <select id="order-type">
+                        <option>日常陪伴</option>
+                        <option>跑腿代办</option>
+                        <option>数字辅导</option>
+                        <option>陪同就医</option>
+                        <option>其他</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label>服务时间</label>
+                      <input type="datetime-local" id="order-time">
+                    </div>
+                    <div class="form-group">
+                      <label>服务时长</label>
+                      <select id="order-duration">
+                        <option>1小时</option>
+                        <option>2小时</option>
+                        <option>3小时</option>
+                        <option>半天</option>
+                        <option>全天</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label>服务地址</label>
+                      <input type="text" id="order-address" placeholder="请输入详细地址">
+                    </div>
+                    <div class="form-group">
+                      <label>备注说明</label>
+                      <textarea id="order-desc" rows="3" placeholder="请描述具体需求..." style="resize:none;"></textarea>
+                    </div>
+                    <button onclick="submitOrder()" class="submit-btn">提交订单</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Alarm Modal -->
+              <div id="modal-alarm" class="modal-overlay" style="display:none">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h3 class="text-base font-semibold" style="color: var(--state-error);">紧急报警</h3>
+                    <button onclick="closeModal('modal-alarm')" class="modal-close-btn"><i data-lucide="x" style="width:20px;height:20px;"></i></button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="text-center py-4">
+                      <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style="background: var(--state-error-bg);">
+                        <i data-lucide="phone-call" style="width: 32px; height: 32px; color: var(--state-error);"></i>
+                      </div>
+                      <p class="text-sm font-medium mb-2" style="color: var(--color-text);">确认发起紧急报警？</p>
+                      <p class="text-xs leading-relaxed" style="color: var(--color-text-secondary);">点击确认后，系统将立即通知您的紧急联系人和附近暖伴。</p>
+                    </div>
+                    <div class="form-group">
+                      <label>当前位置</label>
+                      <input type="text" id="alarm-location" placeholder="请输入或确认当前位置">
+                    </div>
+                    <div class="flex gap-2">
+                      <button onclick="closeModal('modal-alarm')" class="cancel-btn">取消</button>
+                      <button onclick="submitAlarm()" class="submit-btn" style="background: var(--state-error); flex:1;">确认报警</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Health Modal -->
+              <div id="modal-health" class="modal-overlay" style="display:none">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h3 class="text-base font-semibold" style="color: var(--color-text);">健康档案</h3>
+                    <button onclick="closeModal('modal-health')" class="modal-close-btn"><i data-lucide="x" style="width:20px;height:20px;"></i></button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="form-group">
+                      <label>血压 (mmHg)</label>
+                      <input type="text" id="health-bp" placeholder="如 130/85">
+                    </div>
+                    <div class="form-group">
+                      <label>血糖 (mmol/L)</label>
+                      <input type="text" id="health-bs" placeholder="如 5.6">
+                    </div>
+                    <div class="form-group">
+                      <label>用药记录</label>
+                      <textarea id="health-meds" rows="2" placeholder="当前用药情况..." style="resize:none;"></textarea>
+                    </div>
+                    <div class="form-group">
+                      <label>过敏史</label>
+                      <input type="text" id="health-allergies" placeholder="如青霉素">
+                    </div>
+                    <div class="form-group">
+                      <label>其他备注</label>
+                      <textarea id="health-notes" rows="2" placeholder="其他健康备注..." style="resize:none;"></textarea>
+                    </div>
+                    <button onclick="saveHealth()" class="submit-btn">保存档案</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Profile Modal -->
+              <div id="modal-profile" class="modal-overlay" style="display:none">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h3 class="text-base font-semibold" style="color: var(--color-text);">编辑个人信息</h3>
+                    <button onclick="closeModal('modal-profile')" class="modal-close-btn"><i data-lucide="x" style="width:20px;height:20px;"></i></button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="form-group">
+                      <label>姓名</label>
+                      <input type="text" id="profile-name" placeholder="请输入姓名">
+                    </div>
+                    <div class="form-group">
+                      <label>电话</label>
+                      <input type="tel" id="profile-phone" placeholder="请输入电话">
+                    </div>
+                    <div class="form-group">
+                      <label>地址</label>
+                      <input type="text" id="profile-address" placeholder="请输入地址">
+                    </div>
+                    <div class="form-group">
+                      <label>紧急联系人</label>
+                      <input type="text" id="profile-emergency" placeholder="紧急联系人姓名和电话">
+                    </div>
+                    <button onclick="saveProfile()" class="submit-btn">保存信息</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Order Detail Modal -->
+              <div id="modal-order-detail" class="modal-overlay" style="display:none">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h3 class="text-base font-semibold" style="color: var(--color-text);">订单详情</h3>
+                    <button onclick="closeModal('modal-order-detail')" class="modal-close-btn"><i data-lucide="x" style="width:20px;height:20px;"></i></button>
+                  </div>
+                  <div class="modal-body" id="order-detail-body"></div>
+                </div>
+              </div>
+
+              <!-- Training Modal -->
+              <div id="modal-training" class="modal-overlay" style="display:none">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h3 class="text-base font-semibold" style="color: var(--color-text);">培训中心</h3>
+                    <button onclick="closeModal('modal-training')" class="modal-close-btn"><i data-lucide="x" style="width:20px;height:20px;"></i></button>
+                  </div>
+                  <div class="modal-body" id="training-body"></div>
+                </div>
+              </div>
+
+              <!-- Alarms List Modal -->
+              <div id="modal-alarms" class="modal-overlay" style="display:none">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h3 class="text-base font-semibold" style="color: var(--color-text);">报警记录</h3>
+                    <button onclick="closeModal('modal-alarms')" class="modal-close-btn"><i data-lucide="x" style="width:20px;height:20px;"></i></button>
+                  </div>
+                  <div class="modal-body" id="alarms-list-body"></div>
+                </div>
+              </div>
+
+              <!-- Toast -->
+              <div id="toast" class="toast" style="display:none"></div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+    <style>
+      /* Role switch interaction */
+      .role-active {
+        background: var(--color-primary) !important;
+        color: var(--color-text-inverse) !important;
+        border: none !important;
+        box-shadow: var(--shadow-sm) !important;
+      }
+      .role-inactive {
+        background: transparent !important;
+        color: var(--color-text) !important;
+        border: 1px solid var(--color-border) !important;
+        box-shadow: none !important;
+      }
+
+      /* Modal System */
+      .modal-overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 400;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        animation: mpFadeIn 200ms ease;
+      }
+      .modal-content {
+        background: var(--color-bg-card);
+        width: 100%;
+        max-height: 85%;
+        border-radius: 16px 16px 0 0;
+        display: flex;
+        flex-direction: column;
+        animation: mpSlideUp 250ms ease;
+      }
+      .modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px;
+        border-bottom: 1px solid var(--color-border-light);
+        flex-shrink: 0;
+      }
+      .modal-close-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--color-text-muted);
+        padding: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: var(--radius-full);
+        transition: background var(--transition-fast);
+      }
+      .modal-close-btn:hover {
+        background: var(--color-bg-muted);
+      }
+      .modal-body {
+        padding: 16px;
+        overflow-y: auto;
+        flex: 1;
+      }
+
+      /* Form Elements */
+      .form-group {
+        margin-bottom: 12px;
+      }
+      .form-group label {
+        display: block;
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--color-text-secondary);
+        margin-bottom: 4px;
+      }
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid var(--color-border);
+        border-radius: 8px;
+        font-size: 14px;
+        color: var(--color-text);
+        background: var(--color-bg);
+        font-family: inherit;
+        box-sizing: border-box;
+        transition: border-color var(--transition-fast);
+      }
+      .form-group input:focus,
+      .form-group select:focus,
+      .form-group textarea:focus {
+        outline: none;
+        border-color: var(--color-border-focus);
+      }
+      .submit-btn {
+        width: 100%;
+        padding: 10px;
+        border: none;
+        border-radius: 8px;
+        background: var(--color-primary);
+        color: var(--color-text-inverse);
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 8px;
+        transition: background var(--transition-fast);
+      }
+      .submit-btn:hover {
+        background: var(--color-primary-hover);
+      }
+      .cancel-btn {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid var(--color-border);
+        border-radius: 8px;
+        background: var(--color-bg-card);
+        color: var(--color-text-secondary);
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background var(--transition-fast);
+      }
+      .cancel-btn:hover {
+        background: var(--color-bg-muted);
+      }
+
+      /* Toast */
+      .toast {
+        position: absolute;
+        top: 56px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(61, 46, 36, 0.92);
+        color: #fff;
+        padding: 8px 18px;
+        border-radius: 8px;
+        font-size: 13px;
+        z-index: 500;
+        white-space: nowrap;
+        max-width: 80%;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        animation: mpFadeIn 200ms ease;
+        pointer-events: none;
+      }
+
+      @keyframes mpFadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      @keyframes mpSlideUp {
+        from { transform: translateY(100%); }
+        to { transform: translateY(0); }
+      }
+    </style>
+
+    <script>
+      /* ===== Storage Keys ===== */
+      var SK = {
+        orders: 'sc_orders',
+        profile: 'sc_profile',
+        health: 'sc_health_records',
+        alarms: 'sc_alarms',
+        volunteer: 'sc_volunteer_profile'
+      };
+
+      var currentRole = 'nuanjia';
+      var currentTab = 'home';
+      var VOLUNTEER_NAME = '张同学';
+
+      /* ===== Data Helpers ===== */
+      function getData(key) {
+        try {
+          var raw = localStorage.getItem(key);
+          return raw ? JSON.parse(raw) : null;
+        } catch (e) {
+          return null;
+        }
+      }
+      function saveData(key, data) {
+        try {
+          localStorage.setItem(key, JSON.stringify(data));
+        } catch (e) {
+          console.error('Storage error:', e);
+        }
+      }
+
+      /* ===== Initialize Sample Data ===== */
+      function initData() {
+        if (!getData(SK.orders)) {
+          var now = Date.now();
+          saveData(SK.orders, [
+            {
+              id: 'ORD-001', type: '日常陪伴', status: '待接单',
+              elderName: '李奶奶', address: '朝阳区幸福小区3号楼',
+              time: '2026-06-25 09:00', duration: '2小时',
+              description: '陪老人散步聊天', volunteer: null,
+              price: 80, createdAt: now - 86400000
+            },
+            {
+              id: 'ORD-002', type: '跑腿代办', status: '待接单',
+              elderName: '赵爷爷', address: '海淀区阳光花园5栋',
+              time: '2026-06-25 10:00', duration: '1小时',
+              description: '帮忙去超市买菜', volunteer: null,
+              price: 50, createdAt: now - 43200000
+            },
+            {
+              id: 'ORD-003', type: '数字辅导', status: '待接单',
+              elderName: '孙奶奶', address: '西城区德胜里2号',
+              time: '2026-06-24 14:00', duration: '1小时',
+              description: '教老人使用微信视频通话', volunteer: null,
+              price: 30, createdAt: now - 3600000
+            },
+            {
+              id: 'ORD-004', type: '陪同就医', status: '已完成',
+              elderName: '王奶奶', address: '朝阳区幸福小区3号楼',
+              time: '2026-06-23 09:00', duration: '半天',
+              description: '陪同去医院复查', volunteer: VOLUNTEER_NAME,
+              price: 100, createdAt: now - 172800000, completedAt: now - 86400000
+            },
+            {
+              id: 'ORD-005', type: '日常陪伴', status: '已完成',
+              elderName: '刘大爷', address: '东城区和平里1号',
+              time: '2026-06-22 14:00', duration: '2小时',
+              description: '陪老人聊天解闷', volunteer: VOLUNTEER_NAME,
+              price: 80, createdAt: now - 259200000, completedAt: now - 172800000
+            }
+          ]);
+        }
+        if (!getData(SK.profile)) {
+          saveData(SK.profile, {
+            name: '王奶奶', phone: '13888888888', address: '朝阳区幸福小区3号楼',
+            emergency: '王小明 13900000000', role: 'nuanjia'
+          });
+        }
+        if (!getData(SK.health)) {
+          saveData(SK.health, {
+            bloodPressure: '130/85', bloodSugar: '5.6',
+            medications: '降压药 每日1次', allergies: '青霉素',
+            notes: '高血压病史3年', lastUpdate: Date.now()
+          });
+        }
+        if (!getData(SK.alarms)) {
+          saveData(SK.alarms, []);
+        }
+        if (!getData(SK.volunteer)) {
+          saveData(SK.volunteer, {
+            name: VOLUNTEER_NAME, phone: '13777777777', rating: 4.8,
+            totalService: 23, certified: true
+          });
+        }
+      }
+
+      /* ===== Toast ===== */
+      var toastTimer = null;
+      function showToast(msg) {
+        var toast = document.getElementById('toast');
+        toast.textContent = msg;
+        toast.style.display = 'block';
+        if (toastTimer) clearTimeout(toastTimer);
+        toastTimer = setTimeout(function () {
+          toast.style.display = 'none';
+        }, 2200);
+      }
+
+      /* ===== Modal ===== */
+      function openModal(id) {
+        document.getElementById(id).style.display = 'flex';
+        lucide.createIcons();
+      }
+      function closeModal(id) {
+        document.getElementById(id).style.display = 'none';
+      }
+
+      /* ===== Role Switch ===== */
+      function switchRole(role) {
+        currentRole = role;
+        var nuanjia = document.getElementById('mode-nuanjia');
+        var nuanban = document.getElementById('mode-nuanban');
+        var btnJia = document.getElementById('btn-nuanjia');
+        var btnBan = document.getElementById('btn-nuanban');
+        var descText = document.getElementById('role-desc-text');
+        var mpTitle = document.getElementById('mp-title');
+
+        if (role === 'nuanjia') {
+          nuanjia.style.display = 'block';
+          nuanban.style.display = 'none';
+          btnJia.className = btnJia.className.replace('role-inactive', '') + ' role-active';
+          btnBan.className = btnBan.className.replace('role-active', '') + ' role-inactive';
+          descText.textContent = '暖家模式面向老人家庭，提供日常陪伴、跑腿代办、数字辅导等服务，支持一键报警与健康档案管理。';
+          mpTitle.textContent = '共享儿女';
+        } else {
+          nuanjia.style.display = 'none';
+          nuanban.style.display = 'block';
+          btnBan.className = btnBan.className.replace('role-inactive', '') + ' role-active';
+          btnJia.className = btnJia.className.replace('role-active', '') + ' role-inactive';
+          descText.textContent = '暖伴模式面向志愿者，可浏览并接取附近服务订单，查看收入统计与服务记录，参与培训提升技能。';
+          mpTitle.textContent = '暖伴工作台';
+        }
+        switchTab('home');
+      }
+
+      /* ===== Tab Switch ===== */
+      function switchTab(tab) {
+        currentTab = tab;
+        var tabs = ['home', 'orders', 'me'];
+
+        // Hide all tab contents
+        tabs.forEach(function (t) {
+          var nj = document.getElementById('tab-nuanjia-' + t);
+          var nb = document.getElementById('tab-nuanban-' + t);
+          if (nj) nj.style.display = 'none';
+          if (nb) nb.style.display = 'none';
+        });
+
+        // Show active tab for current role
+        var active = document.getElementById('tab-' + currentRole + '-' + tab);
+        if (active) active.style.display = 'block';
+
+        // Update tab bar styles
+        tabs.forEach(function (t) {
+          var tabEl = document.getElementById('tabbar-' + t);
+          if (tabEl) {
+            var icon = tabEl.querySelector('i');
+            var span = tabEl.querySelector('span');
+            if (t === tab) {
+              icon.style.color = 'var(--color-primary)';
+              span.style.color = 'var(--color-primary)';
+              span.style.fontWeight = '500';
+            } else {
+              icon.style.color = 'var(--color-text-muted)';
+              span.style.color = 'var(--color-text-muted)';
+              span.style.fontWeight = '400';
+            }
+          }
+        });
+
+        // Render content for the active tab
+        if (currentRole === 'nuanjia') {
+          if (tab === 'home') renderRecentOrders();
+          if (tab === 'orders') renderNuanjiaOrders();
+          if (tab === 'me') renderNuanjiaMe();
+        } else {
+          if (tab === 'home') renderNuanbanHome();
+          if (tab === 'orders') renderNuanbanOrders();
+          if (tab === 'me') renderNuanbanMe();
+        }
+        lucide.createIcons();
+      }
+
+      /* ===== Order Create ===== */
+      function openOrderModal(type) {
+        var select = document.getElementById('order-type');
+        if (type) {
+          for (var i = 0; i < select.options.length; i++) {
+            if (select.options[i].text === type) {
+              select.selectedIndex = i;
+              break;
+            }
+          }
+        }
+        document.getElementById('order-modal-title').textContent = type ? '预约' + type : '创建订单';
+        // Pre-fill address from profile
+        var profile = getData(SK.profile) || {};
+        document.getElementById('order-address').value = profile.address || '';
+        openModal('modal-order');
+      }
+
+      function submitOrder() {
+        var type = document.getElementById('order-type').value;
+        var timeVal = document.getElementById('order-time').value;
+        var duration = document.getElementById('order-duration').value;
+        var address = document.getElementById('order-address').value.trim();
+        var desc = document.getElementById('order-desc').value.trim();
+
+        if (!address) {
+          showToast('请填写服务地址');
+          return;
+        }
+
+        var orders = getData(SK.orders) || [];
+        var profile = getData(SK.profile) || {};
+        var priceMap = { '日常陪伴': 80, '跑腿代办': 50, '数字辅导': 30, '陪同就医': 100, '其他': 60 };
+
+        var timeStr = '';
+        if (timeVal) {
+          var d = new Date(timeVal);
+          timeStr = d.getFullYear() + '-' +
+            String(d.getMonth() + 1).padStart(2, '0') + '-' +
+            String(d.getDate()).padStart(2, '0') + ' ' +
+            String(d.getHours()).padStart(2, '0') + ':' +
+            String(d.getMinutes()).padStart(2, '0');
+        }
+
+        var newOrder = {
+          id: 'ORD-' + Date.now().toString(36).toUpperCase(),
+          type: type,
+          status: '待接单',
+          elderName: profile.name || '匿名用户',
+          address: address,
+          time: timeStr,
+          duration: duration,
+          description: desc || '无特殊说明',
+          volunteer: null,
+          price: priceMap[type] || 60,
+          createdAt: Date.now()
+        };
+
+        orders.unshift(newOrder);
+        saveData(SK.orders, orders);
+
+        // Reset form
+        document.getElementById('order-time').value = '';
+        document.getElementById('order-address').value = '';
+        document.getElementById('order-desc').value = '';
+
+        closeModal('modal-order');
+        showToast('订单提交成功，等待暖伴接单');
+        switchTab(currentTab);
+      }
+
+      /* ===== Alarm ===== */
+      function openAlarmModal() {
+        var profile = getData(SK.profile) || {};
+        document.getElementById('alarm-location').value = profile.address || '';
+        openModal('modal-alarm');
+      }
+
+      function submitAlarm() {
+        var location = document.getElementById('alarm-location').value.trim() || '未知位置';
+        var alarms = getData(SK.alarms) || [];
+
+        var alarm = {
+          id: 'ALM-' + String(alarms.length + 1).padStart(3, '0'),
+          time: Date.now(),
+          type: '紧急求助',
+          status: '已通知',
+          location: location
+        };
+
+        alarms.unshift(alarm);
+        saveData(SK.alarms, alarms);
+
+        closeModal('modal-alarm');
+        showToast('报警成功，已通知紧急联系人');
+
+        // Show notification details after a moment
+        setTimeout(function () {
+          var profile = getData(SK.profile) || {};
+          var contact = profile.emergency || '紧急联系人';
+          showToast('已通知：' + contact + ' 及附近3位暖伴');
+        }, 2400);
+      }
+
+      /* ===== Health Archive ===== */
+      function openHealthModal() {
+        var h = getData(SK.health) || {};
+        document.getElementById('health-bp').value = h.bloodPressure || '';
+        document.getElementById('health-bs').value = h.bloodSugar || '';
+        document.getElementById('health-meds').value = h.medications || '';
+        document.getElementById('health-allergies').value = h.allergies || '';
+        document.getElementById('health-notes').value = h.notes || '';
+        openModal('modal-health');
+      }
+
+      function saveHealth() {
+        var health = {
+          bloodPressure: document.getElementById('health-bp').value.trim(),
+          bloodSugar: document.getElementById('health-bs').value.trim(),
+          medications: document.getElementById('health-meds').value.trim(),
+          allergies: document.getElementById('health-allergies').value.trim(),
+          notes: document.getElementById('health-notes').value.trim(),
+          lastUpdate: Date.now()
+        };
+        saveData(SK.health, health);
+        closeModal('modal-health');
+        showToast('健康档案已保存');
+      }
+
+      /* ===== Profile ===== */
+      function openProfileModal() {
+        var p = getData(SK.profile) || {};
+        document.getElementById('profile-name').value = p.name || '';
+        document.getElementById('profile-phone').value = p.phone || '';
+        document.getElementById('profile-address').value = p.address || '';
+        document.getElementById('profile-emergency').value = p.emergency || '';
+        openModal('modal-profile');
+      }
+
+      function saveProfile() {
+        var name = document.getElementById('profile-name').value.trim();
+        if (!name) {
+          showToast('请填写姓名');
+          return;
+        }
+        var profile = {
+          name: name,
+          phone: document.getElementById('profile-phone').value.trim(),
+          address: document.getElementById('profile-address').value.trim(),
+          emergency: document.getElementById('profile-emergency').value.trim(),
+          role: currentRole
+        };
+        saveData(SK.profile, profile);
+        closeModal('modal-profile');
+        showToast('个人信息已保存');
+        switchTab(currentTab);
+      }
+
+      /* ===== Order Detail ===== */
+      function openOrderDetail(id) {
+        var orders = getData(SK.orders) || [];
+        var order = null;
+        for (var i = 0; i < orders.length; i++) {
+          if (orders[i].id === id) { order = orders[i]; break; }
+        }
+        if (!order) return;
+
+        var statusStyles = {
+          '待接单': { bg: 'var(--state-warning-bg)', color: 'var(--state-warning)' },
+          '进行中': { bg: 'var(--state-info-bg)', color: 'var(--state-info)' },
+          '已完成': { bg: 'var(--state-success-bg)', color: 'var(--state-success)' }
+        };
+        var s = statusStyles[order.status] || { bg: 'var(--color-bg-muted)', color: 'var(--color-text-muted)' };
+
+        var html = '<div class="space-y-3">';
+        html += '<div class="flex items-center justify-between">';
+        html += '<span class="text-base font-semibold" style="color: var(--color-text);">' + escapeHtml(order.type) + '</span>';
+        html += '<span class="text-xs px-2 py-1 rounded" style="background: ' + s.bg + '; color: ' + s.color + ';">' + escapeHtml(order.status) + '</span>';
+        html += '</div>';
+        html += '<div class="text-xs" style="color: var(--color-text-muted);">订单编号：' + escapeHtml(order.id) + '</div>';
+        html += '<div style="height:1px; background: var(--color-border-light);"></div>';
+        html += '<div class="space-y-2 text-sm" style="color: var(--color-text);">';
+        html += '<div class="flex"><span style="color:var(--color-text-muted); width:72px; flex-shrink:0;">服务对象</span><span>' + escapeHtml(order.elderName) + '</span></div>';
+        html += '<div class="flex"><span style="color:var(--color-text-muted); width:72px; flex-shrink:0;">服务时间</span><span>' + escapeHtml(order.time || '未指定') + '</span></div>';
+        html += '<div class="flex"><span style="color:var(--color-text-muted); width:72px; flex-shrink:0;">服务时长</span><span>' + escapeHtml(order.duration) + '</span></div>';
+        html += '<div class="flex"><span style="color:var(--color-text-muted); width:72px; flex-shrink:0;">服务地址</span><span>' + escapeHtml(order.address) + '</span></div>';
+        html += '<div class="flex"><span style="color:var(--color-text-muted); width:72px; flex-shrink:0;">需求描述</span><span>' + escapeHtml(order.description) + '</span></div>';
+        if (order.volunteer) {
+          html += '<div class="flex"><span style="color:var(--color-text-muted); width:72px; flex-shrink:0;">服务暖伴</span><span>' + escapeHtml(order.volunteer) + '</span></div>';
+        }
+        html += '<div class="flex"><span style="color:var(--color-text-muted); width:72px; flex-shrink:0;">服务费用</span><span style="color:var(--color-primary); font-weight:600;">' + order.price + ' 元</span></div>';
+        html += '</div>';
+
+        // Action buttons
+        if (currentRole === 'nuanban' && order.status === '待接单') {
+          html += '<button onclick="acceptOrder(\'' + order.id + '\')" class="submit-btn">接单</button>';
+        } else if (currentRole === 'nuanban' && order.status === '进行中') {
+          html += '<button onclick="completeOrder(\'' + order.id + '\')" class="submit-btn" style="background: var(--state-success);">完成服务</button>';
+        }
+        html += '</div>';
+
+        document.getElementById('order-detail-body').innerHTML = html;
+        openModal('modal-order-detail');
+      }
+
+      /* ===== Volunteer Accept / Complete ===== */
+      function acceptOrder(id) {
+        var orders = getData(SK.orders) || [];
+        orders.forEach(function (o) {
+          if (o.id === id) {
+            o.status = '进行中';
+            o.volunteer = VOLUNTEER_NAME;
+          }
+        });
+        saveData(SK.orders, orders);
+        closeModal('modal-order-detail');
+        showToast('接单成功');
+        switchTab(currentTab);
+      }
+
+      function completeOrder(id) {
+        var orders = getData(SK.orders) || [];
+        orders.forEach(function (o) {
+          if (o.id === id) {
+            o.status = '已完成';
+            o.completedAt = Date.now();
+          }
+        });
+        saveData(SK.orders, orders);
+        closeModal('modal-order-detail');
+        showToast('服务已完成');
+        switchTab(currentTab);
+      }
+
+      /* ===== Training ===== */
+      function openTrainingModal() {
+        var courses = [
+          { title: '老年人心理沟通技巧', duration: '2小时', level: '基础', icon: 'message-circle' },
+          { title: '应急救护基础知识', duration: '3小时', level: '重要', icon: 'heart-pulse' },
+          { title: '智能手机教学指南', duration: '1.5小时', level: '基础', icon: 'smartphone' },
+          { title: '老年人常见疾病护理', duration: '4小时', level: '进阶', icon: 'stethoscope' },
+          { title: '服务礼仪与规范', duration: '2小时', level: '基础', icon: 'user-check' }
+        ];
+        var levelColor = {
+          '基础': { bg: 'var(--state-info-bg)', color: 'var(--state-info)' },
+          '重要': { bg: 'var(--state-error-bg)', color: 'var(--state-error)' },
+          '进阶': { bg: 'var(--state-warning-bg)', color: 'var(--state-warning)' }
+        };
+
+        var html = '<p class="text-xs mb-3" style="color: var(--color-text-secondary);">完成培训课程可获取认证，提升服务等级。</p>';
+        html += '<div class="space-y-2">';
+        courses.forEach(function (c) {
+          var lc = levelColor[c.level];
+          html += '<div class="flex items-center gap-3 p-3 rounded-xl cursor-pointer" style="background: var(--color-bg); border: 1px solid var(--color-border-light);" onclick="showToast(\'已开始学习：' + c.title + '\')">';
+          html += '<div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style="background: var(--state-warning-bg);">';
+          html += '<i data-lucide="' + c.icon + '" style="width: 20px; height: 20px; color: var(--state-warning);"></i>';
+          html += '</div>';
+          html += '<div class="flex-1 min-w-0">';
+          html += '<p class="text-sm font-medium" style="color: var(--color-text);">' + c.title + '</p>';
+          html += '<p class="text-xs" style="color: var(--color-text-muted);">时长 ' + c.duration + '</p>';
+          html += '</div>';
+          html += '<span class="text-xs px-2 py-1 rounded shrink-0" style="background: ' + lc.bg + '; color: ' + lc.color + ';">' + c.level + '</span>';
+          html += '</div>';
+        });
+        html += '</div>';
+
+        document.getElementById('training-body').innerHTML = html;
+        openModal('modal-training');
+      }
+
+      /* ===== Alarms List ===== */
+      function openAlarmsList() {
+        var alarms = getData(SK.alarms) || [];
+        var html = '';
+        if (alarms.length === 0) {
+          html = '<div class="text-center py-8"><i data-lucide="bell-off" style="width:32px;height:32px;color:var(--color-text-muted);margin:0 auto 8px;display:block;"></i><p class="text-sm" style="color: var(--color-text-muted);">暂无报警记录</p></div>';
+        } else {
+          html = '<div class="space-y-2">';
+          alarms.forEach(function (a) {
+            var d = new Date(a.time);
+            var timeStr = d.getFullYear() + '-' +
+              String(d.getMonth() + 1).padStart(2, '0') + '-' +
+              String(d.getDate()).padStart(2, '0') + ' ' +
+              String(d.getHours()).padStart(2, '0') + ':' +
+              String(d.getMinutes()).padStart(2, '0');
+            html += '<div class="p-3 rounded-xl" style="background: var(--state-error-bg); border: 1px solid var(--state-error-bg);">';
+            html += '<div class="flex items-center justify-between mb-1">';
+            html += '<span class="text-sm font-medium" style="color: var(--state-error);">' + escapeHtml(a.type) + '</span>';
+            html += '<span class="text-xs px-2 py-0.5 rounded" style="background: var(--state-error); color: #fff;">' + escapeHtml(a.status) + '</span>';
+            html += '</div>';
+            html += '<p class="text-xs" style="color: var(--color-text-secondary);">' + timeStr + '</p>';
+            html += '<p class="text-xs mt-1" style="color: var(--color-text-secondary);">位置：' + escapeHtml(a.location) + '</p>';
+            html += '</div>';
+          });
+          html += '</div>';
+        }
+        document.getElementById('alarms-list-body').innerHTML = html;
+        openModal('modal-alarms');
+      }
+
+      /* ===== Render Helpers ===== */
+      function getStatusStyle(status) {
+        var styles = {
+          '待接单': { bg: 'var(--state-warning-bg)', color: 'var(--state-warning)' },
+          '进行中': { bg: 'var(--state-info-bg)', color: 'var(--state-info)' },
+          '已完成': { bg: 'var(--state-success-bg)', color: 'var(--state-success)' }
+        };
+        return styles[status] || { bg: 'var(--color-bg-muted)', color: 'var(--color-text-muted)' };
+      }
+
+      function getOrderIcon(type) {
+        var icons = {
+          '日常陪伴': 'coffee',
+          '跑腿代办': 'shopping-bag',
+          '数字辅导': 'smartphone',
+          '陪同就医': 'stethoscope',
+          '其他': 'hand-helping'
+        };
+        return icons[type] || 'hand-helping';
+      }
+
+      function escapeHtml(str) {
+        if (!str) return '';
+        return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+      }
+
+      /* ===== Render: Nuanjia Recent Orders (Home) ===== */
+      function renderRecentOrders() {
+        var orders = getData(SK.orders) || [];
+        var profile = getData(SK.profile) || {};
+        var myOrders = orders.filter(function (o) { return o.elderName === profile.name; });
+        var container = document.getElementById('recent-orders');
+        if (!container) return;
+
+        if (myOrders.length === 0) {
+          container.innerHTML = '<div class="p-3 rounded-xl text-center" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);"><p class="text-xs" style="color: var(--color-text-muted);">暂无服务记录，点击上方服务类别创建订单</p></div>';
+          return;
+        }
+
+        var html = '';
+        myOrders.slice(0, 3).forEach(function (o) {
+          var st = getStatusStyle(o.status);
+          html += '<div class="p-3 rounded-xl mb-2 cursor-pointer" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" onclick="openOrderDetail(\'' + o.id + '\')">';
+          html += '<div class="flex items-center justify-between mb-1">';
+          html += '<span class="text-sm font-medium" style="color: var(--color-text);">' + escapeHtml(o.type) + '</span>';
+          html += '<span class="text-xs px-2 py-0.5 rounded" style="background: ' + st.bg + '; color: ' + st.color + ';">' + o.status + '</span>';
+          html += '</div>';
+          html += '<p class="text-xs" style="color: var(--color-text-muted);">' + (o.time || '未指定时间') + (o.volunteer ? ' · ' + escapeHtml(o.volunteer) : '') + '</p>';
+          html += '</div>';
+        });
+        container.innerHTML = html;
+      }
+
+      /* ===== Render: Nuanjia Orders List ===== */
+      function renderNuanjiaOrders() {
+        var orders = getData(SK.orders) || [];
+        var profile = getData(SK.profile) || {};
+        var myOrders = orders.filter(function (o) { return o.elderName === profile.name; });
+        var container = document.getElementById('nuanjia-orders-list');
+        if (!container) return;
+
+        if (myOrders.length === 0) {
+          container.innerHTML = '<div class="text-center py-8"><i data-lucide="clipboard-list" style="width:32px;height:32px;color:var(--color-text-muted);margin:0 auto 8px;display:block;"></i><p class="text-sm" style="color: var(--color-text-muted);">暂无订单</p><p class="text-xs mt-1" style="color: var(--color-text-muted);">点击首页服务类别创建订单</p></div>';
+          lucide.createIcons();
+          return;
+        }
+
+        var html = '';
+        myOrders.forEach(function (o) {
+          var st = getStatusStyle(o.status);
+          var icon = getOrderIcon(o.type);
+          html += '<div class="flex items-center gap-3 p-3 rounded-xl cursor-pointer" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" onclick="openOrderDetail(\'' + o.id + '\')">';
+          html += '<div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style="background: var(--color-primary-light);">';
+          html += '<i data-lucide="' + icon + '" style="width: 20px; height: 20px; color: var(--color-primary);"></i>';
+          html += '</div>';
+          html += '<div class="flex-1 min-w-0">';
+          html += '<div class="flex items-center gap-2 mb-0.5">';
+          html += '<span class="text-sm font-medium" style="color: var(--color-text);">' + escapeHtml(o.type) + '</span>';
+          html += '<span class="text-xs px-1.5 py-0.5 rounded" style="background: ' + st.bg + '; color: ' + st.color + ';">' + o.status + '</span>';
+          html += '</div>';
+          html += '<p class="text-xs truncate" style="color: var(--color-text-muted);">' + (o.time || '未指定时间') + ' · ' + escapeHtml(o.address) + '</p>';
+          html += '</div>';
+          html += '<span class="text-sm font-semibold shrink-0" style="color: var(--color-primary);">' + o.price + '元</span>';
+          html += '</div>';
+        });
+        container.innerHTML = html;
+        lucide.createIcons();
+      }
+
+      /* ===== Render: Nuanjia Me ===== */
+      function renderNuanjiaMe() {
+        var profile = getData(SK.profile) || {};
+        var avatar = document.getElementById('me-avatar');
+        var name = document.getElementById('me-name');
+        var phone = document.getElementById('me-phone');
+        var homeName = document.getElementById('nj-home-name');
+        if (avatar) avatar.textContent = (profile.name || '用').charAt(0);
+        if (name) name.textContent = profile.name || '未设置';
+        if (phone) {
+          var p = profile.phone || '';
+          phone.textContent = p ? p.substring(0, 3) + '****' + p.substring(7) : '未绑定';
+        }
+        if (homeName) homeName.textContent = (profile.name || '我的') + '的家';
+      }
+
+      /* ===== Render: Nuanban Home ===== */
+      function renderNuanbanHome() {
+        var orders = getData(SK.orders) || [];
+        var available = orders.filter(function (o) { return o.status === '待接单'; });
+        var completed = orders.filter(function (o) { return o.status === '已完成' && o.volunteer === VOLUNTEER_NAME; });
+
+        // Income stats
+        var income = completed.reduce(function (sum, o) { return sum + (o.price || 0); }, 0);
+        var incomeEl = document.getElementById('income-amount');
+        var countEl = document.getElementById('service-count');
+        if (incomeEl) incomeEl.textContent = income.toLocaleString();
+        if (countEl) countEl.textContent = completed.length;
+
+        // Available orders
+        var container = document.getElementById('available-orders');
+        if (!container) return;
+
+        if (available.length === 0) {
+          container.innerHTML = '<div class="text-center py-6"><i data-lucide="inbox" style="width:32px;height:32px;color:var(--color-text-muted);margin:0 auto 8px;display:block;"></i><p class="text-sm" style="color: var(--color-text-muted);">暂无可接订单</p></div>';
+          lucide.createIcons();
+          return;
+        }
+
+        var html = '';
+        available.forEach(function (o) {
+          var icon = getOrderIcon(o.type);
+          html += '<div class="p-3 rounded-xl" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);">';
+          html += '<div class="flex items-center justify-between mb-1">';
+          html += '<div class="flex items-center gap-2">';
+          html += '<i data-lucide="' + icon + '" style="width: 16px; height: 16px; color: var(--color-primary);"></i>';
+          html += '<span class="text-sm font-medium" style="color: var(--color-text);">' + escapeHtml(o.type) + '</span>';
+          html += '</div>';
+          html += '<span class="text-sm font-semibold" style="color: var(--color-primary);">' + o.price + ' 元</span>';
+          html += '</div>';
+          html += '<p class="text-xs mb-1" style="color: var(--color-text-muted);">' + escapeHtml(o.elderName) + ' · ' + escapeHtml(o.address) + '</p>';
+          html += '<p class="text-xs mb-2" style="color: var(--color-text-muted);">' + (o.time || '时间未定') + ' · ' + o.duration + '</p>';
+          html += '<div class="flex gap-2">';
+          html += '<button onclick="openOrderDetail(\'' + o.id + '\')" class="flex-1 py-2 rounded-lg text-sm font-medium" style="background: var(--color-bg-muted); color: var(--color-text); border: none; cursor: pointer;">详情</button>';
+          html += '<button onclick="acceptOrder(\'' + o.id + '\')" class="flex-1 py-2 rounded-lg text-sm font-medium" style="background: var(--color-primary); color: var(--color-text-inverse); border: none; cursor: pointer;">接单</button>';
+          html += '</div>';
+          html += '</div>';
+        });
+        container.innerHTML = html;
+        lucide.createIcons();
+      }
+
+      /* ===== Render: Nuanban Orders ===== */
+      function renderNuanbanOrders() {
+        var orders = getData(SK.orders) || [];
+        var ongoing = orders.filter(function (o) { return o.status === '进行中' && o.volunteer === VOLUNTEER_NAME; });
+        var completed = orders.filter(function (o) { return o.status === '已完成' && o.volunteer === VOLUNTEER_NAME; });
+
+        // Ongoing
+        var ongoingEl = document.getElementById('ongoing-orders');
+        if (ongoingEl) {
+          if (ongoing.length === 0) {
+            ongoingEl.innerHTML = '<p class="text-xs text-center py-3" style="color: var(--color-text-muted);">暂无进行中的订单</p>';
+          } else {
+            var html = '';
+            ongoing.forEach(function (o) {
+              var icon = getOrderIcon(o.type);
+              html += '<div class="p-3 rounded-xl" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);">';
+              html += '<div class="flex items-center justify-between mb-1">';
+              html += '<div class="flex items-center gap-2">';
+              html += '<i data-lucide="' + icon + '" style="width: 16px; height: 16px; color: var(--state-info);"></i>';
+              html += '<span class="text-sm font-medium" style="color: var(--color-text);">' + escapeHtml(o.type) + '</span>';
+              html += '</div>';
+              html += '<span class="text-xs px-2 py-0.5 rounded" style="background: var(--state-info-bg); color: var(--state-info);">进行中</span>';
+              html += '</div>';
+              html += '<p class="text-xs mb-1" style="color: var(--color-text-muted);">' + escapeHtml(o.elderName) + ' · ' + escapeHtml(o.address) + '</p>';
+              html += '<p class="text-xs mb-2" style="color: var(--color-text-muted);">' + (o.time || '时间未定') + ' · ' + o.duration + ' · ' + o.price + '元</p>';
+              html += '<div class="flex gap-2">';
+              html += '<button onclick="openOrderDetail(\'' + o.id + '\')" class="flex-1 py-2 rounded-lg text-sm font-medium" style="background: var(--color-bg-muted); color: var(--color-text); border: none; cursor: pointer;">详情</button>';
+              html += '<button onclick="completeOrder(\'' + o.id + '\')" class="flex-1 py-2 rounded-lg text-sm font-medium" style="background: var(--state-success); color: var(--color-text-inverse); border: none; cursor: pointer;">完成服务</button>';
+              html += '</div>';
+              html += '</div>';
+            });
+            ongoingEl.innerHTML = html;
+          }
+        }
+
+        // Service records
+        var recordsEl = document.getElementById('service-records');
+        if (recordsEl) {
+          if (completed.length === 0) {
+            recordsEl.innerHTML = '<p class="text-xs text-center py-3" style="color: var(--color-text-muted);">暂无服务记录</p>';
+          } else {
+            var html2 = '';
+            completed.forEach(function (o) {
+              var icon = getOrderIcon(o.type);
+              html2 += '<div class="flex items-center gap-3 p-3 rounded-xl cursor-pointer" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" onclick="openOrderDetail(\'' + o.id + '\')">';
+              html2 += '<div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style="background: var(--state-success-bg);">';
+              html2 += '<i data-lucide="' + icon + '" style="width: 16px; height: 16px; color: var(--state-success);"></i>';
+              html2 += '</div>';
+              html2 += '<div class="flex-1 min-w-0">';
+              html2 += '<p class="text-sm font-medium truncate" style="color: var(--color-text);">' + escapeHtml(o.type) + '</p>';
+              html2 += '<p class="text-xs truncate" style="color: var(--color-text-muted);">' + escapeHtml(o.elderName) + ' · ' + (o.time || '') + '</p>';
+              html2 += '</div>';
+              html2 += '<span class="text-xs px-2 py-0.5 rounded shrink-0" style="background: var(--state-success-bg); color: var(--state-success);">已完成</span>';
+              html2 += '</div>';
+            });
+            recordsEl.innerHTML = html2;
+          }
+        }
+        lucide.createIcons();
+      }
+
+      /* ===== Render: Nuanban Me ===== */
+      function renderNuanbanMe() {
+        var orders = getData(SK.orders) || [];
+        var completed = orders.filter(function (o) { return o.status === '已完成' && o.volunteer === VOLUNTEER_NAME; });
+        var income = completed.reduce(function (sum, o) { return sum + (o.price || 0); }, 0);
+
+        var meIncome = document.getElementById('me-income');
+        var meCount = document.getElementById('me-count');
+        if (meIncome) meIncome.textContent = income;
+        if (meCount) meCount.textContent = completed.length;
+      }
+
+      /* ===== Init ===== */
+      initData();
+      switchRole('nuanjia');
+      lucide.createIcons();
+    </script>
+</body>
+</html>

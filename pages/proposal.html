@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>共享儿女 · 暖陪伴计划 — 创意方案</title>
+    <style id="theme-vars">
+/* ===== Brand Design Tokens — 共享儿女 · 暖陪伴计划 ===== */
+/* Warm, human, approachable — like a neighbor's kitchen */
+
+:root {
+  /* --- Color System --- */
+  --color-primary: #D4654A;
+  --color-primary-hover: #BF5A42;
+  --color-primary-light: #F5E6E0;
+  --color-primary-lighter: #FBF5F2;
+  --color-primary-50: rgba(212, 101, 74, 0.08);
+  --color-primary-100: rgba(212, 101, 74, 0.15);
+
+  /* Backgrounds */
+  --color-bg: #FDF9F5;
+  --color-bg-warm: #F8F1E8;
+  --color-bg-card: #FFFFFF;
+  --color-bg-elevated: #FFFFFF;
+  --color-bg-sunken: #F5EDE4;
+  --color-bg-muted: #F0E8DF;
+
+  /* Text */
+  --color-text: #3D2E24;
+  --color-text-secondary: #7A6B5D;
+  --color-text-muted: #A89888;
+  --color-text-inverse: #FFFFFF;
+
+  /* Borders */
+  --color-border: #E8DDD0;
+  --color-border-light: #F0E8DF;
+  --color-border-focus: #D4654A;
+
+  /* State colors */
+  --state-success: #5B8A72;
+  --state-success-bg: #E8F0EB;
+  --state-warning: #E8A838;
+  --state-warning-bg: #FDF3E0;
+  --state-error: #C44D3E;
+  --state-error-bg: #FCEAE8;
+  --state-info: #5B7FA8;
+  --state-info-bg: #EBF0F5;
+
+  /* --- Typography --- */
+  --font-sans: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --font-serif: 'Noto Serif SC', 'Songti SC', Georgia, serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+  --text-5xl: 3rem;
+  --text-6xl: 3.75rem;
+
+  --leading-tight: 1.25;
+  --leading-snug: 1.375;
+  --leading-normal: 1.6;
+  --leading-relaxed: 1.75;
+
+  --tracking-tight: -0.02em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.04em;
+  --tracking-wider: 0.08em;
+
+  /* --- Spacing --- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+
+  /* --- Radius --- */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+
+  /* --- Shadows --- */
+  --shadow-xs: 0 1px 2px rgba(61, 46, 36, 0.04);
+  --shadow-sm: 0 1px 3px rgba(61, 46, 36, 0.05);
+  --shadow-md: 0 2px 8px rgba(61, 46, 36, 0.06);
+  --shadow-lg: 0 4px 16px rgba(61, 46, 36, 0.08);
+  --shadow-xl: 0 8px 32px rgba(61, 46, 36, 0.1);
+
+  /* --- Transitions --- */
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+  --transition-slow: 400ms ease;
+
+  /* --- Z-index --- */
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-overlay: 300;
+  --z-modal: 400;
+  --z-toast: 500;
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-primary: var(--color-primary);
+    --color-secondary: var(--state-success);
+    --color-accent: var(--state-warning);
+    --color-border: var(--color-border);
+  }
+  @layer base {
+    body { background: var(--color-bg); color: var(--color-text); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+      /* ===== Reading Progress Bar ===== */
+      .reading-progress {
+        position: fixed; top: 0; left: 0; right: 0;
+        height: 3px; z-index: 999;
+        background: transparent;
+      }
+      .reading-progress-bar {
+        height: 100%; width: 0%;
+        background: linear-gradient(90deg, var(--color-primary), var(--state-warning));
+        transition: width 100ms ease-out;
+      }
+      /* ===== Floating TOC ===== */
+      .toc-fab {
+        position: fixed; left: 24px; bottom: 24px; z-index: 600;
+        width: 48px; height: 48px; border-radius: 50%;
+        background: var(--color-primary); color: #fff;
+        border: none; cursor: pointer;
+        display: flex; align-items: center; justify-content: center;
+        box-shadow: var(--shadow-lg);
+        transition: transform 200ms ease, box-shadow 200ms ease;
+      }
+      .toc-fab:hover { transform: scale(1.08); box-shadow: var(--shadow-xl); }
+      .toc-panel {
+        position: fixed; left: 24px; bottom: 84px; z-index: 600;
+        width: 260px; max-height: 70vh; overflow-y: auto;
+        background: var(--color-bg-card); border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg); box-shadow: var(--shadow-xl);
+        padding: 16px; display: none;
+      }
+      .toc-panel.open { display: block; animation: tocSlideUp 250ms ease; }
+      @keyframes tocSlideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+      .toc-panel h4 { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-text-muted); margin-bottom: 10px; font-family: var(--font-mono); }
+      .toc-panel a {
+        display: block; padding: 7px 12px; border-radius: var(--radius-md);
+        font-size: 13px; color: var(--color-text-secondary); text-decoration: none;
+        transition: background 150ms ease, color 150ms ease;
+        line-height: 1.5;
+      }
+      .toc-panel a:hover { background: var(--color-primary-lighter); color: var(--color-primary); }
+      .toc-panel a.active { background: var(--color-primary-light); color: var(--color-primary); font-weight: 600; }
+      /* ===== Floating Action Buttons ===== */
+      .fab-group {
+        position: fixed; right: 24px; bottom: 24px; z-index: 600;
+        display: flex; flex-direction: column; gap: 10px;
+      }
+      .fab-btn {
+        width: 44px; height: 44px; border-radius: 50%;
+        background: var(--color-bg-card); color: var(--color-text-secondary);
+        border: 1px solid var(--color-border); cursor: pointer;
+        display: flex; align-items: center; justify-content: center;
+        box-shadow: var(--shadow-md);
+        transition: all 200ms ease;
+        opacity: 0; transform: translateY(8px); pointer-events: none;
+      }
+      .fab-btn.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+      .fab-btn:hover { background: var(--color-primary); color: #fff; border-color: var(--color-primary); transform: translateY(-2px); }
+      /* ===== Toast ===== */
+      .toast {
+        position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-60px);
+        z-index: 999; padding: 10px 20px; border-radius: var(--radius-md);
+        background: var(--color-text); color: var(--color-bg);
+        font-size: 14px; font-weight: 500;
+        box-shadow: var(--shadow-xl);
+        transition: transform 300ms ease;
+        display: flex; align-items: center; gap: 8px;
+      }
+      .toast.show { transform: translateX(-50%) translateY(0); }
+      /* ===== Section scroll margin ===== */
+      section[id] { scroll-margin-top: 20px; }
+      /* ===== Print styles ===== */
+      @media print {
+        .toc-fab, .toc-panel, .fab-group, .reading-progress, .toast { display: none !important; }
+        body { font-size: 12px; }
+        section { page-break-inside: avoid; padding: 20px 0 !important; }
+      }
+      /* ===== Animated counter ===== */
+      .counter { display: inline-block; }
+    </style>
+</head>
+<body class="min-h-screen antialiased" style="font-family: var(--font-sans); background: var(--color-bg); color: var(--color-text);">
+
+    <!-- Reading Progress Bar -->
+    <div class="reading-progress"><div class="reading-progress-bar" id="progress-bar"></div></div>
+
+    <!-- Floating TOC -->
+    <button class="toc-fab" onclick="toggleTOC()" title="目录导航">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+    </button>
+    <div class="toc-panel" id="toc-panel">
+      <h4>目录导航</h4>
+      <a href="#sec-01" data-toc="sec-01">01 · 创意概述</a>
+      <a href="#sec-02" data-toc="sec-02">02 · 目标用户与痛点</a>
+      <a href="#sec-03" data-toc="sec-03">03 · 价值与意义</a>
+      <a href="#sec-04" data-toc="sec-04">04 · 市场规模与机会</a>
+      <a href="#sec-05" data-toc="sec-05">05 · 解决方案</a>
+      <a href="#sec-06" data-toc="sec-06">06 · 典型场景</a>
+      <a href="#sec-07" data-toc="sec-07">07 · 商业模式</a>
+      <a href="#sec-08" data-toc="sec-08">08 · 本地化与护城河</a>
+      <a href="#sec-09" data-toc="sec-09">09 · 发展路线</a>
+      <a href="#sec-10" data-toc="sec-10">10 · 结语</a>
+    </div>
+
+    <!-- Floating Action Buttons -->
+    <div class="fab-group">
+      <button class="fab-btn" id="fab-print" onclick="window.print()" title="打印 / 导出PDF">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      </button>
+      <button class="fab-btn" id="fab-share" onclick="sharePage()" title="分享">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+      </button>
+      <button class="fab-btn" id="fab-top" onclick="scrollToTop()" title="返回顶部">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+      </button>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <main>
+
+<!-- ===== Navigation ===== -->
+<nav class="sticky top-0 z-200 w-full" style="background: var(--color-bg); border-bottom: 1px solid var(--color-border);">
+    <div class="mx-auto max-w-6xl px-6 lg:px-8 flex items-center justify-between" style="height:64px;">
+        <a href="index.html" class="flex items-center gap-2 no-underline" style="color:var(--color-primary);">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+            <span class="font-semibold text-base" style="font-family:var(--font-serif); color:var(--color-text);">共享儿女</span>
+        </a>
+        <div class="hidden sm:flex items-center gap-8">
+            <a href="index.html" class="text-sm no-underline transition-colors duration-150" style="color:var(--color-text-secondary);" onmouseover="this.style.color='var(--color-primary)'" onmouseout="this.style.color='var(--color-text-secondary)'">首页</a>
+            <a href="mini-program.html" class="text-sm no-underline transition-colors duration-150" style="color:var(--color-text-secondary);" onmouseover="this.style.color='var(--color-primary)'" onmouseout="this.style.color='var(--color-text-secondary)'">小程序Demo</a>
+            <a href="web-admin.html" class="text-sm no-underline transition-colors duration-150" style="color:var(--color-text-secondary);" onmouseover="this.style.color='var(--color-primary)'" onmouseout="this.style.color='var(--color-text-secondary)'">调度后台</a>
+            <a href="proposal.html" class="text-sm no-underline transition-colors duration-150" style="color:var(--color-primary); font-weight:600;">创意方案</a>
+        </div>
+        <div class="sm:hidden">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--color-text);"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </div>
+    </div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<header class="relative overflow-hidden" style="background: var(--color-bg-warm); border-bottom: 1px solid var(--color-border);">
+  <div class="relative z-10 mx-auto max-w-4xl px-6 py-16 sm:px-8 md:py-24 lg:py-32">
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-lg text-xs font-medium tracking-wider uppercase whitespace-nowrap" style="font-family: var(--font-mono); color: var(--color-primary); border: 1px solid var(--color-primary); background: var(--color-primary-lighter);">
+      TRAE AI 创造力大赛 · 社会服务赛道
+    </div>
+    <h1 class="mt-6 text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-normal leading-tight" style="font-family: var(--font-serif); color: var(--color-text); text-wrap: balance; word-break: keep-all; overflow-wrap: break-word; letter-spacing: -0.02em;">
+      共享儿女<br><em class="italic" style="color: var(--color-primary);">暖陪伴计划</em>
+    </h1>
+    <p class="mt-6 max-w-2xl text-base sm:text-lg leading-relaxed" style="color: var(--color-text-secondary);">
+      "让每一位长者身边，都有一个随时可以搭把手的'邻家孩子'。用平台连接青年志愿者与银发家庭，把孤独感、跑腿难、数字鸿沟一次性打包解决。"
+    </p>
+    <div class="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-xs tracking-wide" style="font-family: var(--font-mono); color: var(--color-text-muted);">
+      <span><strong style="color: var(--color-text);">赛道</strong> · 社会服务</span>
+      <span><strong style="color: var(--color-text);">形态</strong> · 小程序 + Web 后台</span>
+      <span><strong style="color: var(--color-text);">参考</strong> · 美国 Papa (YCS18)</span>
+      <span><strong style="color: var(--color-text);">作者</strong> · 王心瀚</span>
+      <span><strong style="color: var(--color-text);">时间</strong> · 2026.06</span>
+    </div>
+  </div>
+</header>
+
+<!-- ===== 01 创意概述 ===== -->
+<section id="sec-01" class="mx-auto max-w-4xl px-6 py-16 sm:px-8 md:py-20 lg:py-24" style="border-bottom: 1px solid var(--color-border);">
+  <div class="text-xs tracking-widest uppercase font-medium mb-3" style="font-family: var(--font-mono); color: var(--state-success);">01 · 创意概述</div>
+  <h2 class="text-2xl sm:text-3xl md:text-4xl font-normal leading-snug mb-6" style="font-family: var(--font-serif); color: var(--color-text); text-wrap: balance; word-break: keep-all; overflow-wrap: break-word;">
+    用"共享儿女"的方式，<em class="italic" style="color: var(--color-primary);">重新定义老年陪伴</em>
+  </h2>
+  <p class="text-base sm:text-lg leading-relaxed mb-8" style="color: var(--color-text-secondary);">
+    当 60 岁以上人口突破 2.8 亿，独居与空巢老人数量持续攀升，"谁来陪爸妈说话、跑跑腿"正在变成一个社会化问题。
+  </p>
+
+  <h3 class="text-lg sm:text-xl font-semibold mt-10 mb-3" style="color: var(--color-text); font-family: var(--font-sans);">要解决什么问题</h3>
+  <p class="text-sm sm:text-base leading-relaxed mb-4" style="color: var(--color-text);">
+    中国有近 <span class="font-semibold" style="color: var(--color-primary);">1.18 亿</span> 独居和空巢老人<sup><a href="#cite-1" class="text-xs font-semibold" style="color: var(--color-primary); text-decoration: none;">[1]</a></sup>。他们中很多人不缺物质，缺的是"被陪伴"：有人聊聊天、有人帮取药、有人教用智能手机。子女在外地、护工费用高昂且资质参差，传统的"家政 + 社区服务"模式又难以解决情感层面的孤独。
+  </p>
+
+  <h3 class="text-lg sm:text-xl font-semibold mt-10 mb-3" style="color: var(--color-text); font-family: var(--font-sans);">为什么会想到做这个</h3>
+  <p class="text-sm sm:text-base leading-relaxed mb-4" style="color: var(--color-text);">
+    美国的 <strong>Papa</strong>（Y Combinator 2018 夏季批次，业内简称 <span class="font-semibold" style="color: var(--color-primary);">YCS18</span>）开创了"Family on Demand"模式：把经过筛选的"陪友"（Papa Pals）按需匹配给老年人家庭，提供陪伴、跑腿、就医接送等服务，估值一度达到<span class="font-semibold" style="color: var(--color-primary);">独角兽级别</span><sup><a href="#cite-2" class="text-xs font-semibold" style="color: var(--color-primary); text-decoration: none;">[2]</a></sup>。这启发我们：中国有更密集的青年志愿者群体（大学生、退休低龄老人、社区热心人），如果能在中国本地化这套"平台 + 严选 + 灵活性匹配"的机制，就能把原本昂贵的"私人陪护"变成普惠型的社会服务。
+  </p>
+
+  <h3 class="text-lg sm:text-xl font-semibold mt-10 mb-3" style="color: var(--color-text); font-family: var(--font-sans);">大概是什么产品</h3>
+  <p class="text-sm sm:text-base leading-relaxed mb-8" style="color: var(--color-text);">
+    一款基于微信小程序的"共享儿女"平台，连接 <span class="font-semibold" style="color: var(--color-primary);">"暖伴"（青年志愿者）</span> 与 <span class="font-semibold" style="color: var(--color-primary);">"暖家"（老人家庭）</span>，提供三类核心服务：日常陪伴、跑腿代办、智能手机与就医协助。配套 Web 后台用于志愿者筛选、订单调度、安全审计与数据统计。
+  </p>
+
+  <!-- Stats Row -->
+  <div class="grid grid-cols-2 md:grid-cols-4 rounded-lg overflow-hidden mt-8" style="border: 1px solid var(--color-border);">
+    <div class="p-5 sm:p-6 text-center" style="background: var(--color-bg-card);">
+      <div class="text-3xl sm:text-4xl font-normal leading-none mb-2" style="font-family: var(--font-serif); color: var(--color-primary); font-variant-numeric: tabular-nums;">1.18亿</div>
+      <div class="text-xs tracking-wider uppercase whitespace-nowrap" style="font-family: var(--font-mono); color: var(--color-text-muted);">独居/空巢老人</div>
+    </div>
+    <div class="p-5 sm:p-6 text-center" style="background: var(--color-bg-card);">
+      <div class="text-3xl sm:text-4xl font-normal leading-none mb-2" style="font-family: var(--font-serif); color: var(--color-primary); font-variant-numeric: tabular-nums;">2.8亿</div>
+      <div class="text-xs tracking-wider uppercase whitespace-nowrap" style="font-family: var(--font-mono); color: var(--color-text-muted);">60岁以上人口</div>
+    </div>
+    <div class="p-5 sm:p-6 text-center" style="background: var(--color-bg-card);">
+      <div class="text-3xl sm:text-4xl font-normal leading-none mb-2" style="font-family: var(--font-serif); color: var(--color-primary); font-variant-numeric: tabular-nums;">30%</div>
+      <div class="text-xs tracking-wider uppercase whitespace-nowrap" style="font-family: var(--font-mono); color: var(--color-text-muted);">存在明显孤独感</div>
+    </div>
+    <div class="p-5 sm:p-6 text-center" style="background: var(--color-bg-card);">
+      <div class="text-3xl sm:text-4xl font-normal leading-none mb-2" style="font-family: var(--font-serif); color: var(--color-primary); font-variant-numeric: tabular-nums;">$1.4B</div>
+      <div class="text-xs tracking-wider uppercase whitespace-nowrap" style="font-family: var(--font-mono); color: var(--color-text-muted);">Papa 估值参考</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 02 目标用户与痛点 ===== -->
+<section id="sec-02" class="mx-auto max-w-4xl px-6 py-16 sm:px-8 md:py-20 lg:py-24" style="border-bottom: 1px solid var(--color-border);">
+  <div class="text-xs tracking-widest uppercase font-medium mb-3" style="font-family: var(--font-mono); color: var(--state-success);">02 · 目标用户与痛点</div>
+  <h2 class="text-2xl sm:text-3xl md:text-4xl font-normal leading-snug mb-6" style="font-family: var(--font-serif); color: var(--color-text); text-wrap: balance; word-break: keep-all; overflow-wrap: break-word;">
+    两类用户，<em class="italic" style="color: var(--color-primary);">三方共赢</em>
+  </h2>
+  <p class="text-base sm:text-lg leading-relaxed mb-8" style="color: var(--color-text-secondary);">
+    我们不是要做"替老管家"，而是要用平台化方式，让青年、老人、社区都从中受益。
+  </p>
+
+  <h3 class="text-lg sm:text-xl font-semibold mt-8 mb-4" style="color: var(--color-text); font-family: var(--font-sans);">面向哪些用户</h3>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 mt-4">
+    <div class="p-5 sm:p-6 rounded-lg transition-transform duration-200" style="background: var(--color-bg-card); border: 1px solid var(--color-border);">
+      <div class="w-10 h-10 rounded flex items-center justify-center text-lg mb-4" style="background: var(--state-success); color: var(--color-text-inverse); font-family: var(--font-serif);">家</div>
+      <h4 class="text-base font-semibold mb-2" style="color: var(--color-text);">暖家（银发家庭）</h4>
+      <p class="text-sm leading-relaxed" style="color: var(--color-text-secondary);">60+ 独居或空巢长者，子女异地、行动不便、对数字工具陌生。需求是有人说话、有人帮忙、有人兜底。</p>
+    </div>
+    <div class="p-5 sm:p-6 rounded-lg transition-transform duration-200" style="background: var(--color-bg-card); border: 1px solid var(--color-border);">
+      <div class="w-10 h-10 rounded flex items-center justify-center text-lg mb-4" style="background: var(--state-success); color: var(--color-text-inverse); font-family: var(--font-serif);">伴</div>
+      <h4 class="text-base font-semibold mb-2" style="color: var(--color-text);">暖伴（青年志愿者）</h4>
+      <p class="text-sm leading-relaxed" style="color: var(--color-text-secondary);">大学生、社区青年、低龄退休人员、心理辅导师、社工等专业群体。动机包括公益时长、社会实践、收入补贴。</p>
+    </div>
+    <div class="p-5 sm:p-6 rounded-lg transition-transform duration-200 sm:col-span-2 lg:col-span-1" style="background: var(--color-bg-card); border: 1px solid var(--color-border);">
+      <div class="w-10 h-10 rounded flex items-center justify-center text-lg mb-4" style="background: var(--state-success); color: var(--color-text-inverse); font-family: var(--font-serif);">社</div>
+      <h4 class="text-base font-semibold mb-2" style="color: var(--color-text);">暖社区（街道/物业/医院）</h4>
+      <p class="text-sm leading-relaxed" style="color: var(--color-text-secondary);">基层政府、街道办、社工站、医院导诊科、企业工会。可以用平台把分散的志愿资源统一调度。</p>
+    </div>
+  </div>
+
+  <h3 class="text-lg sm:text-xl font-semibold mt-10 mb-4" style="color: var(--color-text); font-family: var(--font-sans);">在什么场景下使用</h3>
+  <ul class="mt-3 space-y-0">
+    <li class="flex items-start gap-3 py-3 text-sm sm:text-base leading-relaxed" style="border-bottom: 1px solid var(--color-border-light); color: var(--color-text);">
+      <span class="shrink-0 font-bold text-sm" style="color: var(--state-success); font-family: var(--font-mono);">01</span>
+      <span>工作日中午，子女在外上班，独居父亲不会网上挂号，志愿者代挂号并陪同就诊。</span>
+    </li>
+    <li class="flex items-start gap-3 py-3 text-sm sm:text-base leading-relaxed" style="border-bottom: 1px solid var(--color-border-light); color: var(--color-text);">
+      <span class="shrink-0 font-bold text-sm" style="color: var(--state-success); font-family: var(--font-mono);">02</span>
+      <span>周末午后，青年志愿者上门陪老人下棋、读报、拍一段全家福短视频远程发给孩子。</span>
+    </li>
+    <li class="flex items-start gap-3 py-3 text-sm sm:text-base leading-relaxed" style="border-bottom: 1px solid var(--color-border-light); color: var(--color-text);">
+      <span class="shrink-0 font-bold text-sm" style="color: var(--state-success); font-family: var(--font-mono);">03</span>
+      <span>突发情况，老人血压飙高需要跑腿买药，平台 30 分钟内匹配最近志愿者上门。</span>
+    </li>
+    <li class="flex items-start gap-3 py-3 text-sm sm:text-base leading-relaxed" style="border-bottom: 1px solid var(--color-border-light); color: var(--color-text);">
+      <span class="shrink-0 font-bold text-sm" style="color: var(--state-success); font-family: var(--font-mono);">04</span>
+      <span>临年过节，子女因病情或工作无法回家，志愿者上门贴春联、陪吃年夜饭。</span>
+    </li>
+    <li class="flex items-start gap-3 py-3 text-sm sm:text-base leading-relaxed" style="color: var(--color-text);">
+      <span class="shrink-0 font-bold text-sm" style="color: var(--state-success); font-family: var(--font-mono);">05</span>
+      <span>智能手机不会用，教老人发视频、打车、缴水电费，缓解数字鸿沟焦虑。</span>
+    </li>
+  </ul>
+
+  <h3 class="text-lg sm:text-xl font-semibold mt-10 mb-4" style="color: var(--color-text); font-family: var(--font-sans);">当前痛点（没有我们的产品时）</h3>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+    <div>
+      <h4 class="text-base font-semibold mb-3" style="color: var(--color-primary);">对老人来说</h4>
+      <ul class="space-y-0">
+        <li class="flex items-start gap-3 py-3 text-sm leading-relaxed" style="border-bottom: 1px solid var(--color-border-light); color: var(--color-text);">
+          <span class="shrink-0 font-bold text-xs" style="color: var(--state-success); font-family: var(--font-mono);">!</span>
+          <span>请专业护工：每月 4000-8000 元，且质量参差、情感连接弱。</span>
+        </li>
+        <li class="flex items-start gap-3 py-3 text-sm leading-relaxed" style="border-bottom: 1px solid var(--color-border-light); color: var(--color-text);">
+          <span class="shrink-0 font-bold text-xs" style="color: var(--state-success); font-family: var(--font-mono);">!</span>
+          <span>靠社区上门：频次低、覆盖窄、节假日基本停摆。</span>
+        </li>
+        <li class="flex items-start gap-3 py-3 text-sm leading-relaxed" style="border-bottom: 1px solid var(--color-border-light); color: var(--color-text);">
+          <span class="shrink-0 font-bold text-xs" style="color: var(--state-success); font-family: var(--font-mono);">!</span>
+          <span>靠子女远程视频：情感温度有限，无法解决"跑腿"刚需。</span>
+        </li>
+        <li class="flex items-start gap-3 py-3 text-sm leading-relaxed" style="color: var(--color-text);">
+          <span class="shrink-0 font-bold text-xs" style="color: var(--state-success); font-family: var(--font-mono);">!</span>
+          <span>自己硬扛：安全隐患大，突发疾病难以及时发现。</span>
+        </li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="text-base font-semibold mb-3" style="color: var(--state-success);">对青年志愿者来说</h4>
+      <ul class="space-y-0">
+        <li class="flex items-start gap-3 py-3 text-sm leading-relaxed" style="border-bottom: 1px solid var(--color-border-light); color: var(--color-text);">
+          <span class="shrink-0 font-bold text-xs" style="color: var(--state-success); font-family: var(--font-mono);">!</span>
+          <span>想做公益找不到可信的入口：怕被骗、怕担责、怕被骚扰。</span>
+        </li>
+        <li class="flex items-start gap-3 py-3 text-sm leading-relaxed" style="border-bottom: 1px solid var(--color-border-light); color: var(--color-text);">
+          <span class="shrink-0 font-bold text-xs" style="color: var(--state-success); font-family: var(--font-mono);">!</span>
+          <span>零散志愿活动难以持续：没有稳定的"工单池"和回报机制。</span>
+        </li>
+        <li class="flex items-start gap-3 py-3 text-sm leading-relaxed" style="border-bottom: 1px solid var(--color-border-light); color: var(--color-text);">
+          <span class="shrink-0 font-bold text-xs" style="color: var(--state-success); font-family: var(--font-mono);">!</span>
+          <span>公益时长认证繁琐：高校、企业、街道各一套系统。</span>
+        </li>
+        <li class="flex items-start gap-3 py-3 text-sm leading-relaxed" style="color: var(--color-text);">
+          <span class="shrink-0 font-bold text-xs" style="color: var(--state-success); font-family: var(--font-mono);">!</span>
+          <span>缺少培训与意外保障：想做但不敢做。</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Pullquote -->
+  <blockquote class="mt-10 pl-5 sm:pl-6 border-l-4" style="border-color: var(--color-primary);">
+    <p class="text-lg sm:text-xl sm:text-2xl leading-relaxed italic" style="font-family: var(--font-serif); color: var(--color-text);">
+      "我们不是在重塑家政服务，而是在为一座城市重新接上被切断的'邻里温度'。"
+    </p>
+    <cite class="block mt-3 text-xs tracking-wider uppercase not-italic" style="font-family: var(--font-mono); color: var(--color-text-muted);">— 项目愿景</cite>
+  </blockquote>
+</section>
+
+<!-- ===== 03 价值与意义 ===== -->
+<section id="sec-03" class="mx-auto max-w-4xl px-6 py-16 sm:px-8 md:py-20 lg:py-24" style="border-bottom: 1px solid var(--color-border);">
+  <div class="text-xs tracking-widest uppercase font-medium mb-3" style="font-family: var(--font-mono); color: var(--state-success);">03 · 价值与意义</div>
+  <h2 class="text-2xl sm:text-3xl md:text-4xl font-normal leading-snug mb-6" style="font-family: var(--font-serif); color: var(--color-text); text-wrap: balance; word-break: keep-all; overflow-wrap: break-word;">
+    不止是生意，<em class="italic" style="color: var(--color-primary);">更是基础设施</em>
+  </h2>
+  <p class="text-base sm:text-lg leading-relaxed mb-8" style="color: var(--color-text-secondary);">
+    从社会价值、商业价值、效率提升三个角度，我们看到这件事有成为"银发时代基础设施"的潜力。
+  </p>
+
+  <h3 class="text-lg sm:text-xl font-semibold mt-8 mb-3" style="color: var(--color-text); font-family: var(--font-sans);">社会价值</h3>
+  <p class="text-sm sm:text-base leading-relaxed mb-4" style="color: var(--color-text);">
+    把"陪伴"从失灵商品变成普惠品。一个青年志愿者每周 4 小时，一年可服务近 200 小时，覆盖 3-5 个家庭，直接缓解城市独居老人的<span class="font-semibold" style="color: var(--color-primary);">情感孤独</span>与<span class="font-semibold" style="color: var(--color-primary);">安全盲区</span>。参考 Papa 的数据，其用户家庭的就医依从性、慢病管理依从性显著提升，间接降低医保支出<sup><a href="#cite-2" class="text-xs font-semibold" style="color: var(--color-primary); text-decoration: none;">[2]</a></sup>。
+  </p>
+
+  <h3 class="text-lg sm:text-xl font-semibold mt-8 mb-3" style="color: var(--color-text); font-family: var(--font-sans);">商业价值</h3>
+  <p class="text-sm sm:text-base leading-relaxed mb-4" style="color: var(--color-text);">
+    中国银发经济规模已超 7 万亿元<sup><a href="#cite-3" class="text-xs font-semibold" style="color: var(--color-primary); text-decoration: none;">[3]</a></sup>，但"情感 + 跑腿"赛道仍处于早期。我们采用 <span class="font-semibold" style="color: var(--color-primary);">B2B2C</span> 模式：企业工会（员工父母关爱福利）、商业保险公司（增值服务）、街道社区（政府采购）作为付费方，老年家庭作为受益方；志愿者按单获得补贴 + 公益时长，形成多方可持续闭环。
+  </p>
+
+  <h3 class="text-lg sm:text-xl font-semibold mt-8 mb-3" style="color: var(--color-text); font-family: var(--font-sans);">效率提升</h3>
+  <p class="text-sm sm:text-base leading-relaxed mb-8" style="color: var(--color-text);">
+    相比传统 1 对 1 上门家政，平台化匹配可让志愿者的"在路上 + 上门"时间从 60% 提升到 85% 以上，单志愿者一年可服务的家庭数提升 3-4 倍，间接压低单位服务成本。
+  </p>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 mt-6">
+    <div class="p-5 sm:p-6 rounded-lg" style="background: var(--color-bg-card); border: 1px solid var(--color-border);">
+      <div class="w-10 h-10 rounded flex items-center justify-center text-base font-semibold mb-4" style="background: var(--state-success); color: var(--color-text-inverse); font-family: var(--font-serif);">1</div>
+      <h4 class="text-base font-semibold mb-2" style="color: var(--color-text);">社会价值</h4>
+      <p class="text-sm leading-relaxed" style="color: var(--color-text-secondary);">把"陪伴"普惠化，缓解独居孤独与数字鸿沟，降低社会照护成本。</p>
+    </div>
+    <div class="p-5 sm:p-6 rounded-lg" style="background: var(--color-bg-card); border: 1px solid var(--color-border);">
+      <div class="w-10 h-10 rounded flex items-center justify-center text-base font-semibold mb-4" style="background: var(--state-success); color: var(--color-text-inverse); font-family: var(--font-serif);">2</div>
+      <h4 class="text-base font-semibold mb-2" style="color: var(--color-text);">商业价值</h4>
+      <p class="text-sm leading-relaxed" style="color: var(--color-text-secondary);">B2B2C 模型，工会/保险/街道付费，万亿级银发市场早期卡位。</p>
+    </div>
+    <div class="p-5 sm:p-6 rounded-lg sm:col-span-2 lg:col-span-1" style="background: var(--color-bg-card); border: 1px solid var(--color-border);">
+      <div class="w-10 h-10 rounded flex items-center justify-center text-base font-semibold mb-4" style="background: var(--state-success); color: var(--color-text-inverse); font-family: var(--font-serif);">3</div>
+      <h4 class="text-base font-semibold mb-2" style="color: var(--color-text);">效率价值</h4>
+      <p class="text-sm leading-relaxed" style="color: var(--color-text-secondary);">平台化匹配提升单志愿者产出 3-4 倍，形成正反熵增飞轮。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 04 市场规模与机会 ===== -->
+<section id="sec-04" class="mx-auto max-w-4xl px-6 py-16 sm:px-8 md:py-20 lg:py-24" style="border-bottom: 1px solid var(--color-border);">
+  <div class="text-xs tracking-widest uppercase font-medium mb-3" style="font-family: var(--font-mono); color: var(--state-success);">04 · 市场规模与机会</div>
+  <h2 class="text-2xl sm:text-3xl md:text-4xl font-normal leading-snug mb-6" style="font-family: var(--font-serif); color: var(--color-text); text-wrap: balance; word-break: keep-all; overflow-wrap: break-word;">
+    被低估的<em class="italic" style="color: var(--color-primary);">银发陪伴</em>赛道
+  </h2>
+  <p class="text-base sm:text-lg leading-relaxed mb-8" style="color: var(--color-text-secondary);">
+    我们用一组可视化数据说明，为什么这件事在中国值得做、现在值得做。
+  </p>
+
+  <!-- Chart 1: Population Trend -->
+  <figure class="mt-6 mb-10">
+    <figcaption class="text-base font-semibold mb-1" style="color: var(--color-text);">图 1 · 中国 60+ 人口与独居老人趋势</figcaption>
+    <figcaption class="text-xs mb-4" style="color: var(--color-text-muted);">单位：亿人 / 占比</figcaption>
+    <div id="chart-population" style="width:100%;height:380px;"></div>
+  </figure>
+
+  <!-- Chart 2: Market Size -->
+  <figure class="mb-10">
+    <figcaption class="text-base font-semibold mb-1" style="color: var(--color-text);">图 2 · 银发经济市场规模预测</figcaption>
+    <figcaption class="text-xs mb-4" style="color: var(--color-text-muted);">单位：万亿元</figcaption>
+    <div id="chart-market" style="width:100%;height:340px;"></div>
+  </figure>
+
+  <!-- Chart 3: Needs Distribution -->
+  <figure class="mb-10">
+    <figcaption class="text-base font-semibold mb-1" style="color: var(--color-text);">图 3 · 用户核心需求分布（多选）</figcaption>
+    <figcaption class="text-xs mb-4" style="color: var(--color-text-muted);">单位：%</figcaption>
+    <div id="chart-needs" style="width:100%;height:360px;"></div>
+  </figure>
+
+  <!-- Competitor Table -->
+  <div class="overflow-x-auto rounded-lg mt-6" style="border: 1px solid var(--color-border);">
+    <table class="w-full text-sm" style="min-width: 600px;">
+      <thead>
+        <tr style="background: var(--color-bg-warm);">
+          <th class="px-4 py-3 text-left text-xs tracking-wider uppercase font-medium whitespace-nowrap" style="font-family: var(--font-mono); color: var(--color-text);">维度</th>
+          <th class="px-4 py-3 text-left text-xs tracking-wider uppercase font-medium whitespace-nowrap" style="font-family: var(--font-mono); color: var(--color-text);">传统家政 / 护工</th>
+          <th class="px-4 py-3 text-left text-xs tracking-wider uppercase font-medium whitespace-nowrap" style="font-family: var(--font-mono); color: var(--color-text);">社区志愿</th>
+          <th class="px-4 py-3 text-left text-xs tracking-wider uppercase font-medium whitespace-nowrap" style="font-family: var(--font-mono); color: var(--color-primary);">共享儿女平台</th>
+        </tr>
+      </thead>
+      <tbody style="color: var(--color-text-secondary);">
+        <tr style="border-bottom: 1px solid var(--color-border-light);">
+          <td class="px-4 py-3 font-semibold whitespace-nowrap" style="color: var(--color-text);">成本</td>
+          <td class="px-4 py-3">4000-8000 元/月</td>
+          <td class="px-4 py-3">免费但频次低</td>
+          <td class="px-4 py-3 font-semibold" style="color: var(--color-primary);">50-150 元/次，企业/保险/街道可补贴</td>
+        </tr>
+        <tr style="border-bottom: 1px solid var(--color-border-light);">
+          <td class="px-4 py-3 font-semibold whitespace-nowrap" style="color: var(--color-text);">覆盖</td>
+          <td class="px-4 py-3">1 对 1，依赖人力</td>
+          <td class="px-4 py-3">街道/社区行政划分</td>
+          <td class="px-4 py-3 font-semibold" style="color: var(--color-primary);">平台智能匹配 3-5 公里内志愿者</td>
+        </tr>
+        <tr style="border-bottom: 1px solid var(--color-border-light);">
+          <td class="px-4 py-3 font-semibold whitespace-nowrap" style="color: var(--color-text);">情感连接</td>
+          <td class="px-4 py-3">弱，职业化</td>
+          <td class="px-4 py-3">弱，偶发性</td>
+          <td class="px-4 py-3 font-semibold" style="color: var(--color-primary);">强，固定"暖伴"长期陪伴</td>
+        </tr>
+        <tr style="border-bottom: 1px solid var(--color-border-light);">
+          <td class="px-4 py-3 font-semibold whitespace-nowrap" style="color: var(--color-text);">安全保障</td>
+          <td class="px-4 py-3">依赖中介背书</td>
+          <td class="px-4 py-3">街道兜底</td>
+          <td class="px-4 py-3 font-semibold" style="color: var(--color-primary);">实名 + 背调 + 保险 + 一键报警</td>
+        </tr>
+        <tr>
+          <td class="px-4 py-3 font-semibold whitespace-nowrap" style="color: var(--color-text);">数据沉淀</td>
+          <td class="px-4 py-3">无</td>
+          <td class="px-4 py-3">纸质台账</td>
+          <td class="px-4 py-3 font-semibold" style="color: var(--color-primary);">全流程数字化，可对接健康档案</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ===== 05 解决方案 ===== -->
+<section id="sec-05" class="mx-auto max-w-4xl px-6 py-16 sm:px-8 md:py-20 lg:py-24" style="border-bottom: 1px solid var(--color-border);">
+  <div class="text-xs tracking-widest uppercase font-medium mb-3" style="font-family: var(--font-mono); color: var(--state-success);">05 · 解决方案</div>
+  <h2 class="text-2xl sm:text-3xl md:text-4xl font-normal leading-snug mb-6" style="font-family: var(--font-serif); color: var(--color-text); text-wrap: balance; word-break: keep-all; overflow-wrap: break-word;">
+    一套"平台 + 严选 + 灵活"的<em class="italic" style="color: var(--color-primary);">中国版 Papa</em>
+  </h2>
+  <p class="text-base sm:text-lg leading-relaxed mb-8" style="color: var(--color-text-secondary);">
+    我们把 Papa 验证过的"Family on Demand"模式，翻译成更适合中国本地的形态。
+  </p>
+
+  <!-- 4-step Flow -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-0 mt-6 rounded-lg overflow-hidden" style="border: 1px solid var(--color-border);">
+    <div class="p-5 sm:p-6" style="border-top: 3px solid var(--state-success); background: var(--color-bg-card);">
+      <div class="text-2xl sm:text-3xl font-normal leading-none mb-2" style="font-family: var(--font-serif); color: var(--color-primary);">01</div>
+      <h4 class="text-sm font-semibold mb-1" style="color: var(--color-text);">暖家下单</h4>
+      <p class="text-xs leading-relaxed" style="color: var(--color-text-secondary);">子女或老人在小程序发起订单，类型、时长、地点、人数一目了然。</p>
+    </div>
+    <div class="p-5 sm:p-6" style="border-top: 3px solid var(--state-success); background: var(--color-bg-card);">
+      <div class="text-2xl sm:text-3xl font-normal leading-none mb-2" style="font-family: var(--font-serif); color: var(--color-primary);">02</div>
+      <h4 class="text-sm font-semibold mb-1" style="color: var(--color-text);">智能匹配</h4>
+      <p class="text-xs leading-relaxed" style="color: var(--color-text-secondary);">系统按距离、技能、评分、性格标签 3 分钟内推荐"暖伴"。</p>
+    </div>
+    <div class="p-5 sm:p-6" style="border-top: 3px solid var(--state-success); background: var(--color-bg-card);">
+      <div class="text-2xl sm:text-3xl font-normal leading-none mb-2" style="font-family: var(--font-serif); color: var(--color-primary);">03</div>
+      <h4 class="text-sm font-semibold mb-1" style="color: var(--color-text);">上门服务</h4>
+      <p class="text-xs leading-relaxed" style="color: var(--color-text-secondary);">志愿者按约定时间上门，全程录音/定位，保障双方安全。</p>
+    </div>
+    <div class="p-5 sm:p-6" style="border-top: 3px solid var(--state-success); background: var(--color-bg-card);">
+      <div class="text-2xl sm:text-3xl font-normal leading-none mb-2" style="font-family: var(--font-serif); color: var(--color-primary);">04</div>
+      <h4 class="text-sm font-semibold mb-1" style="color: var(--color-text);">双向评价</h4>
+      <p class="text-xs leading-relaxed" style="color: var(--color-text-secondary);">服务结束后双向打分，形成暖伴信用档案，沉淀家庭健康档案。</p>
+    </div>
+  </div>
+
+  <!-- Core Modules -->
+  <h3 class="text-lg sm:text-xl font-semibold mt-12 mb-4" style="color: var(--color-text); font-family: var(--font-sans);">核心功能模块</h3>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 mt-4">
+    <div class="p-5 sm:p-6 rounded-lg" style="background: var(--color-bg-card); border: 1px solid var(--color-border);">
+      <div class="w-10 h-10 rounded flex items-center justify-center text-lg mb-4" style="background: var(--state-success); color: var(--color-text-inverse); font-family: var(--font-serif);">陪</div>
+      <h4 class="text-base font-semibold mb-2" style="color: var(--color-text);">日常陪伴</h4>
+      <p class="text-sm leading-relaxed" style="color: var(--color-text-secondary);">聊天、读报、陪下棋、节日陪伴、心理疏导。最少 1 小时起，可按周/月预约。</p>
+    </div>
+    <div class="p-5 sm:p-6 rounded-lg" style="background: var(--color-bg-card); border: 1px solid var(--color-border);">
+      <div class="w-10 h-10 rounded flex items-center justify-center text-lg mb-4" style="background: var(--state-success); color: var(--color-text-inverse); font-family: var(--font-serif);">跑</div>
+      <h4 class="text-base font-semibold mb-2" style="color: var(--color-text);">跑腿代办</h4>
+      <p class="text-sm leading-relaxed" style="color: var(--color-text-secondary);">代取药、代买菜、代缴水电费、陪同就医、物件代取。按"次/公斤/件"计价。</p>
+    </div>
+    <div class="p-5 sm:p-6 rounded-lg" style="background: var(--color-bg-card); border: 1px solid var(--color-border);">
+      <div class="w-10 h-10 rounded flex items-center justify-center text-lg mb-4" style="background: var(--state-success); color: var(--color-text-inverse); font-family: var(--font-serif);">教</div>
+      <h4 class="text-base font-semibold mb-2" style="color: var(--color-text);">数字辅导</h4>
+      <p class="text-sm leading-relaxed" style="color: var(--color-text-secondary);">教用智能手机、视频通话、防诈窗提醒、健康码操作。30 分钟一课，可远程。</p>
+    </div>
+    <div class="p-5 sm:p-6 rounded-lg" style="background: var(--color-bg-card); border: 1px solid var(--color-border);">
+      <div class="w-10 h-10 rounded flex items-center justify-center text-lg mb-4" style="background: var(--state-success); color: var(--color-text-inverse); font-family: var(--font-serif);">安</div>
+      <h4 class="text-base font-semibold mb-2" style="color: var(--color-text);">安全兜底</h4>
+      <p class="text-sm leading-relaxed" style="color: var(--color-text-secondary);">志愿者实名 + 背调 + 保险 + 一键报警 + 服务全程录音定位。</p>
+    </div>
+    <div class="p-5 sm:p-6 rounded-lg" style="background: var(--color-bg-card); border: 1px solid var(--color-border);">
+      <div class="w-10 h-10 rounded flex items-center justify-center text-lg mb-4" style="background: var(--state-success); color: var(--color-text-inverse); font-family: var(--font-serif);">档</div>
+      <h4 class="text-base font-semibold mb-2" style="color: var(--color-text);">家庭健康档案</h4>
+      <p class="text-sm leading-relaxed" style="color: var(--color-text-secondary);">脱敏记录服务频次、用药提醒、情绪曲线，反馈给子女与社区医生。</p>
+    </div>
+    <div class="p-5 sm:p-6 rounded-lg sm:col-span-2 lg:col-span-1" style="background: var(--color-bg-card); border: 1px solid var(--color-border);">
+      <div class="w-10 h-10 rounded flex items-center justify-center text-base font-semibold mb-4" style="background: var(--state-success); color: var(--color-text-inverse); font-family: var(--font-serif);">B</div>
+      <h4 class="text-base font-semibold mb-2" style="color: var(--color-text);">B 端采购</h4>
+      <p class="text-sm leading-relaxed" style="color: var(--color-text-secondary);">企业工会、保险公司、街道办可批量采购，作为员工父母关爱或公共服务。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 06 典型场景 ===== -->
+<section id="sec-06" class="mx-auto max-w-4xl px-6 py-16 sm:px-8 md:py-20 lg:py-24" style="border-bottom: 1px solid var(--color-border);">
+  <div class="text-xs tracking-widest uppercase font-medium mb-3" style="font-family: var(--font-mono); color: var(--state-success);">06 · 典型场景</div>
+  <h2 class="text-2xl sm:text-3xl md:text-4xl font-normal leading-snug mb-6" style="font-family: var(--font-serif); color: var(--color-text); text-wrap: balance; word-break: keep-all; overflow-wrap: break-word;">
+    两个具体的<em class="italic" style="color: var(--color-primary);">陪伴时刻</em>
+  </h2>
+  <p class="text-base sm:text-lg leading-relaxed mb-10" style="color: var(--color-text-secondary);">
+    产品最终要落到真实生活里。以下两个场景，来源于对一线城市独居家庭的访谈。
+  </p>
+
+  <!-- Scenario A -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 items-center mb-12">
+    <div>
+      <h3 class="text-lg sm:text-xl font-semibold mb-3" style="color: var(--color-text); font-family: var(--font-sans);">场景 A · 周末公园的代闲散步</h3>
+      <p class="text-sm leading-relaxed mb-4" style="color: var(--color-text-secondary);">李奶奶，72 岁，独居，腿脚不便。儿子在杭州工作，每两周视频一次。</p>
+      <ul class="space-y-2">
+        <li class="flex items-start gap-3 text-sm leading-relaxed" style="color: var(--color-text);">
+          <span class="shrink-0 font-bold text-xs" style="color: var(--color-primary); font-family: var(--font-mono);">→</span>
+          <span>儿子在平台预约：每周六上午 9:00-11:00，公园陪伴 2 小时。</span>
+        </li>
+        <li class="flex items-start gap-3 text-sm leading-relaxed" style="color: var(--color-text);">
+          <span class="shrink-0 font-bold text-xs" style="color: var(--color-primary); font-family: var(--font-mono);">→</span>
+          <span>平台匹配附近的大学生"暖伴"小张，固定服务 8 周。</span>
+        </li>
+        <li class="flex items-start gap-3 text-sm leading-relaxed" style="color: var(--color-text);">
+          <span class="shrink-0 font-bold text-xs" style="color: var(--color-primary); font-family: var(--font-mono);">→</span>
+          <span>服务结束后生成一段短视频，自动同步给儿子作为"陪伴证据"。</span>
+        </li>
+        <li class="flex items-start gap-3 text-sm leading-relaxed" style="color: var(--color-text);">
+          <span class="shrink-0 font-bold text-xs" style="color: var(--color-primary); font-family: var(--font-mono);">→</span>
+          <span>儿子月度账单 200 元，可由企业工会全额报销。</span>
+        </li>
+      </ul>
+    </div>
+    <div class="rounded-lg overflow-hidden" style="border: 1px solid var(--color-border);">
+      <img src="../assets/scenario-park-walk.jpg" alt="公园陪伴场景示意" class="w-full h-auto object-cover" loading="lazy">
+    </div>
+  </div>
+
+  <!-- Scenario B -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 items-center">
+    <div class="rounded-lg overflow-hidden order-2 md:order-1" style="border: 1px solid var(--color-border);">
+      <img src="../assets/scenario-errand-pharmacy.jpg" alt="跑腿代办场景示意" class="w-full h-auto object-cover" loading="lazy">
+    </div>
+    <div class="order-1 md:order-2">
+      <h3 class="text-lg sm:text-xl font-semibold mb-3" style="color: var(--color-text); font-family: var(--font-sans);">场景 B · 早高峰的代取药</h3>
+      <p class="text-sm leading-relaxed mb-4" style="color: var(--color-text-secondary);">王大爷，68 岁，糖尿病 + 高血压，需长期服药。女儿在外地无法陪同。</p>
+      <ul class="space-y-2">
+        <li class="flex items-start gap-3 text-sm leading-relaxed" style="color: var(--color-text);">
+          <span class="shrink-0 font-bold text-xs" style="color: var(--color-primary); font-family: var(--font-mono);">→</span>
+          <span>女儿在小程序发起"代取药 + 陪同挂号"，定位离家最近的三甲医院。</span>
+        </li>
+        <li class="flex items-start gap-3 text-sm leading-relaxed" style="color: var(--color-text);">
+          <span class="shrink-0 font-bold text-xs" style="color: var(--color-primary); font-family: var(--font-mono);">→</span>
+          <span>平台 12 分钟内匹配"暖伴"李姨（退休护士），自带专业背包。</span>
+        </li>
+        <li class="flex items-start gap-3 text-sm leading-relaxed" style="color: var(--color-text);">
+          <span class="shrink-0 font-bold text-xs" style="color: var(--color-primary); font-family: var(--font-mono);">→</span>
+          <span>李姨完成挂号、缴费、取药、复诊建议全程，生成电子档案。</span>
+        </li>
+        <li class="flex items-start gap-3 text-sm leading-relaxed" style="color: var(--color-text);">
+          <span class="shrink-0 font-bold text-xs" style="color: var(--color-primary); font-family: var(--font-mono);">→</span>
+          <span>若李姨出现不适，一键呼叫家庭医生与社区应急联动。</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 07 商业模式 ===== -->
+<section id="sec-07" class="mx-auto max-w-4xl px-6 py-16 sm:px-8 md:py-20 lg:py-24" style="border-bottom: 1px solid var(--color-border);">
+  <div class="text-xs tracking-widest uppercase font-medium mb-3" style="font-family: var(--font-mono); color: var(--state-success);">07 · 商业模式</div>
+  <h2 class="text-2xl sm:text-3xl md:text-4xl font-normal leading-snug mb-6" style="font-family: var(--font-serif); color: var(--color-text); text-wrap: balance; word-break: keep-all; overflow-wrap: break-word;">
+    三方付费，<em class="italic" style="color: var(--color-primary);">可持续飞轮</em>
+  </h2>
+  <p class="text-base sm:text-lg leading-relaxed mb-8" style="color: var(--color-text-secondary);">
+    我们坚持 B 端付费为主、C 端补贴为辅，让真正需要陪伴的老人家庭几乎免费享受服务。
+  </p>
+
+  <!-- Revenue Chart -->
+  <figure class="mt-6 mb-10">
+    <figcaption class="text-base font-semibold mb-1" style="color: var(--color-text);">图 4 · 三年收入预测结构</figcaption>
+    <figcaption class="text-xs mb-4" style="color: var(--color-text-muted);">单位：万元（按城市试点 1 → 5 城市扩展估算）</figcaption>
+    <div id="chart-revenue" style="width:100%;height:380px;"></div>
+  </figure>
+
+  <!-- Payer Table -->
+  <div class="overflow-x-auto rounded-lg mt-6" style="border: 1px solid var(--color-border);">
+    <table class="w-full text-sm" style="min-width: 500px;">
+      <thead>
+        <tr style="background: var(--color-bg-warm);">
+          <th class="px-4 py-3 text-left text-xs tracking-wider uppercase font-medium whitespace-nowrap" style="font-family: var(--font-mono); color: var(--color-text);">付费方</th>
+          <th class="px-4 py-3 text-left text-xs tracking-wider uppercase font-medium whitespace-nowrap" style="font-family: var(--font-mono); color: var(--color-text);">使用场景</th>
+          <th class="px-4 py-3 text-left text-xs tracking-wider uppercase font-medium whitespace-nowrap" style="font-family: var(--font-mono); color: var(--color-text);">典型客单价</th>
+          <th class="px-4 py-3 text-left text-xs tracking-wider uppercase font-medium whitespace-nowrap" style="font-family: var(--font-mono); color: var(--color-text);">价值</th>
+        </tr>
+      </thead>
+      <tbody style="color: var(--color-text-secondary);">
+        <tr style="border-bottom: 1px solid var(--color-border-light);">
+          <td class="px-4 py-3 font-semibold whitespace-nowrap" style="color: var(--color-text);">企业工会</td>
+          <td class="px-4 py-3">员工父母关爱福利，团队增值</td>
+          <td class="px-4 py-3 whitespace-nowrap">300-500 元/家庭/月</td>
+          <td class="px-4 py-3">雇主品牌 + ESG</td>
+        </tr>
+        <tr style="border-bottom: 1px solid var(--color-border-light);">
+          <td class="px-4 py-3 font-semibold whitespace-nowrap" style="color: var(--color-text);">商业保险</td>
+          <td class="px-4 py-3">长护险增值、慢病管理</td>
+          <td class="px-4 py-3 whitespace-nowrap">按保单规模分摊</td>
+          <td class="px-4 py-3">降低赔付率</td>
+        </tr>
+        <tr style="border-bottom: 1px solid var(--color-border-light);">
+          <td class="px-4 py-3 font-semibold whitespace-nowrap" style="color: var(--color-text);">街道/民政</td>
+          <td class="px-4 py-3">政府购买公共服务</td>
+          <td class="px-4 py-3 whitespace-nowrap">50-100 元/次</td>
+          <td class="px-4 py-3">补足基层服务短板</td>
+        </tr>
+        <tr>
+          <td class="px-4 py-3 font-semibold whitespace-nowrap" style="color: var(--color-text);">个人</td>
+          <td class="px-4 py-3">异地子女为父母购买</td>
+          <td class="px-4 py-3 whitespace-nowrap">100-200 元/次</td>
+          <td class="px-4 py-3">情感刚需 + 应急兜底</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="text-lg sm:text-xl font-semibold mt-10 mb-4" style="color: var(--color-text); font-family: var(--font-sans);">志愿者回报设计</h3>
+  <ul class="space-y-0 mt-3">
+    <li class="flex items-start gap-3 py-3 text-sm sm:text-base leading-relaxed" style="border-bottom: 1px solid var(--color-border-light); color: var(--color-text);">
+      <span class="shrink-0 font-bold text-xs" style="color: var(--state-success); font-family: var(--font-mono);">✓</span>
+      <span><strong>基础补贴</strong>：每单 30-80 元（视类型），覆盖路费与时间成本。</span>
+    </li>
+    <li class="flex items-start gap-3 py-3 text-sm sm:text-base leading-relaxed" style="border-bottom: 1px solid var(--color-border-light); color: var(--color-text);">
+      <span class="shrink-0 font-bold text-xs" style="color: var(--state-success); font-family: var(--font-mono);">✓</span>
+      <span><strong>公益时长</strong>：自动同步至全国志愿服务信息系统，高校可认证。</span>
+    </li>
+    <li class="flex items-start gap-3 py-3 text-sm sm:text-base leading-relaxed" style="border-bottom: 1px solid var(--color-border-light); color: var(--color-text);">
+      <span class="shrink-0 font-bold text-xs" style="color: var(--state-success); font-family: var(--font-mono);">✓</span>
+      <span><strong>能力成长</strong>：免费培训、心理学习、适老化沟通培训，结业发证。</span>
+    </li>
+    <li class="flex items-start gap-3 py-3 text-sm sm:text-base leading-relaxed" style="color: var(--color-text);">
+      <span class="shrink-0 font-bold text-xs" style="color: var(--state-success); font-family: var(--font-mono);">✓</span>
+      <span><strong>职业通道</strong>：累计服务满 500 小时可申请成为"金牌暖伴"，单价上浮 30%。</span>
+    </li>
+  </ul>
+</section>
+
+<!-- ===== 08 本地化与护城河 ===== -->
+<section id="sec-08" class="mx-auto max-w-4xl px-6 py-16 sm:px-8 md:py-20 lg:py-24" style="border-bottom: 1px solid var(--color-border);">
+  <div class="text-xs tracking-widest uppercase font-medium mb-3" style="font-family: var(--font-mono); color: var(--state-success);">08 · 本地化与护城河</div>
+  <h2 class="text-2xl sm:text-3xl md:text-4xl font-normal leading-snug mb-6" style="font-family: var(--font-serif); color: var(--color-text); text-wrap: balance; word-break: keep-all; overflow-wrap: break-word;">
+    不是另一个<em class="italic" style="color: var(--color-primary);">Papa 复刻</em>
+  </h2>
+  <p class="text-base sm:text-lg leading-relaxed mb-8" style="color: var(--color-text-secondary);">
+    我们看到 Papa 模式在中国落地有 3 个关键变量，必须做本地化重构。
+  </p>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 mt-4">
+    <div class="p-5 sm:p-6 rounded-lg" style="background: var(--color-bg-card); border: 1px solid var(--color-border);">
+      <div class="w-10 h-10 rounded flex items-center justify-center text-base font-semibold mb-4" style="background: var(--state-success); color: var(--color-text-inverse); font-family: var(--font-serif);">A</div>
+      <h4 class="text-base font-semibold mb-2" style="color: var(--color-text);">更密的志愿者池</h4>
+      <p class="text-sm leading-relaxed" style="color: var(--color-text-secondary);">中国有 1.7 亿在校大学生 + 1.5 亿低龄退休人员，志愿者供给密度远高于美国。</p>
+    </div>
+    <div class="p-5 sm:p-6 rounded-lg" style="background: var(--color-bg-card); border: 1px solid var(--color-border);">
+      <div class="w-10 h-10 rounded flex items-center justify-center text-base font-semibold mb-4" style="background: var(--state-success); color: var(--color-text-inverse); font-family: var(--font-serif);">B</div>
+      <h4 class="text-base font-semibold mb-2" style="color: var(--color-text);">更强的政企协同</h4>
+      <p class="text-sm leading-relaxed" style="color: var(--color-text-secondary);">街道/工会/保险天然具有集中采购能力，B 端上量速度比 C 端裂变更快。</p>
+    </div>
+    <div class="p-5 sm:p-6 rounded-lg sm:col-span-2 lg:col-span-1" style="background: var(--color-bg-card); border: 1px solid var(--color-border);">
+      <div class="w-10 h-10 rounded flex items-center justify-center text-base font-semibold mb-4" style="background: var(--state-success); color: var(--color-text-inverse); font-family: var(--font-serif);">C</div>
+      <h4 class="text-base font-semibold mb-2" style="color: var(--color-text);">更轻的产品形态</h4>
+      <p class="text-sm leading-relaxed" style="color: var(--color-text-secondary);">基于微信小程序而非独立 App，零安装成本，对老人极其友好。</p>
+    </div>
+  </div>
+
+  <h3 class="text-lg sm:text-xl font-semibold mt-10 mb-4" style="color: var(--color-text); font-family: var(--font-sans);">核心护城河</h3>
+  <ul class="space-y-0 mt-3">
+    <li class="flex items-start gap-3 py-3 text-sm sm:text-base leading-relaxed" style="border-bottom: 1px solid var(--color-border-light); color: var(--color-text);">
+      <span class="shrink-0 font-bold text-xs" style="color: var(--state-success); font-family: var(--font-mono);">✓</span>
+      <span><strong>信任护城河</strong>：实名 + 公安背调 + 双向评价 + 保险，构建平台信用护城河。</span>
+    </li>
+    <li class="flex items-start gap-3 py-3 text-sm sm:text-base leading-relaxed" style="border-bottom: 1px solid var(--color-border-light); color: var(--color-text);">
+      <span class="shrink-0 font-bold text-xs" style="color: var(--state-success); font-family: var(--font-mono);">✓</span>
+      <span><strong>数据护城河</strong>：沉淀中国首个"城市级银发陪伴行为数据库"，反向精准匹配与健康预警。</span>
+    </li>
+    <li class="flex items-start gap-3 py-3 text-sm sm:text-base leading-relaxed" style="color: var(--color-text);">
+      <span class="shrink-0 font-bold text-xs" style="color: var(--state-success); font-family: var(--font-mono);">✓</span>
+      <span><strong>渠道护城河</strong>：与街道办、工会、保险公司深度合作，新城市启动周期可压缩至 4 周。</span>
+    </li>
+  </ul>
+</section>
+
+<!-- ===== 09 发展路线 ===== -->
+<section id="sec-09" class="mx-auto max-w-4xl px-6 py-16 sm:px-8 md:py-20 lg:py-24" style="border-bottom: 1px solid var(--color-border);">
+  <div class="text-xs tracking-widest uppercase font-medium mb-3" style="font-family: var(--font-mono); color: var(--state-success);">09 · 发展路线</div>
+  <h2 class="text-2xl sm:text-3xl md:text-4xl font-normal leading-snug mb-6" style="font-family: var(--font-serif); color: var(--color-text); text-wrap: balance; word-break: keep-all; overflow-wrap: break-word;">
+    从<em class="italic" style="color: var(--color-primary);">一座城市</em>到<em class="italic" style="color: var(--color-primary);">一个网络</em>
+  </h2>
+
+  <!-- Roadmap Chart -->
+  <figure class="mt-6 mb-10">
+    <figcaption class="text-base font-semibold mb-1" style="color: var(--color-text);">图 5 · 36 个月关键里程碑</figcaption>
+    <figcaption class="text-xs mb-4" style="color: var(--color-text-muted);">服务家庭数 / 注册志愿者数</figcaption>
+    <div id="chart-roadmap" style="width:100%;height:380px;"></div>
+  </figure>
+
+  <!-- 4 Milestone Steps -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-0 mt-6 rounded-lg overflow-hidden" style="border: 1px solid var(--color-border);">
+    <div class="p-5 sm:p-6" style="border-top: 3px solid var(--state-success); background: var(--color-bg-card);">
+      <div class="text-xl sm:text-2xl font-normal leading-none mb-2" style="font-family: var(--font-serif); color: var(--color-primary);">M0-3</div>
+      <h4 class="text-sm font-semibold mb-1" style="color: var(--color-text);">单点验证</h4>
+      <p class="text-xs leading-relaxed" style="color: var(--color-text-secondary);">选定 1 个一线城市 1 个街道，签约 2 家企业工会，跑通 MVP。</p>
+    </div>
+    <div class="p-5 sm:p-6" style="border-top: 3px solid var(--state-success); background: var(--color-bg-card);">
+      <div class="text-xl sm:text-2xl font-normal leading-none mb-2" style="font-family: var(--font-serif); color: var(--color-primary);">M4-9</div>
+      <h4 class="text-sm font-semibold mb-1" style="color: var(--color-text);">城市渗透</h4>
+      <p class="text-xs leading-relaxed" style="color: var(--color-text-secondary);">覆盖 5 个核心街道，注册志愿者 1000+，服务家庭 500+。</p>
+    </div>
+    <div class="p-5 sm:p-6" style="border-top: 3px solid var(--state-success); background: var(--color-bg-card);">
+      <div class="text-xl sm:text-2xl font-normal leading-none mb-2" style="font-family: var(--font-serif); color: var(--color-primary);">M10-18</div>
+      <h4 class="text-sm font-semibold mb-1" style="color: var(--color-text);">模式扩张</h4>
+      <p class="text-xs leading-relaxed" style="color: var(--color-text-secondary);">进入 3-5 座城市，引入保险/民政采购方，验证跨城市复制。</p>
+    </div>
+    <div class="p-5 sm:p-6" style="border-top: 3px solid var(--state-success); background: var(--color-bg-card);">
+      <div class="text-xl sm:text-2xl font-normal leading-none mb-2" style="font-family: var(--font-serif); color: var(--color-primary);">M19-36</div>
+      <h4 class="text-sm font-semibold mb-1" style="color: var(--color-text);">网络效应</h4>
+      <p class="text-xs leading-relaxed" style="color: var(--color-text-secondary);">覆盖 20+ 城市、10 万家庭，建立全国性银发陪伴基础设施。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 10 结语 ===== -->
+<section id="sec-10" class="mx-auto max-w-4xl px-6 py-16 sm:px-8 md:py-20 lg:py-24">
+  <div class="text-xs tracking-widest uppercase font-medium mb-3" style="font-family: var(--font-mono); color: var(--state-success);">10 · 结语</div>
+  <h2 class="text-2xl sm:text-3xl md:text-4xl font-normal leading-snug mb-6" style="font-family: var(--font-serif); color: var(--color-text); text-wrap: balance; word-break: keep-all; overflow-wrap: break-word;">
+    让<em class="italic" style="color: var(--color-primary);">共享儿女</em>成为这一代人的善意
+  </h2>
+  <p class="text-sm sm:text-base leading-relaxed mb-4" style="color: var(--color-text);">
+    技术的最大善意，是让被时代抛下的人也能被温柔以待。我们希望"共享儿女"不仅是一个产品，更是一种新的城市关系——青年与长者之间的相互陪伴，企业与社区之间的责任连接，技术与人文之间的重新平衡。
+  </p>
+  <p class="text-sm sm:text-base leading-relaxed mb-8" style="color: var(--color-text);">
+    "愿每一位独居的长者身边，都有一个可以搭把手的'邻家孩子'。"
+  </p>
+
+  <blockquote class="mt-6 pl-5 sm:pl-6 border-l-4" style="border-color: var(--color-primary);">
+    <p class="text-lg sm:text-xl sm:text-2xl leading-relaxed italic" style="font-family: var(--font-serif); color: var(--color-text);">
+      共享儿女 · 暖陪伴计划
+    </p>
+    <cite class="block mt-3 text-xs tracking-wider uppercase not-italic" style="font-family: var(--font-mono); color: var(--color-text-muted);">— 用平台的方式，重塑城市的邻里温度</cite>
+  </blockquote>
+
+  <!-- CTA -->
+  <div class="mt-12 p-6 sm:p-8 rounded-xl text-center" style="background: var(--color-primary-lighter); border: 1px solid var(--color-primary-light);">
+    <h3 class="text-lg sm:text-xl font-semibold mb-2" style="font-family: var(--font-serif); color: var(--color-text);">立即体验 Demo</h3>
+    <p class="text-sm mb-6" style="color: var(--color-text-secondary);">从C端小程序到B端调度后台，完整覆盖银发陪伴服务链路</p>
+    <div class="flex flex-wrap items-center justify-center gap-4">
+      <a href="mini-program.html" class="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-semibold no-underline transition-all duration-250" style="background: var(--color-primary); color: var(--color-text-inverse);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 16px rgba(212,101,74,0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+        体验小程序
+      </a>
+      <a href="web-admin.html" class="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-semibold no-underline transition-all duration-250" style="background: var(--color-bg-card); color: var(--color-text); border: 1px solid var(--color-border);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='var(--shadow-md)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        调度后台
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="px-6 py-12 sm:px-8" style="background: var(--color-text); color: var(--color-bg);">
+  <div class="mx-auto max-w-4xl">
+    <h2 class="text-xl sm:text-2xl font-normal mb-6" style="font-family: var(--font-serif); color: var(--color-bg);">引用与参考</h2>
+    <ol class="space-y-4 pl-5 text-sm" style="color: var(--color-bg-warm); list-style: decimal;">
+      <li id="cite-1">
+        <span class="block" style="color: var(--color-bg);">国家统计局 & 民政部公开数据, 2024 中国老龄事业发展公报 / 独居老人统计. 中国独居与空巢老人已超过 1.18 亿。</span>
+        <a href="https://www.gov.cn" target="_blank" rel="noopener" class="block mt-1 text-xs underline" style="color: var(--color-bg-warm);">https://www.gov.cn</a>
+      </li>
+      <li id="cite-2">
+        <span class="block" style="color: var(--color-bg);">Y Combinator, Papa 公司页 (Summer 2018 Batch). 介绍 Papa 是一家为家庭提供灵活陪伴与协助服务的平台，估值曾达独角兽级别。</span>
+        <a href="https://www.ycombinator.com/companies/papa" target="_blank" rel="noopener" class="block mt-1 text-xs underline" style="color: var(--color-bg-warm);">https://www.ycombinator.com/companies/papa</a>
+      </li>
+      <li id="cite-3">
+        <span class="block" style="color: var(--color-bg);">中国老龄科学研究中心, 银发经济研究报告 (2024). 中国银发经济市场规模预测与结构分析。</span>
+        <a href="http://www.crca.cn" target="_blank" rel="noopener" class="block mt-1 text-xs underline" style="color: var(--color-bg-warm);">http://www.crca.cn</a>
+      </li>
+    </ol>
+    <div class="mt-10 pt-6 flex flex-wrap justify-between gap-3 text-xs tracking-wider" style="border-top: 1px solid rgba(255,255,255,0.15); font-family: var(--font-mono); color: var(--color-bg-warm);">
+      <span>SHARED CHILDREN · WARM COMPANION</span>
+      <span>CREATED FOR TRAE AI 创造力大赛 · 2026.06</span>
+    </div>
+  </div>
+</footer>
+
+    </main>
+
+    <!-- ECharts Initialization -->
+    <script>
+    (function() {
+      var warmPalette = ['#D4654A', '#5B8A72', '#E8A838', '#5B7FA8'];
+      var textColor = '#3D2E24';
+      var mutedColor = '#A89888';
+      var borderColor = '#E8DDD0';
+
+      // Chart 1: Population Trend
+      var chartPop = echarts.init(document.getElementById('chart-population'));
+      chartPop.setOption({
+        tooltip: { trigger: 'axis', backgroundColor: '#fff', borderColor: borderColor, textStyle: { color: textColor, fontSize: 13 } },
+        legend: { data: ['60+ 总人口', '独居/空巢老人'], top: 0, textStyle: { color: textColor, fontSize: 12 } },
+        grid: { left: 50, right: 30, top: 40, bottom: 40 },
+        xAxis: { type: 'category', data: ['2020', '2022', '2024', '2026E', '2028E', '2030E', '2035E'], axisLine: { lineStyle: { color: borderColor } }, axisLabel: { color: mutedColor, fontSize: 12 } },
+        yAxis: { type: 'value', name: '亿人', nameTextStyle: { color: mutedColor, fontSize: 11 }, axisLine: { show: false }, splitLine: { lineStyle: { color: borderColor, type: 'dashed' } }, axisLabel: { color: mutedColor, fontSize: 12 } },
+        series: [
+          { name: '60+ 总人口', type: 'bar', data: [2.64, 2.80, 2.97, 3.10, 3.25, 3.40, 3.80], itemStyle: { color: warmPalette[0], borderRadius: [4,4,0,0] }, barWidth: '28%' },
+          { name: '独居/空巢老人', type: 'line', data: [0.98, 1.05, 1.18, 1.28, 1.38, 1.50, 1.75], smooth: true, lineStyle: { color: warmPalette[1], width: 2.5 }, itemStyle: { color: warmPalette[1] }, areaStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: 'rgba(91,138,114,0.15)' }, { offset: 1, color: 'rgba(91,138,114,0)' }] } }, symbol: 'circle', symbolSize: 6 }
+        ]
+      });
+
+      // Chart 2: Market Size
+      var chartMarket = echarts.init(document.getElementById('chart-market'));
+      chartMarket.setOption({
+        tooltip: { trigger: 'axis', backgroundColor: '#fff', borderColor: borderColor, textStyle: { color: textColor, fontSize: 13 } },
+        grid: { left: 50, right: 30, top: 30, bottom: 40 },
+        xAxis: { type: 'category', data: ['2020', '2022', '2024', '2026E', '2028E', '2030E'], axisLine: { lineStyle: { color: borderColor } }, axisLabel: { color: mutedColor, fontSize: 12 } },
+        yAxis: { type: 'value', name: '万亿元', nameTextStyle: { color: mutedColor, fontSize: 11 }, axisLine: { show: false }, splitLine: { lineStyle: { color: borderColor, type: 'dashed' } }, axisLabel: { color: mutedColor, fontSize: 12 } },
+        series: [
+          { name: '银发经济总规模', type: 'bar', data: [5.4, 6.2, 7.0, 8.1, 9.4, 11.0], itemStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: warmPalette[2] }, { offset: 1, color: 'rgba(232,168,56,0.3)' }] }, borderRadius: [4,4,0,0] }, barWidth: '40%' },
+          { name: '陪伴服务细分', type: 'bar', data: [0.3, 0.4, 0.6, 0.9, 1.3, 1.8], itemStyle: { color: warmPalette[0], borderRadius: [4,4,0,0] }, barWidth: '40%' }
+        ]
+      });
+
+      // Chart 3: Needs Distribution
+      var chartNeeds = echarts.init(document.getElementById('chart-needs'));
+      chartNeeds.setOption({
+        tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, backgroundColor: '#fff', borderColor: borderColor, textStyle: { color: textColor, fontSize: 13 } },
+        grid: { left: 120, right: 30, top: 20, bottom: 30 },
+        xAxis: { type: 'value', axisLine: { show: false }, splitLine: { lineStyle: { color: borderColor, type: 'dashed' } }, axisLabel: { color: mutedColor, fontSize: 12, formatter: '{value}%' } },
+        yAxis: { type: 'category', data: ['节日陪伴', '数字辅导', '就医陪同', '跑腿代办', '日常聊天', '安全监护'], axisLine: { lineStyle: { color: borderColor } }, axisLabel: { color: textColor, fontSize: 13 } },
+        series: [
+          { name: '需求占比', type: 'bar', data: [28, 35, 52, 61, 78, 45], itemStyle: { color: function(params) { var colors = [warmPalette[2], warmPalette[3], warmPalette[1], warmPalette[0], warmPalette[0], warmPalette[1]]; return colors[params.dataIndex]; }, borderRadius: [0,4,4,0] }, barWidth: '50%', label: { show: true, position: 'right', formatter: '{c}%', color: mutedColor, fontSize: 12 } }
+        ]
+      });
+
+      // Chart 4: Revenue Forecast
+      var chartRevenue = echarts.init(document.getElementById('chart-revenue'));
+      chartRevenue.setOption({
+        tooltip: { trigger: 'axis', backgroundColor: '#fff', borderColor: borderColor, textStyle: { color: textColor, fontSize: 13 } },
+        legend: { data: ['企业工会', '保险/民政', '个人付费'], top: 0, textStyle: { color: textColor, fontSize: 12 } },
+        grid: { left: 60, right: 30, top: 40, bottom: 40 },
+        xAxis: { type: 'category', data: ['Y1 Q1', 'Y1 Q2', 'Y1 Q3', 'Y1 Q4', 'Y2 Q1', 'Y2 Q2', 'Y2 Q3', 'Y2 Q4', 'Y3 Q1', 'Y3 Q2', 'Y3 Q3', 'Y3 Q4'], axisLine: { lineStyle: { color: borderColor } }, axisLabel: { color: mutedColor, fontSize: 11, rotate: 30 } },
+        yAxis: { type: 'value', name: '万元', nameTextStyle: { color: mutedColor, fontSize: 11 }, axisLine: { show: false }, splitLine: { lineStyle: { color: borderColor, type: 'dashed' } }, axisLabel: { color: mutedColor, fontSize: 12 } },
+        series: [
+          { name: '企业工会', type: 'bar', stack: 'total', data: [5, 12, 25, 40, 60, 85, 120, 160, 220, 300, 380, 480], itemStyle: { color: warmPalette[0], borderRadius: [0,0,0,0] } },
+          { name: '保险/民政', type: 'bar', stack: 'total', data: [0, 2, 8, 15, 25, 40, 60, 90, 130, 180, 250, 340], itemStyle: { color: warmPalette[1] } },
+          { name: '个人付费', type: 'bar', stack: 'total', data: [3, 5, 8, 12, 18, 25, 35, 50, 70, 95, 130, 170], itemStyle: { color: warmPalette[2], borderRadius: [4,4,0,0] } }
+        ]
+      });
+
+      // Chart 5: Roadmap
+      var chartRoadmap = echarts.init(document.getElementById('chart-roadmap'));
+      chartRoadmap.setOption({
+        tooltip: { trigger: 'axis', backgroundColor: '#fff', borderColor: borderColor, textStyle: { color: textColor, fontSize: 13 } },
+        legend: { data: ['服务家庭数', '注册志愿者数'], top: 0, textStyle: { color: textColor, fontSize: 12 } },
+        grid: { left: 60, right: 60, top: 40, bottom: 40 },
+        xAxis: { type: 'category', data: ['M1', 'M3', 'M6', 'M9', 'M12', 'M15', 'M18', 'M21', 'M24', 'M30', 'M36'], axisLine: { lineStyle: { color: borderColor } }, axisLabel: { color: mutedColor, fontSize: 12 } },
+        yAxis: [
+          { type: 'value', name: '家庭数', nameTextStyle: { color: mutedColor, fontSize: 11 }, axisLine: { show: false }, splitLine: { lineStyle: { color: borderColor, type: 'dashed' } }, axisLabel: { color: mutedColor, fontSize: 12 } },
+          { type: 'value', name: '志愿者数', nameTextStyle: { color: mutedColor, fontSize: 11 }, axisLine: { show: false }, splitLine: { show: false }, axisLabel: { color: mutedColor, fontSize: 12 } }
+        ],
+        series: [
+          { name: '服务家庭数', type: 'line', yAxisIndex: 0, data: [10, 50, 200, 500, 1200, 2500, 5000, 15000, 35000, 70000, 100000], smooth: true, lineStyle: { color: warmPalette[0], width: 2.5 }, itemStyle: { color: warmPalette[0] }, areaStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: 'rgba(212,101,74,0.12)' }, { offset: 1, color: 'rgba(212,101,74,0)' }] } }, symbol: 'circle', symbolSize: 5 },
+          { name: '注册志愿者数', type: 'line', yAxisIndex: 1, data: [20, 80, 300, 1000, 2500, 5000, 10000, 25000, 50000, 80000, 120000], smooth: true, lineStyle: { color: warmPalette[1], width: 2.5 }, itemStyle: { color: warmPalette[1] }, symbol: 'circle', symbolSize: 5 }
+        ],
+        markArea: {
+          silent: true,
+          data: [
+            [{ xAxis: 'M1', itemStyle: { color: 'rgba(91,138,114,0.06)' }, label: { show: true, position: 'insideTop', formatter: '单点验证', color: mutedColor, fontSize: 11 } }, { xAxis: 'M3' }],
+            [{ xAxis: 'M6', itemStyle: { color: 'rgba(232,168,56,0.06)' }, label: { show: true, position: 'insideTop', formatter: '城市渗透', color: mutedColor, fontSize: 11 } }, { xAxis: 'M9' }],
+            [{ xAxis: 'M12', itemStyle: { color: 'rgba(212,101,74,0.06)' }, label: { show: true, position: 'insideTop', formatter: '模式扩张', color: mutedColor, fontSize: 11 } }, { xAxis: 'M18' }],
+            [{ xAxis: 'M21', itemStyle: { color: 'rgba(91,127,168,0.06)' }, label: { show: true, position: 'insideTop', formatter: '网络效应', color: mutedColor, fontSize: 11 } }, { xAxis: 'M36' }]
+          ]
+        }
+      });
+
+      // Responsive resize
+      window.addEventListener('resize', function() {
+        chartPop.resize();
+        chartMarket.resize();
+        chartNeeds.resize();
+        chartRevenue.resize();
+        chartRoadmap.resize();
+      });
+    })();
+    </script>
+    <!-- ===== Interactive Features ===== -->
+    <script>
+    (function() {
+      // ===== Reading Progress Bar =====
+      var progressBar = document.getElementById('progress-bar');
+      function updateProgress() {
+        var scrollTop = window.scrollY;
+        var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        var progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+        progressBar.style.width = Math.min(progress, 100) + '%';
+      }
+      window.addEventListener('scroll', updateProgress, { passive: true });
+      updateProgress();
+
+      // ===== TOC Toggle =====
+      var tocPanel = document.getElementById('toc-panel');
+      window.toggleTOC = function() {
+        tocPanel.classList.toggle('open');
+      };
+      // Close TOC when clicking outside
+      document.addEventListener('click', function(e) {
+        if (!tocPanel.contains(e.target) && !e.target.closest('.toc-fab')) {
+          tocPanel.classList.remove('open');
+        }
+      });
+
+      // ===== TOC Navigation & Active Section Highlighting =====
+      var tocLinks = document.querySelectorAll('.toc-panel a[data-toc]');
+      var sections = document.querySelectorAll('section[id]');
+      function highlightTOC() {
+        var scrollPos = window.scrollY + 100;
+        var currentId = '';
+        sections.forEach(function(sec) {
+          if (sec.offsetTop <= scrollPos) currentId = sec.id;
+        });
+        tocLinks.forEach(function(link) {
+          link.classList.toggle('active', link.getAttribute('data-toc') === currentId);
+        });
+      }
+      window.addEventListener('scroll', highlightTOC, { passive: true });
+      highlightTOC();
+
+      // Smooth scroll for TOC links
+      tocLinks.forEach(function(link) {
+        link.addEventListener('click', function(e) {
+          e.preventDefault();
+          var targetId = this.getAttribute('href').substring(1);
+          var target = document.getElementById(targetId);
+          if (target) {
+            window.scrollTo({ top: target.offsetTop - 20, behavior: 'smooth' });
+            tocPanel.classList.remove('open');
+          }
+        });
+      });
+
+      // ===== Floating Action Buttons Visibility =====
+      var fabBtns = document.querySelectorAll('.fab-btn');
+      function updateFABs() {
+        var show = window.scrollY > 300;
+        fabBtns.forEach(function(btn) { btn.classList.toggle('visible', show); });
+      }
+      window.addEventListener('scroll', updateFABs, { passive: true });
+
+      // ===== Back to Top =====
+      window.scrollToTop = function() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      };
+
+      // ===== Share =====
+      window.sharePage = function() {
+        if (navigator.share) {
+          navigator.share({
+            title: '共享儿女 · 暖陪伴计划 — 创意方案',
+            text: '让每一位长者身边，都有一个随时可以搭把手的"邻家孩子"',
+            url: window.location.href
+          }).catch(function() {});
+        } else {
+          // Fallback: copy to clipboard
+          var url = window.location.href;
+          if (navigator.clipboard) {
+            navigator.clipboard.writeText(url).then(function() {
+              showToast('链接已复制到剪贴板');
+            });
+          } else {
+            var textarea = document.createElement('textarea');
+            textarea.value = url;
+            document.body.appendChild(textarea);
+            textarea.select();
+            try { document.execCommand('copy'); showToast('链接已复制到剪贴板'); } catch(e) {}
+            document.body.removeChild(textarea);
+          }
+        }
+      };
+
+      // ===== Toast =====
+      var toastEl = document.getElementById('toast');
+      var toastTimer = null;
+      window.showToast = function(msg) {
+        toastEl.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>' + msg;
+        toastEl.classList.add('show');
+        if (toastTimer) clearTimeout(toastTimer);
+        toastTimer = setTimeout(function() { toastEl.classList.remove('show'); }, 2500);
+      };
+
+      // ===== Animated Number Counters =====
+      function animateCounter(el) {
+        var text = el.textContent.trim();
+        var match = text.match(/^([\d.]+)(.*)$/);
+        if (!match) return;
+        var target = parseFloat(match[1]);
+        var suffix = match[2];
+        var duration = 1200;
+        var startTime = null;
+        function step(timestamp) {
+          if (!startTime) startTime = timestamp;
+          var progress = Math.min((timestamp - startTime) / duration, 1);
+          var eased = 1 - Math.pow(1 - progress, 3);
+          var current = target * eased;
+          if (target >= 100) current = Math.round(current);
+          else if (target >= 10) current = Math.round(current * 10) / 10;
+          else current = Math.round(current * 100) / 100;
+          el.textContent = current + suffix;
+          if (progress < 1) requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+      }
+
+      // Observe stat numbers for animation
+      var statNumbers = document.querySelectorAll('.stat-num, [style*="font-variant-numeric: tabular-nums"]');
+      if ('IntersectionObserver' in window) {
+        var counterObserver = new IntersectionObserver(function(entries) {
+          entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+              animateCounter(entry.target);
+              counterObserver.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.5 });
+        statNumbers.forEach(function(el) {
+          // Only animate elements with pure number content
+          var text = el.textContent.trim();
+          if (/^[\d.]+/.test(text)) counterObserver.observe(el);
+        });
+      }
+
+      // ===== Keyboard Navigation =====
+      document.addEventListener('keydown', function(e) {
+        // ESC closes TOC
+        if (e.key === 'Escape') tocPanel.classList.remove('open');
+        // Ctrl/Cmd + P for print
+        if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+          // Let browser handle native print
+        }
+      });
+
+      // ===== Lazy load images =====
+      if ('IntersectionObserver' in window) {
+        var imgObserver = new IntersectionObserver(function(entries) {
+          entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+              var img = entry.target;
+              if (img.dataset.src) {
+                img.src = img.dataset.src;
+                img.removeAttribute('data-src');
+              }
+              imgObserver.unobserve(img);
+            }
+          });
+        });
+        document.querySelectorAll('img[loading="lazy"]').forEach(function(img) {
+          imgObserver.observe(img);
+        });
+      }
+
+      // Show welcome toast
+      setTimeout(function() { showToast('提示：点击左下角目录可快速导航'); }, 1200);
+    })();
+    </script>
+    <script>lucide.createIcons();</script>
+</body>
+</html>

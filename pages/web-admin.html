@@ -1,0 +1,1882 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web调度后台 - 共享儿女 · 暖陪伴计划</title>
+    <style id="theme-vars">
+/* ===== Brand Design Tokens — 共享儿女 · 暖陪伴计划 ===== */
+/* Warm, human, approachable — like a neighbor's kitchen */
+
+:root {
+  /* --- Color System --- */
+  --color-primary: #D4654A;
+  --color-primary-hover: #BF5A42;
+  --color-primary-light: #F5E6E0;
+  --color-primary-lighter: #FBF5F2;
+  --color-primary-50: rgba(212, 101, 74, 0.08);
+  --color-primary-100: rgba(212, 101, 74, 0.15);
+
+  /* Backgrounds */
+  --color-bg: #FDF9F5;
+  --color-bg-warm: #F8F1E8;
+  --color-bg-card: #FFFFFF;
+  --color-bg-elevated: #FFFFFF;
+  --color-bg-sunken: #F5EDE4;
+  --color-bg-muted: #F0E8DF;
+
+  /* Text */
+  --color-text: #3D2E24;
+  --color-text-secondary: #7A6B5D;
+  --color-text-muted: #A89888;
+  --color-text-inverse: #FFFFFF;
+
+  /* Borders */
+  --color-border: #E8DDD0;
+  --color-border-light: #F0E8DF;
+  --color-border-focus: #D4654A;
+
+  /* State colors */
+  --state-success: #5B8A72;
+  --state-success-bg: #E8F0EB;
+  --state-warning: #E8A838;
+  --state-warning-bg: #FDF3E0;
+  --state-error: #C44D3E;
+  --state-error-bg: #FCEAE8;
+  --state-info: #5B7FA8;
+  --state-info-bg: #EBF0F5;
+
+  /* --- Typography --- */
+  --font-sans: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --font-serif: 'Noto Serif SC', 'Songti SC', Georgia, serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+  --text-5xl: 3rem;
+  --text-6xl: 3.75rem;
+
+  --leading-tight: 1.25;
+  --leading-snug: 1.375;
+  --leading-normal: 1.6;
+  --leading-relaxed: 1.75;
+
+  --tracking-tight: -0.02em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.04em;
+  --tracking-wider: 0.08em;
+
+  /* --- Spacing --- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+
+  /* --- Radius --- */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+
+  /* --- Shadows --- */
+  --shadow-xs: 0 1px 2px rgba(61, 46, 36, 0.04);
+  --shadow-sm: 0 1px 3px rgba(61, 46, 36, 0.05);
+  --shadow-md: 0 2px 8px rgba(61, 46, 36, 0.05);
+  --shadow-lg: 0 4px 16px rgba(61, 46, 36, 0.05);
+  --shadow-xl: 0 8px 32px rgba(61, 46, 36, 0.05);
+
+  /* --- Device Chrome --- */
+  --color-sidebar-bg: #3D2E24;
+  --color-sidebar-text: #F0E8DF;
+  --color-sidebar-active-bg: rgba(212, 101, 74, 0.2);
+
+  /* --- Transitions --- */
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+  --transition-slow: 400ms ease;
+
+  /* --- Z-index --- */
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-overlay: 300;
+  --z-modal: 400;
+  --z-toast: 500;
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-primary: var(--color-primary);
+    --color-secondary: var(--state-success);
+    --color-accent: var(--state-warning);
+    --color-border: var(--color-border);
+  }
+  @layer base {
+    body { background: var(--color-background); color: var(--color-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body class="min-h-screen font-sans antialiased">
+    <main class="flex h-screen overflow-hidden" style="font-family: var(--font-sans);">
+
+        <!-- ===== Sidebar ===== -->
+        <aside class="w-60 shrink-0 flex flex-col" style="background: var(--color-sidebar-bg); color: var(--color-sidebar-text);">
+            <!-- Logo -->
+            <div class="px-5 py-5 flex items-center gap-3 border-b" style="border-color: rgba(240,232,223,0.12);">
+                <div class="w-9 h-9 rounded-lg flex items-center justify-center" style="background: var(--color-primary);">
+                    <i data-lucide="heart-handshake" class="w-5 h-5" style="color: var(--color-text-inverse);"></i>
+                </div>
+                <div>
+                    <div class="text-sm font-semibold truncate" style="color: var(--color-sidebar-text);">暖陪伴计划</div>
+                    <div class="text-xs" style="color: rgba(240,232,223,0.5);">运营管理后台</div>
+                </div>
+            </div>
+
+            <!-- Nav -->
+            <nav class="flex-1 py-4 px-3 space-y-1 overflow-y-auto no-scrollbar">
+                <button onclick="switchTab('overview')" data-nav="overview" class="sidebar-btn active w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors duration-200" style="color: var(--color-sidebar-text);">
+                    <i data-lucide="layout-dashboard" class="w-[18px] h-[18px] shrink-0"></i>
+                    <span>数据概览</span>
+                </button>
+                <button onclick="switchTab('orders')" data-nav="orders" class="sidebar-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors duration-200" style="color: rgba(240,232,223,0.6);">
+                    <i data-lucide="clipboard-list" class="w-[18px] h-[18px] shrink-0"></i>
+                    <span class="flex-1 text-left">订单管理</span>
+                    <span class="text-xs px-1.5 py-0.5 rounded" style="color: var(--color-text-inverse);">12</span>
+                </button>
+                <button onclick="switchTab('volunteers')" data-nav="volunteers" class="sidebar-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors duration-200" style="color: rgba(240,232,223,0.6);">
+                    <i data-lucide="users" class="w-[18px] h-[18px] shrink-0"></i>
+                    <span class="flex-1 text-left">暖伴管理</span>
+                    <span class="text-xs px-1.5 py-0.5 rounded" style="background: var(--state-success); color: var(--color-text-inverse);">5</span>
+                </button>
+                <button onclick="switchTab('safety')" data-nav="safety" class="sidebar-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors duration-200" style="color: rgba(240,232,223,0.6);">
+                    <i data-lucide="shield-check" class="w-[18px] h-[18px] shrink-0"></i>
+                    <span>安全监控</span>
+                </button>
+                <button onclick="switchTab('analytics')" data-nav="analytics" class="sidebar-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors duration-200" style="color: rgba(240,232,223,0.6);">
+                    <i data-lucide="bar-chart-3" class="w-[18px] h-[18px] shrink-0"></i>
+                    <span>数据分析</span>
+                </button>
+                <button onclick="switchTab('b2b')" data-nav="b2b" class="sidebar-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors duration-200" style="color: rgba(240,232,223,0.6);">
+                    <i data-lucide="building-2" class="w-[18px] h-[18px] shrink-0"></i>
+                    <span>B端采购</span>
+                </button>
+            </nav>
+
+            <!-- User -->
+            <div class="px-4 py-4 border-t flex items-center gap-3" style="border-color: rgba(240,232,223,0.12);">
+                <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold" style="background: var(--state-warning); color: var(--color-text);">管</div>
+                <div class="flex-1 min-w-0">
+                    <div class="text-sm truncate" style="color: var(--color-sidebar-text);">管理员</div>
+                    <div class="text-xs truncate" style="color: rgba(240,232,223,0.4);">admin@nuanban.com</div>
+                </div>
+                <i data-lucide="log-out" class="w-4 h-4 shrink-0" style="color: rgba(240,232,223,0.4);"></i>
+            </div>
+        </aside>
+
+        <!-- ===== Main Area ===== -->
+        <div class="flex-1 flex flex-col overflow-hidden" style="background: var(--color-bg);">
+
+            <!-- Top Bar -->
+            <header class="h-14 shrink-0 flex items-center justify-between px-6 border-b" style="background: var(--color-bg-card); border-color: var(--color-border);">
+                <div class="flex items-center gap-3">
+                    <h1 id="page-title" class="text-lg font-semibold" style="font-family: var(--font-serif); color: var(--color-text);">数据概览</h1>
+                    <span class="text-xs px-2 py-0.5 rounded" style="background: var(--color-primary-light); color: var(--color-primary);">实时</span>
+                </div>
+                <div class="flex items-center gap-4 relative">
+                    <div class="flex items-center gap-2 text-sm" style="color: var(--color-text-secondary);">
+                        <i data-lucide="clock" class="w-4 h-4"></i>
+                        <span id="current-time">--:--:--</span>
+                    </div>
+                    <button id="bell-btn" onclick="toggleNotifications(event)" class="relative p-2 rounded-lg transition-colors duration-200 hover:bg-[var(--color-bg-muted)]">
+                        <i data-lucide="bell" class="w-[18px] h-[18px]" style="color: var(--color-text-secondary);"></i>
+                        <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full" style="background: var(--color-primary);"></span>
+                    </button>
+                    <div id="notification-dropdown" class="hidden absolute right-0 top-12 w-80 rounded-lg border shadow-lg" style="background: var(--color-bg-card); border-color: var(--color-border); z-index: var(--z-dropdown);">
+                        <div class="px-4 py-3 border-b flex items-center justify-between" style="border-color: var(--color-border);">
+                            <span class="text-sm font-semibold" style="color: var(--color-text);">通知中心</span>
+                            <span id="notif-unread-count" class="text-xs px-2 py-0.5 rounded" style="background: var(--color-primary-light); color: var(--color-primary);">0 条未读</span>
+                        </div>
+                        <div id="notification-list" class="max-h-80 overflow-y-auto"></div>
+                    </div>
+                    <button class="p-2 rounded-lg transition-colors duration-200 hover:bg-[var(--color-bg-muted)]">
+                        <i data-lucide="settings" class="w-[18px] h-[18px]" style="color: var(--color-text-secondary);"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div class="flex-1 overflow-y-auto p-6" style="scrollbar-gutter: stable;">
+
+                <!-- ========== Tab: 数据概览 ========== -->
+                <div id="tab-overview" class="tab-panel">
+                    <!-- Stats Cards -->
+                    <div class="grid grid-cols-4 gap-4 mb-6">
+                        <div class="rounded-lg p-4 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-sm" style="color: var(--color-text-secondary);">今日订单</span>
+                                <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: var(--color-primary-light);">
+                                    <i data-lucide="shopping-bag" class="w-4 h-4" style="color: var(--color-primary);"></i>
+                                </div>
+                            </div>
+                            <div id="stat-today-orders" class="text-2xl font-bold" style="color: var(--color-text); font-variant-numeric: tabular-nums;">48</div>
+                            <div class="text-xs mt-1" style="color: var(--state-success);">
+                                <span>+12%</span>
+                                <span style="color: var(--color-text-muted);"> 较昨日</span>
+                            </div>
+                        </div>
+                        <div class="rounded-lg p-4 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-sm" style="color: var(--color-text-secondary);">活跃暖伴</span>
+                                <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: var(--state-success-bg);">
+                                    <i data-lucide="heart" class="w-4 h-4" style="color: var(--state-success);"></i>
+                                </div>
+                            </div>
+                            <div id="stat-active-volunteers" class="text-2xl font-bold" style="color: var(--color-text); font-variant-numeric: tabular-nums;">126</div>
+                            <div class="text-xs mt-1" style="color: var(--state-success);">
+                                <span>+8%</span>
+                                <span style="color: var(--color-text-muted);"> 较昨日</span>
+                            </div>
+                        </div>
+                        <div class="rounded-lg p-4 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-sm" style="color: var(--color-text-secondary);">服务暖家</span>
+                                <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: var(--state-warning-bg);">
+                                    <i data-lucide="home" class="w-4 h-4" style="color: var(--state-warning);"></i>
+                                </div>
+                            </div>
+                            <div id="stat-service-elders" class="text-2xl font-bold" style="color: var(--color-text); font-variant-numeric: tabular-nums;">342</div>
+                            <div class="text-xs mt-1" style="color: var(--state-success);">
+                                <span>+5%</span>
+                                <span style="color: var(--color-text-muted);"> 较上周</span>
+                            </div>
+                        </div>
+                        <div class="rounded-lg p-4 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-sm" style="color: var(--color-text-secondary);">平均满意度</span>
+                                <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: var(--color-primary-light);">
+                                    <i data-lucide="star" class="w-4 h-4" style="color: var(--state-warning);"></i>
+                                </div>
+                            </div>
+                            <div id="stat-avg-rating" class="text-2xl font-bold" style="color: var(--color-text); font-variant-numeric: tabular-nums;">4.8</div>
+                            <div class="text-xs mt-1" style="color: var(--color-text-muted);">满分 5.0</div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Row -->
+                    <div class="grid grid-cols-12 gap-4 mb-6">
+                        <!-- Order Trend Line Chart -->
+                        <div class="col-span-8 rounded-lg p-5 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-sm font-semibold" style="color: var(--color-text);">订单趋势</h3>
+                                <div class="flex gap-1" id="time-range-btns">
+                                    <button onclick="switchTimeRange(7)" data-range="7" class="px-2.5 py-1 text-xs rounded time-range-btn" style="background: var(--color-primary); color: var(--color-text-inverse);">近7天</button>
+                                    <button onclick="switchTimeRange(30)" data-range="30" class="px-2.5 py-1 text-xs rounded time-range-btn" style="color: var(--color-text-muted);">近30天</button>
+                                </div>
+                            </div>
+                            <div style="height: 220px;"><canvas id="chart-order-trend"></canvas></div>
+                        </div>
+                        <!-- Service Type Pie Chart -->
+                        <div class="col-span-4 rounded-lg p-5 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
+                            <h3 class="text-sm font-semibold mb-4" style="color: var(--color-text);">服务类型分布</h3>
+                            <div style="height: 220px;"><canvas id="chart-service-type"></canvas></div>
+                        </div>
+                    </div>
+
+                    <!-- Real-time Orders Table + Heatmap -->
+                    <div class="grid grid-cols-12 gap-4">
+                        <div class="col-span-7 rounded-lg border" style="background: var(--color-bg-card); border-color: var(--color-border);">
+                            <div class="px-5 py-3 border-b flex items-center justify-between" style="border-color: var(--color-border);">
+                                <h3 class="text-sm font-semibold" style="color: var(--color-text);">实时订单</h3>
+                                <span class="flex items-center gap-1.5 text-xs" style="color: var(--state-success);">
+                                    <span class="w-1.5 h-1.5 rounded-full inline-block" style="background: var(--state-success);"></span>
+                                    实时更新中
+                                </span>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm">
+                                    <thead>
+                                        <tr style="background: var(--color-bg-muted);">
+                                            <th class="px-4 py-2.5 text-left font-medium whitespace-nowrap" style="color: var(--color-text-secondary);">订单号</th>
+                                            <th class="px-4 py-2.5 text-left font-medium whitespace-nowrap" style="color: var(--color-text-secondary);">暖家</th>
+                                            <th class="px-4 py-2.5 text-left font-medium whitespace-nowrap" style="color: var(--color-text-secondary);">服务类型</th>
+                                            <th class="px-4 py-2.5 text-left font-medium whitespace-nowrap" style="color: var(--color-text-secondary);">暖伴</th>
+                                            <th class="px-4 py-2.5 text-left font-medium whitespace-nowrap" style="color: var(--color-text-secondary);">状态</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="border-t" style="border-color: var(--color-border-light);">
+                                            <td class="px-4 py-2.5 whitespace-nowrap truncate" style="color: var(--color-text); font-variant-numeric: tabular-nums;">#NB20240601</td>
+                                            <td class="px-4 py-2.5 whitespace-nowrap truncate" style="color: var(--color-text);">王奶奶 · 幸福社区</td>
+                                            <td class="px-4 py-2.5 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--color-primary-light); color: var(--color-primary);">日常陪伴</span></td>
+                                            <td class="px-4 py-2.5 whitespace-nowrap truncate" style="color: var(--color-text);">张小雨</td>
+                                            <td class="px-4 py-2.5 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--state-success-bg); color: var(--state-success);">进行中</span></td>
+                                        </tr>
+                                        <tr class="border-t" style="border-color: var(--color-border-light);">
+                                            <td class="px-4 py-2.5 whitespace-nowrap truncate" style="color: var(--color-text); font-variant-numeric: tabular-nums;">#NB20240602</td>
+                                            <td class="px-4 py-2.5 whitespace-nowrap truncate" style="color: var(--color-text);">李大爷 · 阳光花园</td>
+                                            <td class="px-4 py-2.5 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--state-warning-bg); color: var(--state-warning);">跑腿代办</span></td>
+                                            <td class="px-4 py-2.5 whitespace-nowrap truncate" style="color: var(--color-text);">李芳姨</td>
+                                            <td class="px-4 py-2.5 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--state-info-bg); color: var(--state-info);">待接单</span></td>
+                                        </tr>
+                                        <tr class="border-t" style="border-color: var(--color-border-light);">
+                                            <td class="px-4 py-2.5 whitespace-nowrap truncate" style="color: var(--color-text); font-variant-numeric: tabular-nums;">#NB20240603</td>
+                                            <td class="px-4 py-2.5 whitespace-nowrap truncate" style="color: var(--color-text);">赵阿姨 · 和平小区</td>
+                                            <td class="px-4 py-2.5 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--state-success-bg); color: var(--state-success);">数字辅导</span></td>
+                                            <td class="px-4 py-2.5 whitespace-nowrap truncate" style="color: var(--color-text);">王志强</td>
+                                            <td class="px-4 py-2.5 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--state-warning-bg); color: var(--state-warning);">已完成</span></td>
+                                        </tr>
+                                        <tr class="border-t" style="border-color: var(--color-border-light);">
+                                            <td class="px-4 py-2.5 whitespace-nowrap truncate" style="color: var(--color-text); font-variant-numeric: tabular-nums;">#NB20240604</td>
+                                            <td class="px-4 py-2.5 whitespace-nowrap truncate" style="color: var(--color-text);">孙爷爷 · 翠苑街道</td>
+                                            <td class="px-4 py-2.5 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--color-primary-light); color: var(--color-primary);">陪同就医</span></td>
+                                            <td class="px-4 py-2.5 whitespace-nowrap truncate" style="color: var(--color-text);">陈思雨</td>
+                                            <td class="px-4 py-2.5 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--state-success-bg); color: var(--state-success);">进行中</span></td>
+                                        </tr>
+                                        <tr class="border-t" style="border-color: var(--color-border-light);">
+                                            <td class="px-4 py-2.5 whitespace-nowrap truncate" style="color: var(--color-text); font-variant-numeric: tabular-nums;">#NB20240605</td>
+                                            <td class="px-4 py-2.5 whitespace-nowrap truncate" style="color: var(--color-text);">周奶奶 · 锦绣家园</td>
+                                            <td class="px-4 py-2.5 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--color-primary-light); color: var(--color-primary);">日常陪伴</span></td>
+                                            <td class="px-4 py-2.5 whitespace-nowrap truncate" style="color: var(--color-text);">刘文博</td>
+                                            <td class="px-4 py-2.5 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--state-warning-bg); color: var(--state-warning);">已完成</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- Time Heatmap Bar Chart -->
+                        <div class="col-span-5 rounded-lg p-5 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
+                            <h3 class="text-sm font-semibold mb-4" style="color: var(--color-text);">时段订单热力</h3>
+                            <div style="height: 220px;"><canvas id="chart-time-heatmap"></canvas></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========== Tab: 订单管理 ========== -->
+                <div id="tab-orders" class="tab-panel hidden">
+                    <!-- Filters -->
+                    <div class="flex items-center gap-3 mb-5 flex-wrap">
+                        <button onclick="filterOrders('全部')" data-filter="全部" class="order-filter-btn px-3 py-1.5 text-sm rounded-lg border transition-colors duration-200" style="background: var(--color-primary); color: var(--color-text-inverse); border-color: var(--color-primary);">全部</button>
+                        <button onclick="filterOrders('待接单')" data-filter="待接单" class="order-filter-btn px-3 py-1.5 text-sm rounded-lg border transition-colors duration-200" style="background: var(--color-bg-card); color: var(--color-text-secondary); border-color: var(--color-border);">待接单</button>
+                        <button onclick="filterOrders('进行中')" data-filter="进行中" class="order-filter-btn px-3 py-1.5 text-sm rounded-lg border transition-colors duration-200" style="background: var(--color-bg-card); color: var(--color-text-secondary); border-color: var(--color-border);">进行中</button>
+                        <button onclick="filterOrders('已完成')" data-filter="已完成" class="order-filter-btn px-3 py-1.5 text-sm rounded-lg border transition-colors duration-200" style="background: var(--color-bg-card); color: var(--color-text-secondary); border-color: var(--color-border);">已完成</button>
+                        <button onclick="filterOrders('已取消')" data-filter="已取消" class="order-filter-btn px-3 py-1.5 text-sm rounded-lg border transition-colors duration-200" style="background: var(--color-bg-card); color: var(--color-text-secondary); border-color: var(--color-border);">已取消</button>
+                        <div class="flex-1"></div>
+                        <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg border" style="background: var(--color-bg-card); border-color: var(--color-border);">
+                            <i data-lucide="search" class="w-4 h-4" style="color: var(--color-text-muted);"></i>
+                            <input id="order-search" type="text" oninput="searchOrders(this.value)" placeholder="搜索订单号或暖家姓名" class="bg-transparent text-sm outline-none" style="color: var(--color-text); width: 200px;">
+                        </div>
+                    </div>
+                    <!-- Orders Table -->
+                    <div class="rounded-lg border overflow-hidden" style="background: var(--color-bg-card); border-color: var(--color-border);">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm">
+                                <thead>
+                                    <tr style="background: var(--color-bg-muted);">
+                                        <th class="px-4 py-3 text-left font-medium whitespace-nowrap" style="color: var(--color-text-secondary);">订单号</th>
+                                        <th class="px-4 py-3 text-left font-medium whitespace-nowrap" style="color: var(--color-text-secondary);">暖家信息</th>
+                                        <th class="px-4 py-3 text-left font-medium whitespace-nowrap" style="color: var(--color-text-secondary);">服务类型</th>
+                                        <th class="px-4 py-3 text-left font-medium whitespace-nowrap" style="color: var(--color-text-secondary);">指派暖伴</th>
+                                        <th class="px-4 py-3 text-left font-medium whitespace-nowrap" style="color: var(--color-text-secondary);">下单时间</th>
+                                        <th class="px-4 py-3 text-left font-medium whitespace-nowrap" style="color: var(--color-text-secondary);">状态</th>
+                                        <th class="px-4 py-3 text-left font-medium whitespace-nowrap" style="color: var(--color-text-secondary);">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="orders-tbody">
+                                    <tr class="border-t" style="border-color: var(--color-border-light);">
+                                        <td class="px-4 py-3 whitespace-nowrap truncate" style="color: var(--color-text); font-variant-numeric: tabular-nums;">#NB20240601</td>
+                                        <td class="px-4 py-3 whitespace-nowrap"><div class="truncate" style="color: var(--color-text);">王奶奶</div><div class="text-xs truncate" style="color: var(--color-text-muted);">幸福社区 3栋</div></td>
+                                        <td class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--color-primary-light); color: var(--color-primary);">日常陪伴</span></td>
+                                        <td class="px-4 py-3 whitespace-nowrap truncate" style="color: var(--color-text);">张小雨</td>
+                                        <td class="px-4 py-3 whitespace-nowrap" style="color: var(--color-text-secondary); font-variant-numeric: tabular-nums;">06-24 09:30</td>
+                                        <td class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--state-success-bg); color: var(--state-success);">进行中</span></td>
+                                        <td class="px-4 py-3 whitespace-nowrap"><button class="text-xs" style="color: var(--color-primary);">详情</button></td>
+                                    </tr>
+                                    <tr class="border-t" style="border-color: var(--color-border-light);">
+                                        <td class="px-4 py-3 whitespace-nowrap truncate" style="color: var(--color-text); font-variant-numeric: tabular-nums;">#NB20240602</td>
+                                        <td class="px-4 py-3 whitespace-nowrap"><div class="truncate" style="color: var(--color-text);">李大爷</div><div class="text-xs truncate" style="color: var(--color-text-muted);">阳光花园 12栋</div></td>
+                                        <td class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--state-warning-bg); color: var(--state-warning);">跑腿代办</span></td>
+                                        <td class="px-4 py-3 whitespace-nowrap truncate" style="color: var(--color-text);">李芳姨</td>
+                                        <td class="px-4 py-3 whitespace-nowrap" style="color: var(--color-text-secondary); font-variant-numeric: tabular-nums;">06-24 10:15</td>
+                                        <td class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--state-info-bg); color: var(--state-info);">待接单</span></td>
+                                        <td class="px-4 py-3 whitespace-nowrap"><button class="text-xs" style="color: var(--color-primary);">指派</button></td>
+                                    </tr>
+                                    <tr class="border-t" style="border-color: var(--color-border-light);">
+                                        <td class="px-4 py-3 whitespace-nowrap truncate" style="color: var(--color-text); font-variant-numeric: tabular-nums;">#NB20240603</td>
+                                        <td class="px-4 py-3 whitespace-nowrap"><div class="truncate" style="color: var(--color-text);">赵阿姨</div><div class="text-xs truncate" style="color: var(--color-text-muted);">和平小区 7栋</div></td>
+                                        <td class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--state-success-bg); color: var(--state-success);">数字辅导</span></td>
+                                        <td class="px-4 py-3 whitespace-nowrap truncate" style="color: var(--color-text);">王志强</td>
+                                        <td class="px-4 py-3 whitespace-nowrap" style="color: var(--color-text-secondary); font-variant-numeric: tabular-nums;">06-24 08:00</td>
+                                        <td class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--state-warning-bg); color: var(--state-warning);">已完成</span></td>
+                                        <td class="px-4 py-3 whitespace-nowrap"><button class="text-xs" style="color: var(--color-primary);">详情</button></td>
+                                    </tr>
+                                    <tr class="border-t" style="border-color: var(--color-border-light);">
+                                        <td class="px-4 py-3 whitespace-nowrap truncate" style="color: var(--color-text); font-variant-numeric: tabular-nums;">#NB20240604</td>
+                                        <td class="px-4 py-3 whitespace-nowrap"><div class="truncate" style="color: var(--color-text);">孙爷爷</div><div class="text-xs truncate" style="color: var(--color-text-muted);">翠苑街道 5栋</div></td>
+                                        <td class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--color-primary-light); color: var(--color-primary);">陪同就医</span></td>
+                                        <td class="px-4 py-3 whitespace-nowrap truncate" style="color: var(--color-text);">陈思雨</td>
+                                        <td class="px-4 py-3 whitespace-nowrap" style="color: var(--color-text-secondary); font-variant-numeric: tabular-nums;">06-24 07:45</td>
+                                        <td class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--state-success-bg); color: var(--state-success);">进行中</span></td>
+                                        <td class="px-4 py-3 whitespace-nowrap"><button class="text-xs" style="color: var(--color-primary);">详情</button></td>
+                                    </tr>
+                                    <tr class="border-t" style="border-color: var(--color-border-light);">
+                                        <td class="px-4 py-3 whitespace-nowrap truncate" style="color: var(--color-text); font-variant-numeric: tabular-nums;">#NB20240605</td>
+                                        <td class="px-4 py-3 whitespace-nowrap"><div class="truncate" style="color: var(--color-text);">周奶奶</div><div class="text-xs truncate" style="color: var(--color-text-muted);">锦绣家园 1栋</div></td>
+                                        <td class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--color-primary-light); color: var(--color-primary);">日常陪伴</span></td>
+                                        <td class="px-4 py-3 whitespace-nowrap truncate" style="color: var(--color-text);">刘文博</td>
+                                        <td class="px-4 py-3 whitespace-nowrap" style="color: var(--color-text-secondary); font-variant-numeric: tabular-nums;">06-23 14:00</td>
+                                        <td class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--state-warning-bg); color: var(--state-warning);">已完成</span></td>
+                                        <td class="px-4 py-3 whitespace-nowrap"><button class="text-xs" style="color: var(--color-primary);">详情</button></td>
+                                    </tr>
+                                    <tr class="border-t" style="border-color: var(--color-border-light);">
+                                        <td class="px-4 py-3 whitespace-nowrap truncate" style="color: var(--color-text); font-variant-numeric: tabular-nums;">#NB20240606</td>
+                                        <td class="px-4 py-3 whitespace-nowrap"><div class="truncate" style="color: var(--color-text);">吴叔叔</div><div class="text-xs truncate" style="color: var(--color-text-muted);">金色港湾 8栋</div></td>
+                                        <td class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--state-warning-bg); color: var(--state-warning);">跑腿代办</span></td>
+                                        <td class="px-4 py-3 whitespace-nowrap truncate" style="color: var(--color-text);">赵敏</td>
+                                        <td class="px-4 py-3 whitespace-nowrap" style="color: var(--color-text-secondary); font-variant-numeric: tabular-nums;">06-23 11:20</td>
+                                        <td class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--state-error-bg); color: var(--state-error);">已取消</span></td>
+                                        <td class="px-4 py-3 whitespace-nowrap"><button class="text-xs" style="color: var(--color-primary);">详情</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========== Tab: 暖伴管理 ========== -->
+                <div id="tab-volunteers" class="tab-panel hidden">
+                    <!-- Stats -->
+                    <div class="grid grid-cols-4 gap-4 mb-6">
+                        <div class="rounded-lg p-4 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
+                            <div class="text-sm mb-2" style="color: var(--color-text-secondary);">注册暖伴</div>
+                            <div class="text-2xl font-bold" style="color: var(--color-text); font-variant-numeric: tabular-nums;">186</div>
+                        </div>
+                        <div class="rounded-lg p-4 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
+                            <div class="text-sm mb-2" style="color: var(--color-text-secondary);">在线暖伴</div>
+                            <div class="text-2xl font-bold" style="color: var(--state-success); font-variant-numeric: tabular-nums;">126</div>
+                        </div>
+                        <div class="rounded-lg p-4 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
+                            <div class="text-sm mb-2" style="color: var(--color-text-secondary);">本月新增</div>
+                            <div class="text-2xl font-bold" style="color: var(--color-primary); font-variant-numeric: tabular-nums;">23</div>
+                        </div>
+                        <div class="rounded-lg p-4 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
+                            <div class="text-sm mb-2" style="color: var(--color-text-secondary);">待审核</div>
+                            <div class="text-2xl font-bold" style="color: var(--state-warning); font-variant-numeric: tabular-nums;">5</div>
+                        </div>
+                    </div>
+                    <!-- Volunteer Cards -->
+                    <div id="volunteers-grid" class="grid grid-cols-3 gap-4">
+                        <div class="rounded-lg p-5 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold" style="background: var(--color-primary-light); color: var(--color-primary);">张</div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="text-sm font-semibold truncate" style="color: var(--color-text);">张小雨</div>
+                                    <div class="text-xs truncate" style="color: var(--color-text-muted);">幸福社区 · 2年经验</div>
+                                </div>
+                                <span class="px-2 py-0.5 rounded text-xs whitespace-nowrap" style="background: var(--state-success-bg); color: var(--state-success);">在线</span>
+                            </div>
+                            <div class="grid grid-cols-3 gap-3 text-center">
+                                <div><div class="text-lg font-bold" style="color: var(--color-text); font-variant-numeric: tabular-nums;">328</div><div class="text-xs" style="color: var(--color-text-muted);">服务次数</div></div>
+                                <div><div class="text-lg font-bold" style="color: var(--state-warning); font-variant-numeric: tabular-nums;">4.9</div><div class="text-xs" style="color: var(--color-text-muted);">评分</div></div>
+                                <div><div class="text-lg font-bold" style="color: var(--state-success); font-variant-numeric: tabular-nums;">98%</div><div class="text-xs" style="color: var(--color-text-muted);">好评率</div></div>
+                            </div>
+                        </div>
+                        <div class="rounded-lg p-5 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold" style="background: var(--state-success-bg); color: var(--state-success);">李</div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="text-sm font-semibold truncate" style="color: var(--color-text);">李芳姨</div>
+                                    <div class="text-xs truncate" style="color: var(--color-text-muted);">阳光花园 · 3年经验</div>
+                                </div>
+                                <span class="px-2 py-0.5 rounded text-xs whitespace-nowrap" style="background: var(--state-success-bg); color: var(--state-success);">在线</span>
+                            </div>
+                            <div class="grid grid-cols-3 gap-3 text-center">
+                                <div><div class="text-lg font-bold" style="color: var(--color-text); font-variant-numeric: tabular-nums;">512</div><div class="text-xs" style="color: var(--color-text-muted);">服务次数</div></div>
+                                <div><div class="text-lg font-bold" style="color: var(--state-warning); font-variant-numeric: tabular-nums;">4.8</div><div class="text-xs" style="color: var(--color-text-muted);">评分</div></div>
+                                <div><div class="text-lg font-bold" style="color: var(--state-success); font-variant-numeric: tabular-nums;">97%</div><div class="text-xs" style="color: var(--color-text-muted);">好评率</div></div>
+                            </div>
+                        </div>
+                        <div class="rounded-lg p-5 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold" style="background: var(--state-warning-bg); color: var(--state-warning);">王</div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="text-sm font-semibold truncate" style="color: var(--color-text);">王志强</div>
+                                    <div class="text-xs truncate" style="color: var(--color-text-muted);">和平小区 · 1年经验</div>
+                                </div>
+                                <span class="px-2 py-0.5 rounded text-xs whitespace-nowrap" style="background: var(--state-success-bg); color: var(--state-success);">在线</span>
+                            </div>
+                            <div class="grid grid-cols-3 gap-3 text-center">
+                                <div><div class="text-lg font-bold" style="color: var(--color-text); font-variant-numeric: tabular-nums;">156</div><div class="text-xs" style="color: var(--color-text-muted);">服务次数</div></div>
+                                <div><div class="text-lg font-bold" style="color: var(--state-warning); font-variant-numeric: tabular-nums;">4.7</div><div class="text-xs" style="color: var(--color-text-muted);">评分</div></div>
+                                <div><div class="text-lg font-bold" style="color: var(--state-success); font-variant-numeric: tabular-nums;">96%</div><div class="text-xs" style="color: var(--color-text-muted);">好评率</div></div>
+                            </div>
+                        </div>
+                        <div class="rounded-lg p-5 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold" style="background: var(--color-primary-light); color: var(--color-primary);">陈</div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="text-sm font-semibold truncate" style="color: var(--color-text);">陈思雨</div>
+                                    <div class="text-xs truncate" style="color: var(--color-text-muted);">翠苑街道 · 1年经验</div>
+                                </div>
+                                <span class="px-2 py-0.5 rounded text-xs whitespace-nowrap" style="background: var(--state-info-bg); color: var(--state-info);">服务中</span>
+                            </div>
+                            <div class="grid grid-cols-3 gap-3 text-center">
+                                <div><div class="text-lg font-bold" style="color: var(--color-text); font-variant-numeric: tabular-nums;">89</div><div class="text-xs" style="color: var(--color-text-muted);">服务次数</div></div>
+                                <div><div class="text-lg font-bold" style="color: var(--state-warning); font-variant-numeric: tabular-nums;">4.9</div><div class="text-xs" style="color: var(--color-text-muted);">评分</div></div>
+                                <div><div class="text-lg font-bold" style="color: var(--state-success); font-variant-numeric: tabular-nums;">99%</div><div class="text-xs" style="color: var(--color-text-muted);">好评率</div></div>
+                            </div>
+                        </div>
+                        <div class="rounded-lg p-5 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold" style="background: var(--state-success-bg); color: var(--state-success);">刘</div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="text-sm font-semibold truncate" style="color: var(--color-text);">刘文博</div>
+                                    <div class="text-xs truncate" style="color: var(--color-text-muted);">锦绣家园 · 半年经验</div>
+                                </div>
+                                <span class="px-2 py-0.5 rounded text-xs whitespace-nowrap" style="background: var(--state-success-bg); color: var(--state-success);">在线</span>
+                            </div>
+                            <div class="grid grid-cols-3 gap-3 text-center">
+                                <div><div class="text-lg font-bold" style="color: var(--color-text); font-variant-numeric: tabular-nums;">67</div><div class="text-xs" style="color: var(--color-text-muted);">服务次数</div></div>
+                                <div><div class="text-lg font-bold" style="color: var(--state-warning); font-variant-numeric: tabular-nums;">4.6</div><div class="text-xs" style="color: var(--color-text-muted);">评分</div></div>
+                                <div><div class="text-lg font-bold" style="color: var(--state-success); font-variant-numeric: tabular-nums;">95%</div><div class="text-xs" style="color: var(--color-text-muted);">好评率</div></div>
+                            </div>
+                        </div>
+                        <div class="rounded-lg p-5 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold" style="background: var(--state-warning-bg); color: var(--state-warning);">赵</div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="text-sm font-semibold truncate" style="color: var(--color-text);">赵敏</div>
+                                    <div class="text-xs truncate" style="color: var(--color-text-muted);">金色港湾 · 2年经验</div>
+                                </div>
+                                <span class="px-2 py-0.5 rounded text-xs whitespace-nowrap" style="background: var(--state-warning-bg); color: var(--state-warning);">待审核</span>
+                            </div>
+                            <div class="grid grid-cols-3 gap-3 text-center">
+                                <div><div class="text-lg font-bold" style="color: var(--color-text); font-variant-numeric: tabular-nums;">203</div><div class="text-xs" style="color: var(--color-text-muted);">服务次数</div></div>
+                                <div><div class="text-lg font-bold" style="color: var(--state-warning); font-variant-numeric: tabular-nums;">4.8</div><div class="text-xs" style="color: var(--color-text-muted);">评分</div></div>
+                                <div><div class="text-lg font-bold" style="color: var(--state-success); font-variant-numeric: tabular-nums;">97%</div><div class="text-xs" style="color: var(--color-text-muted);">好评率</div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========== Tab: 安全监控 ========== -->
+                <div id="tab-safety" class="tab-panel hidden">
+                    <!-- Stats -->
+                    <div class="grid grid-cols-4 gap-4 mb-6">
+                        <div class="rounded-lg p-4 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
+                            <div class="text-sm mb-2" style="color: var(--color-text-secondary);">实时会话</div>
+                            <div class="text-2xl font-bold" style="color: var(--state-success); font-variant-numeric: tabular-nums;">18</div>
+                        </div>
+                        <div class="rounded-lg p-4 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
+                            <div class="text-sm mb-2" style="color: var(--color-text-secondary);">今日预警</div>
+                            <div class="text-2xl font-bold" style="color: var(--state-warning); font-variant-numeric: tabular-nums;">3</div>
+                        </div>
+                        <div class="rounded-lg p-4 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
+                            <div class="text-sm mb-2" style="color: var(--color-text-secondary);">安全评分</div>
+                            <div class="text-2xl font-bold" style="color: var(--state-success); font-variant-numeric: tabular-nums;">96.5</div>
+                        </div>
+                        <div class="rounded-lg p-4 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
+                            <div class="text-sm mb-2" style="color: var(--color-text-secondary);">异常处理率</div>
+                            <div class="text-2xl font-bold" style="color: var(--color-text); font-variant-numeric: tabular-nums;">100%</div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-12 gap-4 mb-6">
+                        <!-- Map Placeholder -->
+                        <div class="col-span-8 rounded-lg border" style="background: var(--color-bg-card); border-color: var(--color-border);">
+                            <div class="px-5 py-3 border-b" style="border-color: var(--color-border);">
+                                <h3 class="text-sm font-semibold" style="color: var(--color-text);">服务区域实时地图</h3>
+                            </div>
+                            <div class="flex items-center justify-center" style="height: 320px; background: var(--color-bg-muted);">
+                                <div class="text-center">
+                                    <i data-lucide="map-pin" class="w-12 h-12 mx-auto mb-3" style="color: var(--color-text-muted);"></i>
+                                    <div class="text-sm" style="color: var(--color-text-muted);">地图服务接入中</div>
+                                    <div class="text-xs mt-1" style="color: var(--color-text-muted);">将展示暖伴实时位置与服务覆盖范围</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Real-time Sessions -->
+                        <div class="col-span-4 rounded-lg border" style="background: var(--color-bg-card); border-color: var(--color-border);">
+                            <div class="px-5 py-3 border-b" style="border-color: var(--color-border);">
+                                <h3 class="text-sm font-semibold" style="color: var(--color-text);">实时会话</h3>
+                            </div>
+                            <div class="p-4 space-y-3 overflow-y-auto" style="max-height: 320px;">
+                                <div class="flex items-center gap-3 p-3 rounded-lg" style="background: var(--color-bg-muted);">
+                                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold" style="background: var(--color-primary-light); color: var(--color-primary);">张</div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="text-sm truncate" style="color: var(--color-text);">张小雨 → 王奶奶</div>
+                                        <div class="text-xs truncate" style="color: var(--color-text-muted);">日常陪伴 · 32分钟</div>
+                                    </div>
+                                    <span class="w-2 h-2 rounded-full shrink-0" style="background: var(--state-success);"></span>
+                                </div>
+                                <div class="flex items-center gap-3 p-3 rounded-lg" style="background: var(--color-bg-muted);">
+                                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold" style="background: var(--state-success-bg); color: var(--state-success);">陈</div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="text-sm truncate" style="color: var(--color-text);">陈思雨 → 孙爷爷</div>
+                                        <div class="text-xs truncate" style="color: var(--color-text-muted);">陪同就医 · 48分钟</div>
+                                    </div>
+                                    <span class="w-2 h-2 rounded-full shrink-0" style="background: var(--state-success);"></span>
+                                </div>
+                                <div class="flex items-center gap-3 p-3 rounded-lg" style="background: var(--color-bg-muted);">
+                                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold" style="background: var(--state-warning-bg); color: var(--state-warning);">王</div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="text-sm truncate" style="color: var(--color-text);">王志强 → 赵阿姨</div>
+                                        <div class="text-xs truncate" style="color: var(--color-text-muted);">数字辅导 · 15分钟</div>
+                                    </div>
+                                    <span class="w-2 h-2 rounded-full shrink-0" style="background: var(--state-success);"></span>
+                                </div>
+                                <div class="flex items-center gap-3 p-3 rounded-lg" style="background: var(--color-bg-muted);">
+                                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold" style="background: var(--color-primary-light); color: var(--color-primary);">刘</div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="text-sm truncate" style="color: var(--color-text);">刘文博 → 周奶奶</div>
+                                        <div class="text-xs truncate" style="color: var(--color-text-muted);">日常陪伴 · 22分钟</div>
+                                    </div>
+                                    <span class="w-2 h-2 rounded-full shrink-0" style="background: var(--state-success);"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Safety Alert Log -->
+                    <div class="rounded-lg border" style="background: var(--color-bg-card); border-color: var(--color-border);">
+                        <div class="px-5 py-3 border-b flex items-center justify-between" style="border-color: var(--color-border);">
+                            <h3 class="text-sm font-semibold" style="color: var(--color-text);">安全预警日志</h3>
+                            <span class="text-xs" style="color: var(--color-text-muted);">最近24小时</span>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm">
+                                <thead>
+                                    <tr style="background: var(--color-bg-muted);">
+                                        <th class="px-4 py-2.5 text-left font-medium whitespace-nowrap" style="color: var(--color-text-secondary);">时间</th>
+                                        <th class="px-4 py-2.5 text-left font-medium whitespace-nowrap" style="color: var(--color-text-secondary);">类型</th>
+                                        <th class="px-4 py-2.5 text-left font-medium whitespace-nowrap" style="color: var(--color-text-secondary);">详情</th>
+                                        <th class="px-4 py-2.5 text-left font-medium whitespace-nowrap" style="color: var(--color-text-secondary);">状态</th>
+                                        <th class="px-4 py-2.5 text-left font-medium whitespace-nowrap" style="color: var(--color-text-secondary);">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="alarms-tbody">
+                                    <tr class="border-t" style="border-color: var(--color-border-light);">
+                                        <td class="px-4 py-2.5 whitespace-nowrap" style="color: var(--color-text-secondary); font-variant-numeric: tabular-nums;">14:32</td>
+                                        <td class="px-4 py-2.5 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--state-warning-bg); color: var(--state-warning);">超时预警</span></td>
+                                        <td class="px-4 py-2.5 truncate" style="color: var(--color-text);">订单#NB20240604 服务时长超过2小时</td>
+                                        <td class="px-4 py-2.5 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--state-success-bg); color: var(--state-success);">已确认</span></td>
+                                    </tr>
+                                    <tr class="border-t" style="border-color: var(--color-border-light);">
+                                        <td class="px-4 py-2.5 whitespace-nowrap" style="color: var(--color-text-secondary); font-variant-numeric: tabular-nums;">11:15</td>
+                                        <td class="px-4 py-2.5 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--state-info-bg); color: var(--state-info);">位置偏离</span></td>
+                                        <td class="px-4 py-2.5 truncate" style="color: var(--color-text);">暖伴李芳姨偏离服务区域500米</td>
+                                        <td class="px-4 py-2.5 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--state-success-bg); color: var(--state-success);">已处理</span></td>
+                                    </tr>
+                                    <tr class="border-t" style="border-color: var(--color-border-light);">
+                                        <td class="px-4 py-2.5 whitespace-nowrap" style="color: var(--color-text-secondary); font-variant-numeric: tabular-nums;">09:40</td>
+                                        <td class="px-4 py-2.5 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--state-error-bg); color: var(--state-error);">紧急呼叫</span></td>
+                                        <td class="px-4 py-2.5 truncate" style="color: var(--color-text);">暖家孙爷爷触发SOS按钮</td>
+                                        <td class="px-4 py-2.5 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--state-success-bg); color: var(--state-success);">已响应</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========== Tab: 数据分析 ========== -->
+                <div id="tab-analytics" class="tab-panel hidden">
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <!-- Monthly Trend -->
+                        <div class="rounded-lg p-5 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
+                            <h3 class="text-sm font-semibold mb-4" style="color: var(--color-text);">月度服务趋势</h3>
+                            <div style="height: 240px;"><canvas id="chart-monthly-trend"></canvas></div>
+                        </div>
+                        <!-- Street Coverage -->
+                        <div class="rounded-lg p-5 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
+                            <h3 class="text-sm font-semibold mb-4" style="color: var(--color-text);">街道覆盖情况</h3>
+                            <div style="height: 240px;"><canvas id="chart-street-coverage"></canvas></div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <!-- Volunteer Ranking -->
+                        <div class="rounded-lg p-5 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
+                            <h3 class="text-sm font-semibold mb-4" style="color: var(--color-text);">暖伴服务排行</h3>
+                            <div style="height: 240px;"><canvas id="chart-volunteer-rank"></canvas></div>
+                        </div>
+                        <!-- Age Distribution -->
+                        <div class="rounded-lg p-5 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
+                            <h3 class="text-sm font-semibold mb-4" style="color: var(--color-text);">暖家年龄分布</h3>
+                            <div style="height: 240px;"><canvas id="chart-age-dist"></canvas></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========== Tab: B端采购 ========== -->
+                <div id="tab-b2b" class="tab-panel hidden">
+                    <!-- Stats -->
+                    <div class="grid grid-cols-4 gap-4 mb-6">
+                        <div class="rounded-lg p-4 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
+                            <div class="text-sm mb-2" style="color: var(--color-text-secondary);">合作企业</div>
+                            <div class="text-2xl font-bold" style="color: var(--color-text); font-variant-numeric: tabular-nums;">28</div>
+                        </div>
+                        <div class="rounded-lg p-4 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
+                            <div class="text-sm mb-2" style="color: var(--color-text-secondary);">月采购额</div>
+                            <div class="text-2xl font-bold" style="color: var(--color-primary); font-variant-numeric: tabular-nums;">¥86万</div>
+                        </div>
+                        <div class="rounded-lg p-4 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
+                            <div class="text-sm mb-2" style="color: var(--color-text-secondary);">覆盖家庭</div>
+                            <div class="text-2xl font-bold" style="color: var(--state-success); font-variant-numeric: tabular-nums;">1,256</div>
+                        </div>
+                        <div class="rounded-lg p-4 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
+                            <div class="text-sm mb-2" style="color: var(--color-text-secondary);">待签合同</div>
+                            <div class="text-2xl font-bold" style="color: var(--state-warning); font-variant-numeric: tabular-nums;">3</div>
+                        </div>
+                    </div>
+
+                    <!-- B2B Type Cards -->
+                    <div class="grid grid-cols-3 gap-4 mb-6">
+                        <div class="rounded-lg p-5 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: var(--color-primary-light);">
+                                    <i data-lucide="landmark" class="w-5 h-5" style="color: var(--color-primary);"></i>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-semibold" style="color: var(--color-text);">企业工会</div>
+                                    <div class="text-xs" style="color: var(--color-text-muted);">员工家属关怀采购</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div><span class="text-lg font-bold" style="color: var(--color-text); font-variant-numeric: tabular-nums;">12</span><span class="text-xs ml-1" style="color: var(--color-text-muted);">家合作</span></div>
+                                <div><span class="text-lg font-bold" style="color: var(--color-primary); font-variant-numeric: tabular-nums;">¥42万</span><span class="text-xs ml-1" style="color: var(--color-text-muted);">/月</span></div>
+                            </div>
+                        </div>
+                        <div class="rounded-lg p-5 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: var(--state-success-bg);">
+                                    <i data-lucide="shield" class="w-5 h-5" style="color: var(--state-success);"></i>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-semibold" style="color: var(--color-text);">商业保险</div>
+                                    <div class="text-xs" style="color: var(--color-text-muted);">保险增值服务采购</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div><span class="text-lg font-bold" style="color: var(--color-text); font-variant-numeric: tabular-nums;">8</span><span class="text-xs ml-1" style="color: var(--color-text-muted);">家合作</span></div>
+                                <div><span class="text-lg font-bold" style="color: var(--state-success); font-variant-numeric: tabular-nums;">¥28万</span><span class="text-xs ml-1" style="color: var(--color-text-muted);">/月</span></div>
+                            </div>
+                        </div>
+                        <div class="rounded-lg p-5 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: var(--state-warning-bg);">
+                                    <i data-lucide="building" class="w-5 h-5" style="color: var(--state-warning);"></i>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-semibold" style="color: var(--color-text);">街道/民政</div>
+                                    <div class="text-xs" style="color: var(--color-text-muted);">政府民生服务采购</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div><span class="text-lg font-bold" style="color: var(--color-text); font-variant-numeric: tabular-nums;">8</span><span class="text-xs ml-1" style="color: var(--color-text-muted);">家合作</span></div>
+                                <div><span class="text-lg font-bold" style="color: var(--state-warning); font-variant-numeric: tabular-nums;">¥16万</span><span class="text-xs ml-1" style="color: var(--color-text-muted);">/月</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Procurement Contract Table -->
+                    <div class="rounded-lg border" style="background: var(--color-bg-card); border-color: var(--color-border);">
+                        <div class="px-5 py-3 border-b flex items-center justify-between" style="border-color: var(--color-border);">
+                            <h3 class="text-sm font-semibold" style="color: var(--color-text);">采购合同</h3>
+                            <button onclick="showContractModal()" class="px-3 py-1.5 text-xs rounded-lg" style="background: var(--color-primary); color: var(--color-text-inverse);">新建合同</button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm">
+                                <thead>
+                                    <tr style="background: var(--color-bg-muted);">
+                                        <th class="px-4 py-3 text-left font-medium whitespace-nowrap" style="color: var(--color-text-secondary);">合同编号</th>
+                                        <th class="px-4 py-3 text-left font-medium whitespace-nowrap" style="color: var(--color-text-secondary);">合作方</th>
+                                        <th class="px-4 py-3 text-left font-medium whitespace-nowrap" style="color: var(--color-text-secondary);">类型</th>
+                                        <th class="px-4 py-3 text-left font-medium whitespace-nowrap" style="color: var(--color-text-secondary);">金额</th>
+                                        <th class="px-4 py-3 text-left font-medium whitespace-nowrap" style="color: var(--color-text-secondary);">有效期</th>
+                                        <th class="px-4 py-3 text-left font-medium whitespace-nowrap" style="color: var(--color-text-secondary);">状态</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="contracts-tbody">
+                                    <tr class="border-t" style="border-color: var(--color-border-light);">
+                                        <td class="px-4 py-3 whitespace-nowrap truncate" style="color: var(--color-text); font-variant-numeric: tabular-nums;">HT-2024-001</td>
+                                        <td class="px-4 py-3 whitespace-nowrap truncate" style="color: var(--color-text);">杭州XX科技有限公司</td>
+                                        <td class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--color-primary-light); color: var(--color-primary);">企业工会</span></td>
+                                        <td class="px-4 py-3 whitespace-nowrap" style="color: var(--color-text); font-variant-numeric: tabular-nums;">¥180,000/年</td>
+                                        <td class="px-4 py-3 whitespace-nowrap" style="color: var(--color-text-secondary); font-variant-numeric: tabular-nums;">2024.01 - 2024.12</td>
+                                        <td class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--state-success-bg); color: var(--state-success);">执行中</span></td>
+                                    </tr>
+                                    <tr class="border-t" style="border-color: var(--color-border-light);">
+                                        <td class="px-4 py-3 whitespace-nowrap truncate" style="color: var(--color-text); font-variant-numeric: tabular-nums;">HT-2024-002</td>
+                                        <td class="px-4 py-3 whitespace-nowrap truncate" style="color: var(--color-text);">XX人寿保险浙江分公司</td>
+                                        <td class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--state-success-bg); color: var(--state-success);">商业保险</span></td>
+                                        <td class="px-4 py-3 whitespace-nowrap" style="color: var(--color-text); font-variant-numeric: tabular-nums;">¥120,000/年</td>
+                                        <td class="px-4 py-3 whitespace-nowrap" style="color: var(--color-text-secondary); font-variant-numeric: tabular-nums;">2024.03 - 2025.02</td>
+                                        <td class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--state-success-bg); color: var(--state-success);">执行中</span></td>
+                                    </tr>
+                                    <tr class="border-t" style="border-color: var(--color-border-light);">
+                                        <td class="px-4 py-3 whitespace-nowrap truncate" style="color: var(--color-text); font-variant-numeric: tabular-nums;">HT-2024-003</td>
+                                        <td class="px-4 py-3 whitespace-nowrap truncate" style="color: var(--color-text);">翠苑街道办事处</td>
+                                        <td class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--state-warning-bg); color: var(--state-warning);">街道/民政</span></td>
+                                        <td class="px-4 py-3 whitespace-nowrap" style="color: var(--color-text); font-variant-numeric: tabular-nums;">¥96,000/年</td>
+                                        <td class="px-4 py-3 whitespace-nowrap" style="color: var(--color-text-secondary); font-variant-numeric: tabular-nums;">2024.06 - 2025.05</td>
+                                        <td class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--state-warning-bg); color: var(--state-warning);">待签署</span></td>
+                                    </tr>
+                                    <tr class="border-t" style="border-color: var(--color-border-light);">
+                                        <td class="px-4 py-3 whitespace-nowrap truncate" style="color: var(--color-text); font-variant-numeric: tabular-nums;">HT-2024-004</td>
+                                        <td class="px-4 py-3 whitespace-nowrap truncate" style="color: var(--color-text);">XX集团工会委员会</td>
+                                        <td class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--color-primary-light); color: var(--color-primary);">企业工会</span></td>
+                                        <td class="px-4 py-3 whitespace-nowrap" style="color: var(--color-text); font-variant-numeric: tabular-nums;">¥240,000/年</td>
+                                        <td class="px-4 py-3 whitespace-nowrap" style="color: var(--color-text-secondary); font-variant-numeric: tabular-nums;">2024.07 - 2025.06</td>
+                                        <td class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--state-warning-bg); color: var(--state-warning);">待签署</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- ===== Modals ===== -->
+    <!-- Order Detail Modal -->
+    <div id="modal-order-detail" class="hidden fixed inset-0 flex items-center justify-center p-4" style="background: rgba(61,46,36,0.45); z-index: var(--z-modal);" onclick="closeModal('modal-order-detail')">
+        <div class="rounded-lg border w-full max-w-lg shadow-xl" style="background: var(--color-bg-card); border-color: var(--color-border);" onclick="event.stopPropagation()">
+            <div class="px-5 py-4 border-b flex items-center justify-between" style="border-color: var(--color-border);">
+                <h3 class="text-base font-semibold" style="color: var(--color-text); font-family: var(--font-serif);">订单详情</h3>
+                <button onclick="closeModal('modal-order-detail')" class="p-1 rounded-lg transition-colors hover:bg-[var(--color-bg-muted)]">
+                    <i data-lucide="x" class="w-5 h-5" style="color: var(--color-text-secondary);"></i>
+                </button>
+            </div>
+            <div id="order-detail-body" class="p-5 max-h-[70vh] overflow-y-auto"></div>
+        </div>
+    </div>
+
+    <!-- Assign Volunteer Modal -->
+    <div id="modal-assign" class="hidden fixed inset-0 flex items-center justify-center p-4" style="background: rgba(61,46,36,0.45); z-index: var(--z-modal);" onclick="closeModal('modal-assign')">
+        <div class="rounded-lg border w-full max-w-md shadow-xl" style="background: var(--color-bg-card); border-color: var(--color-border);" onclick="event.stopPropagation()">
+            <div class="px-5 py-4 border-b flex items-center justify-between" style="border-color: var(--color-border);">
+                <div>
+                    <h3 class="text-base font-semibold" style="color: var(--color-text); font-family: var(--font-serif);">指派暖伴</h3>
+                    <div class="text-xs mt-0.5" style="color: var(--color-text-muted);">订单号：<span id="assign-order-id"></span></div>
+                </div>
+                <button onclick="closeModal('modal-assign')" class="p-1 rounded-lg transition-colors hover:bg-[var(--color-bg-muted)]">
+                    <i data-lucide="x" class="w-5 h-5" style="color: var(--color-text-secondary);"></i>
+                </button>
+            </div>
+            <div id="assign-volunteer-list" class="p-4 space-y-2 max-h-96 overflow-y-auto"></div>
+        </div>
+    </div>
+
+    <!-- Volunteer Detail Modal -->
+    <div id="modal-volunteer-detail" class="hidden fixed inset-0 flex items-center justify-center p-4" style="background: rgba(61,46,36,0.45); z-index: var(--z-modal);" onclick="closeModal('modal-volunteer-detail')">
+        <div class="rounded-lg border w-full max-w-lg shadow-xl" style="background: var(--color-bg-card); border-color: var(--color-border);" onclick="event.stopPropagation()">
+            <div class="px-5 py-4 border-b flex items-center justify-between" style="border-color: var(--color-border);">
+                <h3 class="text-base font-semibold" style="color: var(--color-text); font-family: var(--font-serif);">暖伴详情</h3>
+                <button onclick="closeModal('modal-volunteer-detail')" class="p-1 rounded-lg transition-colors hover:bg-[var(--color-bg-muted)]">
+                    <i data-lucide="x" class="w-5 h-5" style="color: var(--color-text-secondary);"></i>
+                </button>
+            </div>
+            <div id="volunteer-detail-body" class="p-5 max-h-[70vh] overflow-y-auto"></div>
+        </div>
+    </div>
+
+    <!-- Contract Create Modal -->
+    <div id="modal-contract" class="hidden fixed inset-0 flex items-center justify-center p-4" style="background: rgba(61,46,36,0.45); z-index: var(--z-modal);" onclick="closeModal('modal-contract')">
+        <div class="rounded-lg border w-full max-w-lg shadow-xl" style="background: var(--color-bg-card); border-color: var(--color-border);" onclick="event.stopPropagation()">
+            <div class="px-5 py-4 border-b flex items-center justify-between" style="border-color: var(--color-border);">
+                <h3 class="text-base font-semibold" style="color: var(--color-text); font-family: var(--font-serif);">新建合同</h3>
+                <button onclick="closeModal('modal-contract')" class="p-1 rounded-lg transition-colors hover:bg-[var(--color-bg-muted)]">
+                    <i data-lucide="x" class="w-5 h-5" style="color: var(--color-text-secondary);"></i>
+                </button>
+            </div>
+            <form id="contract-form" onsubmit="submitContract(event)" class="p-5 space-y-4">
+                <div>
+                    <label class="text-sm block mb-1.5" style="color: var(--color-text-secondary);">合作方名称 <span style="color: var(--state-error);">*</span></label>
+                    <input id="contract-client" type="text" required placeholder="请输入企业/机构名称" class="w-full px-3 py-2 rounded-lg border text-sm outline-none" style="background: var(--color-bg); border-color: var(--color-border); color: var(--color-text);">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-sm block mb-1.5" style="color: var(--color-text-secondary);">合同类型</label>
+                        <select id="contract-type" class="w-full px-3 py-2 rounded-lg border text-sm outline-none" style="background: var(--color-bg); border-color: var(--color-border); color: var(--color-text);">
+                            <option>企业工会</option>
+                            <option>商业保险</option>
+                            <option>街道/民政</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-sm block mb-1.5" style="color: var(--color-text-secondary);">合同金额（元/年）</label>
+                        <input id="contract-amount" type="number" min="0" placeholder="如 180000" class="w-full px-3 py-2 rounded-lg border text-sm outline-none" style="background: var(--color-bg); border-color: var(--color-border); color: var(--color-text);">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-sm block mb-1.5" style="color: var(--color-text-secondary);">开始日期</label>
+                        <input id="contract-start" type="date" class="w-full px-3 py-2 rounded-lg border text-sm outline-none" style="background: var(--color-bg); border-color: var(--color-border); color: var(--color-text);">
+                    </div>
+                    <div>
+                        <label class="text-sm block mb-1.5" style="color: var(--color-text-secondary);">有效期</label>
+                        <input id="contract-period" type="text" placeholder="如 2024.01 - 2024.12" class="w-full px-3 py-2 rounded-lg border text-sm outline-none" style="background: var(--color-bg); border-color: var(--color-border); color: var(--color-text);">
+                    </div>
+                </div>
+                <div>
+                    <label class="text-sm block mb-1.5" style="color: var(--color-text-secondary);">合同状态</label>
+                    <select id="contract-status" class="w-full px-3 py-2 rounded-lg border text-sm outline-none" style="background: var(--color-bg); border-color: var(--color-border); color: var(--color-text);">
+                        <option>待签署</option>
+                        <option>执行中</option>
+                        <option>已结束</option>
+                    </select>
+                </div>
+                <div class="flex justify-end gap-3 pt-2">
+                    <button type="button" onclick="closeModal('modal-contract')" class="px-4 py-2 text-sm rounded-lg border" style="background: var(--color-bg-card); color: var(--color-text-secondary); border-color: var(--color-border);">取消</button>
+                    <button type="submit" class="px-4 py-2 text-sm rounded-lg" style="background: var(--color-primary); color: var(--color-text-inverse);">创建合同</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed top-6 right-6 space-y-2" style="z-index: var(--z-toast);"></div>
+
+    <!-- ===== Custom Styles (inside body) ===== -->
+    <style>
+        /* Sidebar button states */
+        .sidebar-btn:hover { background: rgba(240, 232, 223, 0.08); }
+        .sidebar-btn.active { background: var(--color-sidebar-active-bg); color: var(--color-sidebar-text) !important; }
+
+        /* Scrollbar styling */
+        .tab-panel::-webkit-scrollbar { width: 6px; }
+        .tab-panel::-webkit-scrollbar-track { background: transparent; }
+        .tab-panel::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 3px; }
+
+        /* Table row hover */
+        table tbody tr { transition: background-color 150ms ease; }
+        table tbody tr:hover { background: var(--color-bg-muted); }
+
+        /* Button hover transitions */
+        button { transition: background-color 150ms ease, color 150ms ease, transform 150ms ease; }
+        button:active { transform: scale(0.98); }
+    </style>
+
+    <!-- ===== Tab Switching + Charts ===== -->
+    <script>
+        // Tab titles map
+        var tabTitles = {
+            overview: '数据概览',
+            orders: '订单管理',
+            volunteers: '暖伴管理',
+            safety: '安全监控',
+            analytics: '数据分析',
+            b2b: 'B端采购'
+        };
+
+        function switchTab(tabId) {
+            // Hide all panels
+            var panels = document.querySelectorAll('.tab-panel');
+            for (var i = 0; i < panels.length; i++) { panels[i].classList.add('hidden'); }
+            // Show target
+            var target = document.getElementById('tab-' + tabId);
+            if (target) target.classList.remove('hidden');
+            // Update nav buttons
+            var btns = document.querySelectorAll('.sidebar-btn');
+            for (var j = 0; j < btns.length; j++) {
+                btns[j].classList.remove('active');
+                btns[j].style.color = 'rgba(240,232,223,0.6)';
+            }
+            var activeBtn = document.querySelector('[data-nav="' + tabId + '"]');
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+                activeBtn.style.color = 'var(--color-sidebar-text)';
+            }
+            // Update page title
+            var titleEl = document.getElementById('page-title');
+            if (titleEl && tabTitles[tabId]) titleEl.textContent = tabTitles[tabId];
+            // Init charts if analytics tab
+            if (tabId === 'analytics') { setTimeout(initAnalyticsCharts, 100); }
+        }
+
+        // Clock
+        function updateClock() {
+            var now = new Date();
+            var h = String(now.getHours()).padStart(2, '0');
+            var m = String(now.getMinutes()).padStart(2, '0');
+            var s = String(now.getSeconds()).padStart(2, '0');
+            var el = document.getElementById('current-time');
+            if (el) el.textContent = h + ':' + m + ':' + s;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // Chart.js global defaults
+        Chart.defaults.font.family = "'Noto Sans SC', sans-serif";
+        Chart.defaults.font.size = 12;
+        Chart.defaults.color = '#7A6B5D';
+        Chart.defaults.plugins.legend.labels.usePointStyle = true;
+        Chart.defaults.plugins.legend.labels.pointStyleWidth = 8;
+
+        var warmColors = {
+            primary: '#D4654A',
+            primaryLight: 'rgba(212,101,74,0.15)',
+            secondary: '#5B8A72',
+            secondaryLight: 'rgba(91,138,114,0.15)',
+            accent: '#E8A838',
+            accentLight: 'rgba(232,168,56,0.15)',
+            info: '#5B7FA8',
+            infoLight: 'rgba(91,127,168,0.15)',
+            grid: '#E8DDD0',
+            text: '#3D2E24',
+            muted: '#A89888'
+        };
+
+        // --- Overview Charts ---
+        // Order Trend Line
+        (function() {
+            var ctx = document.getElementById('chart-order-trend');
+            if (!ctx) return;
+            window.orderTrendChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['6/18', '6/19', '6/20', '6/21', '6/22', '6/23', '6/24'],
+                    datasets: [{
+                        label: '订单数',
+                        data: [32, 38, 35, 42, 45, 40, 48],
+                        borderColor: warmColors.primary,
+                        backgroundColor: warmColors.primaryLight,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 4,
+                        pointBackgroundColor: warmColors.primary,
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: warmColors.grid }, ticks: { stepSize: 10 } },
+                        x: { grid: { display: false } }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        })();
+
+        // Service Type Pie
+        (function() {
+            var ctx = document.getElementById('chart-service-type');
+            if (!ctx) return;
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['日常陪伴', '跑腿代办', '数字辅导', '陪同就医'],
+                    datasets: [{
+                        data: [38, 24, 18, 20],
+                        backgroundColor: [warmColors.primary, warmColors.accent, warmColors.secondary, warmColors.info],
+                        borderWidth: 2,
+                        borderColor: '#FFFFFF'
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    cutout: '60%',
+                    plugins: {
+                        legend: { position: 'bottom', labels: { padding: 12, font: { size: 11 } } }
+                    }
+                }
+            });
+        })();
+
+        // Time Heatmap Bar
+        (function() {
+            var ctx = document.getElementById('chart-time-heatmap');
+            if (!ctx) return;
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['6-8时', '8-10时', '10-12时', '12-14时', '14-16时', '16-18时', '18-20时', '20-22时'],
+                    datasets: [{
+                        label: '订单量',
+                        data: [4, 12, 18, 8, 15, 20, 14, 6],
+                        backgroundColor: function(context) {
+                            var value = context.raw;
+                            if (value >= 18) return warmColors.primary;
+                            if (value >= 12) return 'rgba(212,101,74,0.6)';
+                            return 'rgba(212,101,74,0.3)';
+                        },
+                        borderRadius: 4,
+                        barPercentage: 0.7
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: warmColors.grid }, ticks: { stepSize: 5 } },
+                        x: { grid: { display: false } }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        })();
+
+        // --- Analytics Charts (lazy init) ---
+        var analyticsInited = false;
+        function initAnalyticsCharts() {
+            if (analyticsInited) return;
+            analyticsInited = true;
+
+            // Monthly Trend
+            var ctx1 = document.getElementById('chart-monthly-trend');
+            if (ctx1) {
+                new Chart(ctx1, {
+                    type: 'line',
+                    data: {
+                        labels: ['1月', '2月', '3月', '4月', '5月', '6月'],
+                        datasets: [
+                            { label: '订单数', data: [280, 310, 350, 420, 480, 520], borderColor: warmColors.primary, backgroundColor: warmColors.primaryLight, fill: true, tension: 0.4, borderWidth: 2, pointRadius: 3 },
+                            { label: '服务家庭', data: [180, 210, 250, 300, 340, 380], borderColor: warmColors.secondary, backgroundColor: warmColors.secondaryLight, fill: true, tension: 0.4, borderWidth: 2, pointRadius: 3 }
+                        ]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        scales: { y: { beginAtZero: true, grid: { color: warmColors.grid } }, x: { grid: { display: false } } },
+                        plugins: { legend: { position: 'top', labels: { padding: 16 } } }
+                    }
+                });
+            }
+
+            // Street Coverage
+            var ctx2 = document.getElementById('chart-street-coverage');
+            if (ctx2) {
+                new Chart(ctx2, {
+                    type: 'bar',
+                    data: {
+                        labels: ['翠苑街道', '西溪街道', '灵隐街道', '北山街道', '西湖街道', '古荡街道'],
+                        datasets: [{
+                            label: '覆盖家庭',
+                            data: [86, 72, 65, 58, 48, 42],
+                            backgroundColor: [warmColors.primary, warmColors.secondary, warmColors.accent, warmColors.info, 'rgba(212,101,74,0.5)', 'rgba(91,138,114,0.5)'],
+                            borderRadius: 4,
+                            barPercentage: 0.6
+                        }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        indexAxis: 'y',
+                        scales: { x: { beginAtZero: true, grid: { color: warmColors.grid } }, y: { grid: { display: false } } },
+                        plugins: { legend: { display: false } }
+                    }
+                });
+            }
+
+            // Volunteer Ranking
+            var ctx3 = document.getElementById('chart-volunteer-rank');
+            if (ctx3) {
+                new Chart(ctx3, {
+                    type: 'bar',
+                    data: {
+                        labels: ['李芳姨', '张小雨', '赵敏', '王志强', '陈思雨', '刘文博'],
+                        datasets: [{
+                            label: '本月服务次数',
+                            data: [48, 42, 38, 35, 30, 26],
+                            backgroundColor: warmColors.primary,
+                            borderRadius: 4,
+                            barPercentage: 0.5
+                        }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        scales: { y: { beginAtZero: true, grid: { color: warmColors.grid } }, x: { grid: { display: false } } },
+                        plugins: { legend: { display: false } }
+                    }
+                });
+            }
+
+            // Age Distribution
+            var ctx4 = document.getElementById('chart-age-dist');
+            if (ctx4) {
+                new Chart(ctx4, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['60-65岁', '66-70岁', '71-75岁', '76-80岁', '80岁以上'],
+                        datasets: [{
+                            data: [22, 28, 25, 16, 9],
+                            backgroundColor: [warmColors.accent, warmColors.primary, warmColors.secondary, warmColors.info, 'rgba(168,152,136,0.6)'],
+                            borderWidth: 2,
+                            borderColor: '#FFFFFF'
+                        }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        cutout: '55%',
+                        plugins: { legend: { position: 'bottom', labels: { padding: 12, font: { size: 11 } } } }
+                    }
+                });
+            }
+        }
+    </script>
+    <script>lucide.createIcons();</script>
+
+    <!-- ===== 业务功能脚本（localStorage 持久化 + 交互逻辑） ===== -->
+    <script>
+    /* ============================================================
+     * 共享数据层 — 与 mini-program.html 共享相同 localStorage key
+     * ============================================================ */
+    var SC_KEYS = {
+        orders: 'sc_orders',
+        volunteers: 'sc_volunteers',
+        alarms: 'sc_alarms',
+        contracts: 'sc_contracts'
+    };
+
+    function scGet(key) {
+        try {
+            var raw = localStorage.getItem(key);
+            return raw ? JSON.parse(raw) : null;
+        } catch (e) { return null; }
+    }
+    function scSet(key, data) {
+        try { localStorage.setItem(key, JSON.stringify(data)); } catch (e) {}
+    }
+
+    /* ===== 示例数据初始化（仅在 localStorage 为空时写入） ===== */
+    function initData() {
+        if (!scGet(SC_KEYS.orders)) {
+            scSet(SC_KEYS.orders, [
+                { id: 'NB20240601', type: '日常陪伴', status: '进行中', elderName: '王奶奶', address: '幸福社区 3栋', time: '06-24 09:30', duration: '2小时', description: '陪老人散步聊天，读报纸，协助简单家务', volunteer: '张小雨', price: 80, createdAt: Date.now() },
+                { id: 'NB20240602', type: '跑腿代办', status: '待接单', elderName: '李大爷', address: '阳光花园 12栋', time: '06-24 10:15', duration: '1小时', description: '代购生活用品和常用药品', volunteer: null, price: 60, createdAt: Date.now() },
+                { id: 'NB20240603', type: '数字辅导', status: '已完成', elderName: '赵阿姨', address: '和平小区 7栋', time: '06-24 08:00', duration: '1.5小时', description: '教老人使用智能手机视频通话和微信', volunteer: '王志强', price: 70, createdAt: Date.now() },
+                { id: 'NB20240604', type: '陪同就医', status: '进行中', elderName: '孙爷爷', address: '翠苑街道 5栋', time: '06-24 07:45', duration: '3小时', description: '陪同前往省立医院复查并取药', volunteer: '陈思雨', price: 120, createdAt: Date.now() },
+                { id: 'NB20240605', type: '日常陪伴', status: '已完成', elderName: '周奶奶', address: '锦绣家园 1栋', time: '06-23 14:00', duration: '2小时', description: '陪伴聊天，协助整理家务', volunteer: '刘文博', price: 80, createdAt: Date.now() },
+                { id: 'NB20240606', type: '跑腿代办', status: '已取消', elderName: '吴叔叔', address: '金色港湾 8栋', time: '06-23 11:20', duration: '1小时', description: '代缴水电燃气费', volunteer: '赵敏', price: 60, createdAt: Date.now() }
+            ]);
+        }
+        if (!scGet(SC_KEYS.volunteers)) {
+            scSet(SC_KEYS.volunteers, [
+                { id: 'V-001', name: '张小雨', phone: '138xxxx1234', rating: 4.9, completedOrders: 328, status: '在线', skills: ['日常陪伴', '数字辅导'], area: '幸福社区', experience: '2年经验', praiseRate: 98 },
+                { id: 'V-002', name: '李芳姨', phone: '139xxxx5678', rating: 4.8, completedOrders: 512, status: '在线', skills: ['日常陪伴', '跑腿代办', '陪同就医'], area: '阳光花园', experience: '3年经验', praiseRate: 97 },
+                { id: 'V-003', name: '王志强', phone: '137xxxx9012', rating: 4.7, completedOrders: 156, status: '在线', skills: ['数字辅导', '跑腿代办'], area: '和平小区', experience: '1年经验', praiseRate: 96 },
+                { id: 'V-004', name: '陈思雨', phone: '136xxxx3456', rating: 4.9, completedOrders: 89, status: '服务中', skills: ['陪同就医', '日常陪伴'], area: '翠苑街道', experience: '1年经验', praiseRate: 99 },
+                { id: 'V-005', name: '刘文博', phone: '135xxxx7890', rating: 4.6, completedOrders: 67, status: '在线', skills: ['日常陪伴', '跑腿代办'], area: '锦绣家园', experience: '半年经验', praiseRate: 95 },
+                { id: 'V-006', name: '赵敏', phone: '133xxxx2345', rating: 4.8, completedOrders: 203, status: '待审核', skills: ['跑腿代办', '陪同就医'], area: '金色港湾', experience: '2年经验', praiseRate: 97 }
+            ]);
+        }
+        if (!scGet(SC_KEYS.alarms)) {
+            scSet(SC_KEYS.alarms, [
+                { id: 'ALM-001', time: '14:32', type: '超时预警', status: '已确认', detail: '订单#NB20240604 服务时长超过2小时', location: '翠苑街道' },
+                { id: 'ALM-002', time: '11:15', type: '位置偏离', status: '已处理', detail: '暖伴李芳姨偏离服务区域500米', location: '阳光花园' },
+                { id: 'ALM-003', time: '09:40', type: '紧急呼叫', status: '已响应', detail: '暖家孙爷爷触发SOS按钮', location: '翠苑街道 5栋' }
+            ]);
+        }
+        if (!scGet(SC_KEYS.contracts)) {
+            scSet(SC_KEYS.contracts, [
+                { id: 'HT-2024-001', client: '杭州XX科技有限公司', type: '企业工会', amount: 180000, period: '2024.01 - 2024.12', status: '执行中', startDate: '2024-01-01' },
+                { id: 'HT-2024-002', client: 'XX人寿保险浙江分公司', type: '商业保险', amount: 120000, period: '2024.03 - 2025.02', status: '执行中', startDate: '2024-03-01' },
+                { id: 'HT-2024-003', client: '翠苑街道办事处', type: '街道/民政', amount: 96000, period: '2024.06 - 2025.05', status: '待签署', startDate: '2024-06-01' },
+                { id: 'HT-2024-004', client: 'XX集团工会委员会', type: '企业工会', amount: 240000, period: '2024.07 - 2025.06', status: '待签署', startDate: '2024-07-01' }
+            ]);
+        }
+    }
+
+    /* ============================================================
+     * Toast 提示
+     * ============================================================ */
+    function showToast(msg, type) {
+        var container = document.getElementById('toast-container');
+        if (!container) return;
+        var palette = {
+            success: { bg: 'var(--state-success-bg)', color: 'var(--state-success)', icon: 'check-circle' },
+            error:   { bg: 'var(--state-error-bg)',   color: 'var(--state-error)',   icon: 'x-circle' },
+            info:    { bg: 'var(--state-info-bg)',    color: 'var(--state-info)',    icon: 'info' }
+        };
+        var c = palette[type] || palette.info;
+        var toast = document.createElement('div');
+        toast.className = 'flex items-center gap-2 px-4 py-3 rounded-lg border shadow-lg';
+        toast.style.cssText = 'background:' + c.bg + ';border-color:' + c.color + ';min-width:200px;';
+        toast.innerHTML = '<i data-lucide="' + c.icon + '" class="w-4 h-4" style="color:' + c.color + ';"></i><span class="text-sm" style="color:var(--color-text);">' + msg + '</span>';
+        container.appendChild(toast);
+        if (window.lucide) lucide.createIcons();
+        setTimeout(function () {
+            toast.style.transition = 'opacity 300ms ease, transform 300ms ease';
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateY(-10px)';
+            setTimeout(function () { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 300);
+        }, 2500);
+    }
+
+    /* ============================================================
+     * Modal 通用工具
+     * ============================================================ */
+    function openModal(id) {
+        var m = document.getElementById(id);
+        if (m) { m.classList.remove('hidden'); if (window.lucide) lucide.createIcons(); }
+    }
+    function closeModal(id) {
+        var m = document.getElementById(id);
+        if (m) m.classList.add('hidden');
+    }
+    // ESC 键关闭所有弹窗
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+            ['modal-order-detail', 'modal-assign', 'modal-volunteer-detail', 'modal-contract'].forEach(function (id) {
+                var m = document.getElementById(id);
+                if (m && !m.classList.contains('hidden')) m.classList.add('hidden');
+            });
+        }
+    });
+
+    /* ============================================================
+     * 样式辅助函数
+     * ============================================================ */
+    function orderTypeStyle(type) {
+        var map = {
+            '日常陪伴': 'var(--color-primary-light)|var(--color-primary)',
+            '陪同就医': 'var(--color-primary-light)|var(--color-primary)',
+            '跑腿代办': 'var(--state-warning-bg)|var(--state-warning)',
+            '数字辅导': 'var(--state-success-bg)|var(--state-success)'
+        };
+        return map[type] || 'var(--color-bg-muted)|var(--color-text-secondary)';
+    }
+    function orderStatusStyle(status) {
+        var map = {
+            '进行中': 'var(--state-success-bg)|var(--state-success)',
+            '待接单': 'var(--state-info-bg)|var(--state-info)',
+            '已完成': 'var(--state-warning-bg)|var(--state-warning)',
+            '已取消': 'var(--state-error-bg)|var(--state-error)'
+        };
+        return map[status] || 'var(--color-bg-muted)|var(--color-text-secondary)';
+    }
+    function volunteerStatusStyle(status) {
+        var map = {
+            '在线': 'var(--state-success-bg)|var(--state-success)',
+            '服务中': 'var(--state-info-bg)|var(--state-info)',
+            '待审核': 'var(--state-warning-bg)|var(--state-warning)'
+        };
+        return map[status] || 'var(--color-bg-muted)|var(--color-text-secondary)';
+    }
+    function alarmTypeStyle(type) {
+        var map = {
+            '紧急呼叫': 'var(--state-error-bg)|var(--state-error)',
+            '紧急求助': 'var(--state-error-bg)|var(--state-error)',
+            '超时预警': 'var(--state-warning-bg)|var(--state-warning)',
+            '位置偏离': 'var(--state-info-bg)|var(--state-info)'
+        };
+        return map[type] || 'var(--color-bg-muted)|var(--color-text-secondary)';
+    }
+    function contractTypeStyle(type) {
+        var map = {
+            '企业工会': 'var(--color-primary-light)|var(--color-primary)',
+            '商业保险': 'var(--state-success-bg)|var(--state-success)',
+            '街道/民政': 'var(--state-warning-bg)|var(--state-warning)'
+        };
+        return map[type] || 'var(--color-bg-muted)|var(--color-text-secondary)';
+    }
+    function contractStatusStyle(status) {
+        var map = {
+            '执行中': 'var(--state-success-bg)|var(--state-success)',
+            '待签署': 'var(--state-warning-bg)|var(--state-warning)',
+            '已结束': 'var(--color-bg-muted)|var(--color-text-secondary)'
+        };
+        return map[status] || 'var(--color-bg-muted)|var(--color-text-secondary)';
+    }
+
+    /* ============================================================
+     * 订单管理
+     * ============================================================ */
+    var currentOrderFilter = '全部';
+    var currentOrderSearch = '';
+
+    function getOrders() { return scGet(SC_KEYS.orders) || []; }
+    function saveOrders(o) { scSet(SC_KEYS.orders, o); }
+
+    function renderOrders() {
+        var tbody = document.getElementById('orders-tbody');
+        if (!tbody) return;
+        var orders = getOrders();
+        var kw = currentOrderSearch.toLowerCase();
+        var filtered = orders.filter(function (o) {
+            var matchFilter = (currentOrderFilter === '全部') || (o.status === currentOrderFilter);
+            var matchSearch = !kw || o.id.toLowerCase().indexOf(kw) >= 0 || (o.elderName || '').toLowerCase().indexOf(kw) >= 0;
+            return matchFilter && matchSearch;
+        });
+        if (filtered.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" class="px-4 py-10 text-center" style="color:var(--color-text-muted);">暂无符合条件的订单</td></tr>';
+            return;
+        }
+        var html = '';
+        filtered.forEach(function (o) {
+            var ts = orderTypeStyle(o.type).split('|');
+            var ss = orderStatusStyle(o.status).split('|');
+            var volunteerCell = o.volunteer
+                ? '<span style="color:var(--color-text);">' + o.volunteer + '</span>'
+                : '<span style="color:var(--color-text-muted);">未指派</span>';
+            var actionBtn;
+            if (o.status === '待接单' || !o.volunteer) {
+                actionBtn = '<button onclick="showAssignModal(\'' + o.id + '\')" class="text-xs mr-2" style="color:var(--color-primary);">指派</button>' +
+                            '<button onclick="showOrderDetail(\'' + o.id + '\')" class="text-xs" style="color:var(--color-text-secondary);">详情</button>';
+            } else {
+                actionBtn = '<button onclick="showOrderDetail(\'' + o.id + '\')" class="text-xs" style="color:var(--color-primary);">详情</button>';
+            }
+            html += '<tr class="border-t" style="border-color:var(--color-border-light);">' +
+                '<td class="px-4 py-3 whitespace-nowrap truncate" style="color:var(--color-text);font-variant-numeric:tabular-nums;">#' + o.id + '</td>' +
+                '<td class="px-4 py-3 whitespace-nowrap"><div class="truncate" style="color:var(--color-text);">' + o.elderName + '</div><div class="text-xs truncate" style="color:var(--color-text-muted);">' + o.address + '</div></td>' +
+                '<td class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background:' + ts[0] + ';color:' + ts[1] + ';">' + o.type + '</span></td>' +
+                '<td class="px-4 py-3 whitespace-nowrap truncate">' + volunteerCell + '</td>' +
+                '<td class="px-4 py-3 whitespace-nowrap" style="color:var(--color-text-secondary);font-variant-numeric:tabular-nums;">' + o.time + '</td>' +
+                '<td class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background:' + ss[0] + ';color:' + ss[1] + ';">' + o.status + '</span></td>' +
+                '<td class="px-4 py-3 whitespace-nowrap">' + actionBtn + '</td>' +
+                '</tr>';
+        });
+        tbody.innerHTML = html;
+    }
+
+    function filterOrders(status) {
+        currentOrderFilter = status;
+        var btns = document.querySelectorAll('.order-filter-btn');
+        btns.forEach(function (b) {
+            if (b.getAttribute('data-filter') === status) {
+                b.style.background = 'var(--color-primary)';
+                b.style.color = 'var(--color-text-inverse)';
+                b.style.borderColor = 'var(--color-primary)';
+            } else {
+                b.style.background = 'var(--color-bg-card)';
+                b.style.color = 'var(--color-text-secondary)';
+                b.style.borderColor = 'var(--color-border)';
+            }
+        });
+        renderOrders();
+    }
+
+    function searchOrders(keyword) {
+        currentOrderSearch = keyword || '';
+        renderOrders();
+    }
+
+    function showOrderDetail(id) {
+        var orders = getOrders();
+        var o = null;
+        for (var i = 0; i < orders.length; i++) { if (orders[i].id === id) { o = orders[i]; break; } }
+        if (!o) return;
+        var body = document.getElementById('order-detail-body');
+        var ts = orderTypeStyle(o.type).split('|');
+        var ss = orderStatusStyle(o.status).split('|');
+        var rows = [
+            ['订单编号', '#' + o.id, 'text'],
+            ['服务类型', o.type, 'type'],
+            ['订单状态', o.status, 'status'],
+            ['暖家姓名', o.elderName, 'text'],
+            ['服务地址', o.address, 'text'],
+            ['服务时间', o.time, 'text'],
+            ['服务时长', o.duration, 'text'],
+            ['指派暖伴', o.volunteer || '未指派', 'text'],
+            ['服务费用', '¥' + o.price, 'text'],
+            ['需求描述', o.description || '-', 'text']
+        ];
+        var html = '';
+        rows.forEach(function (r) {
+            var valHtml;
+            if (r[2] === 'status') {
+                valHtml = '<span class="px-2 py-0.5 rounded text-xs" style="background:' + ss[0] + ';color:' + ss[1] + ';">' + r[1] + '</span>';
+            } else if (r[2] === 'type') {
+                valHtml = '<span class="px-2 py-0.5 rounded text-xs" style="background:' + ts[0] + ';color:' + ts[1] + ';">' + r[1] + '</span>';
+            } else {
+                valHtml = '<span style="color:var(--color-text);">' + r[1] + '</span>';
+            }
+            html += '<div class="flex items-start gap-4 py-2.5 border-b" style="border-color:var(--color-border-light);">' +
+                '<div class="text-sm w-24 shrink-0" style="color:var(--color-text-secondary);">' + r[0] + '</div>' +
+                '<div class="text-sm flex-1 break-words">' + valHtml + '</div>' +
+                '</div>';
+        });
+        body.innerHTML = html;
+        openModal('modal-order-detail');
+    }
+
+    function showAssignModal(id) {
+        var volunteers = getVolunteers();
+        var list = document.getElementById('assign-volunteer-list');
+        var orderIdEl = document.getElementById('assign-order-id');
+        if (orderIdEl) orderIdEl.textContent = '#' + id;
+        if (volunteers.length === 0) {
+            list.innerHTML = '<div class="px-4 py-8 text-center text-sm" style="color:var(--color-text-muted);">暂无可指派的暖伴</div>';
+        } else {
+            var html = '';
+            volunteers.forEach(function (v) {
+                var ss = volunteerStatusStyle(v.status).split('|');
+                var disabled = (v.status === '待审核');
+                var cursor = disabled ? 'not-allowed' : 'pointer';
+                var opacity = disabled ? '0.5' : '1';
+                var clickAttr = disabled ? '' : 'onclick="assignVolunteer(\'' + id + '\',\'' + v.id + '\')"';
+                html += '<div ' + clickAttr + ' class="flex items-center gap-3 p-3 rounded-lg transition-colors" style="background:var(--color-bg-muted);cursor:' + cursor + ';opacity:' + opacity + ';" ' + (disabled ? '' : 'onmouseover="this.style.background=\'var(--color-primary-light)\'" onmouseout="this.style.background=\'var(--color-bg-muted)\'"') + '>' +
+                    '<div class="w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold" style="background:var(--color-primary-light);color:var(--color-primary);">' + v.name.charAt(0) + '</div>' +
+                    '<div class="flex-1 min-w-0">' +
+                        '<div class="text-sm font-medium truncate" style="color:var(--color-text);">' + v.name + (disabled ? '（待审核）' : '') + '</div>' +
+                        '<div class="text-xs truncate" style="color:var(--color-text-muted);">评分 ' + v.rating + ' · 完成 ' + v.completedOrders + ' 单 · ' + (v.skills ? v.skills.join('、') : '') + '</div>' +
+                    '</div>' +
+                    '<span class="px-2 py-0.5 rounded text-xs whitespace-nowrap" style="background:' + ss[0] + ';color:' + ss[1] + ';">' + v.status + '</span>' +
+                    '</div>';
+            });
+            list.innerHTML = html;
+        }
+        openModal('modal-assign');
+    }
+
+    function assignVolunteer(orderId, volunteerId) {
+        var orders = getOrders();
+        var volunteers = getVolunteers();
+        var v = null, idx = -1;
+        for (var i = 0; i < volunteers.length; i++) { if (volunteers[i].id === volunteerId) { v = volunteers[i]; break; } }
+        for (var j = 0; j < orders.length; j++) { if (orders[j].id === orderId) { idx = j; break; } }
+        if (idx >= 0 && v) {
+            orders[idx].volunteer = v.name;
+            if (orders[idx].status === '待接单') orders[idx].status = '进行中';
+            saveOrders(orders);
+            renderOrders();
+            updateOverviewStats();
+            closeModal('modal-assign');
+            showToast('已成功指派暖伴 ' + v.name, 'success');
+        }
+    }
+
+    /* ============================================================
+     * 暖伴管理
+     * ============================================================ */
+    function getVolunteers() { return scGet(SC_KEYS.volunteers) || []; }
+    function saveVolunteers(v) { scSet(SC_KEYS.volunteers, v); }
+
+    function renderVolunteers() {
+        var grid = document.getElementById('volunteers-grid');
+        if (!grid) return;
+        var volunteers = getVolunteers();
+        var avatarColors = [
+            'var(--color-primary-light)|var(--color-primary)',
+            'var(--state-success-bg)|var(--state-success)',
+            'var(--state-warning-bg)|var(--state-warning)',
+            'var(--state-info-bg)|var(--state-info)'
+        ];
+        if (volunteers.length === 0) {
+            grid.innerHTML = '<div class="col-span-3 py-10 text-center text-sm" style="color:var(--color-text-muted);">暂无暖伴数据</div>';
+            return;
+        }
+        var html = '';
+        volunteers.forEach(function (v, i) {
+            var ac = avatarColors[i % avatarColors.length].split('|');
+            var ss = volunteerStatusStyle(v.status).split('|');
+            html += '<div onclick="showVolunteerDetail(\'' + v.id + '\')" class="rounded-lg p-5 border cursor-pointer transition-shadow" style="background:var(--color-bg-card);border-color:var(--color-border);" onmouseover="this.style.boxShadow=\'var(--shadow-md)\'" onmouseout="this.style.boxShadow=\'none\'">' +
+                '<div class="flex items-center gap-3 mb-4">' +
+                    '<div class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold" style="background:' + ac[0] + ';color:' + ac[1] + ';">' + v.name.charAt(0) + '</div>' +
+                    '<div class="flex-1 min-w-0">' +
+                        '<div class="text-sm font-semibold truncate" style="color:var(--color-text);">' + v.name + '</div>' +
+                        '<div class="text-xs truncate" style="color:var(--color-text-muted);">' + (v.area || '') + ' · ' + (v.experience || '') + '</div>' +
+                    '</div>' +
+                    '<span class="px-2 py-0.5 rounded text-xs whitespace-nowrap" style="background:' + ss[0] + ';color:' + ss[1] + ';">' + v.status + '</span>' +
+                '</div>' +
+                '<div class="grid grid-cols-3 gap-3 text-center">' +
+                    '<div><div class="text-lg font-bold" style="color:var(--color-text);font-variant-numeric:tabular-nums;">' + v.completedOrders + '</div><div class="text-xs" style="color:var(--color-text-muted);">服务次数</div></div>' +
+                    '<div><div class="text-lg font-bold" style="color:var(--state-warning);font-variant-numeric:tabular-nums;">' + v.rating + '</div><div class="text-xs" style="color:var(--color-text-muted);">评分</div></div>' +
+                    '<div><div class="text-lg font-bold" style="color:var(--state-success);font-variant-numeric:tabular-nums;">' + (v.praiseRate || 95) + '%</div><div class="text-xs" style="color:var(--color-text-muted);">好评率</div></div>' +
+                '</div>' +
+                '</div>';
+        });
+        grid.innerHTML = html;
+    }
+
+    function showVolunteerDetail(id) {
+        var volunteers = getVolunteers();
+        var v = null;
+        for (var i = 0; i < volunteers.length; i++) { if (volunteers[i].id === id) { v = volunteers[i]; break; } }
+        if (!v) return;
+        var body = document.getElementById('volunteer-detail-body');
+        var ss = volunteerStatusStyle(v.status).split('|');
+        var rows = [
+            ['姓名', v.name, 'text'],
+            ['联系电话', v.phone || '-', 'text'],
+            ['当前状态', v.status, 'status'],
+            ['所在区域', v.area || '-', 'text'],
+            ['从业经验', v.experience || '-', 'text'],
+            ['服务次数', v.completedOrders + ' 次', 'text'],
+            ['综合评分', v.rating + ' 分', 'text'],
+            ['好评率', (v.praiseRate || 95) + '%', 'text'],
+            ['服务技能', (v.skills || []).join('、') || '-', 'text']
+        ];
+        var html = '';
+        rows.forEach(function (r) {
+            var valHtml = (r[2] === 'status')
+                ? '<span class="px-2 py-0.5 rounded text-xs" style="background:' + ss[0] + ';color:' + ss[1] + ';">' + r[1] + '</span>'
+                : '<span style="color:var(--color-text);">' + r[1] + '</span>';
+            html += '<div class="flex items-start gap-4 py-2.5 border-b" style="border-color:var(--color-border-light);">' +
+                '<div class="text-sm w-24 shrink-0" style="color:var(--color-text-secondary);">' + r[0] + '</div>' +
+                '<div class="text-sm flex-1 break-words">' + valHtml + '</div>' +
+                '</div>';
+        });
+        body.innerHTML = html;
+        openModal('modal-volunteer-detail');
+    }
+
+    /* ============================================================
+     * 安全监控
+     * ============================================================ */
+    function getAlarms() { return scGet(SC_KEYS.alarms) || []; }
+    function saveAlarms(a) { scSet(SC_KEYS.alarms, a); }
+
+    function renderAlarms() {
+        var tbody = document.getElementById('alarms-tbody');
+        if (!tbody) return;
+        var alarms = getAlarms();
+        if (alarms.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-10 text-center" style="color:var(--color-text-muted);">暂无报警记录</td></tr>';
+            return;
+        }
+        var html = '';
+        alarms.forEach(function (a) {
+            var ts = alarmTypeStyle(a.type).split('|');
+            var processed = (a.status === '已处理' || a.status === '已确认' || a.status === '已响应');
+            var ss = processed ? 'var(--state-success-bg)|var(--state-success)'.split('|') : 'var(--state-warning-bg)|var(--state-warning)'.split('|');
+            var actionBtn = processed
+                ? '<span class="text-xs" style="color:var(--color-text-muted);">已处理</span>'
+                : '<button onclick="processAlarm(\'' + a.id + '\')" class="text-xs px-2.5 py-1 rounded" style="background:var(--color-primary);color:var(--color-text-inverse);">处理</button>';
+            html += '<tr class="border-t" style="border-color:var(--color-border-light);">' +
+                '<td class="px-4 py-2.5 whitespace-nowrap" style="color:var(--color-text-secondary);font-variant-numeric:tabular-nums;">' + a.time + '</td>' +
+                '<td class="px-4 py-2.5 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background:' + ts[0] + ';color:' + ts[1] + ';">' + a.type + '</span></td>' +
+                '<td class="px-4 py-2.5 truncate" style="color:var(--color-text);">' + (a.detail || a.location || '') + '</td>' +
+                '<td class="px-4 py-2.5 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background:' + ss[0] + ';color:' + ss[1] + ';">' + a.status + '</span></td>' +
+                '<td class="px-4 py-2.5 whitespace-nowrap">' + actionBtn + '</td>' +
+                '</tr>';
+        });
+        tbody.innerHTML = html;
+    }
+
+    function processAlarm(id) {
+        var alarms = getAlarms();
+        var idx = -1;
+        for (var i = 0; i < alarms.length; i++) { if (alarms[i].id === id) { idx = i; break; } }
+        if (idx >= 0) {
+            alarms[idx].status = '已处理';
+            saveAlarms(alarms);
+            renderAlarms();
+            showToast('报警事件已标记为已处理', 'success');
+        }
+    }
+
+    /* ============================================================
+     * B端采购
+     * ============================================================ */
+    function getContracts() { return scGet(SC_KEYS.contracts) || []; }
+    function saveContracts(c) { scSet(SC_KEYS.contracts, c); }
+
+    function renderContracts() {
+        var tbody = document.getElementById('contracts-tbody');
+        if (!tbody) return;
+        var contracts = getContracts();
+        if (contracts.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" class="px-4 py-10 text-center" style="color:var(--color-text-muted);">暂无合同记录</td></tr>';
+            return;
+        }
+        var html = '';
+        contracts.forEach(function (c) {
+            var ts = contractTypeStyle(c.type).split('|');
+            var ss = contractStatusStyle(c.status).split('|');
+            var amountStr = c.amount >= 10000 ? '¥' + (c.amount / 10000).toFixed(1) + '万/年' : '¥' + c.amount + '/年';
+            html += '<tr class="border-t" style="border-color:var(--color-border-light);">' +
+                '<td class="px-4 py-3 whitespace-nowrap truncate" style="color:var(--color-text);font-variant-numeric:tabular-nums;">' + c.id + '</td>' +
+                '<td class="px-4 py-3 whitespace-nowrap truncate" style="color:var(--color-text);">' + c.client + '</td>' +
+                '<td class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background:' + ts[0] + ';color:' + ts[1] + ';">' + c.type + '</span></td>' +
+                '<td class="px-4 py-3 whitespace-nowrap" style="color:var(--color-text);font-variant-numeric:tabular-nums;">' + amountStr + '</td>' +
+                '<td class="px-4 py-3 whitespace-nowrap" style="color:var(--color-text-secondary);font-variant-numeric:tabular-nums;">' + (c.period || '-') + '</td>' +
+                '<td class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background:' + ss[0] + ';color:' + ss[1] + ';">' + c.status + '</span></td>' +
+                '</tr>';
+        });
+        tbody.innerHTML = html;
+    }
+
+    function showContractModal() {
+        var form = document.getElementById('contract-form');
+        if (form) form.reset();
+        openModal('modal-contract');
+    }
+
+    function submitContract(e) {
+        e.preventDefault();
+        var client = document.getElementById('contract-client').value.trim();
+        var type = document.getElementById('contract-type').value;
+        var amount = parseFloat(document.getElementById('contract-amount').value) || 0;
+        var startDate = document.getElementById('contract-start').value;
+        var period = document.getElementById('contract-period').value.trim();
+        var status = document.getElementById('contract-status').value;
+        if (!client) { showToast('请填写合作方名称', 'error'); return; }
+        var contracts = getContracts();
+        var newId = 'HT-2024-' + String(contracts.length + 1).padStart(3, '0');
+        while (contracts.some(function (c) { return c.id === newId; })) {
+            var num = parseInt(newId.split('-')[2]) + 1;
+            newId = 'HT-2024-' + String(num).padStart(3, '0');
+        }
+        var periodStr = period || (startDate ? startDate.replace(/-/g, '.') + ' - 至今' : '-');
+        contracts.push({
+            id: newId, client: client, type: type, amount: amount,
+            period: periodStr, status: status, startDate: startDate || ''
+        });
+        saveContracts(contracts);
+        renderContracts();
+        closeModal('modal-contract');
+        showToast('合同创建成功', 'success');
+    }
+
+    /* ============================================================
+     * 数据概览
+     * ============================================================ */
+    function updateOverviewStats() {
+        var orders = getOrders();
+        var volunteers = getVolunteers();
+        var todayEl = document.getElementById('stat-today-orders');
+        var activeEl = document.getElementById('stat-active-volunteers');
+        var eldersEl = document.getElementById('stat-service-elders');
+        var ratingEl = document.getElementById('stat-avg-rating');
+        if (todayEl) todayEl.textContent = orders.length;
+        if (activeEl) {
+            var active = volunteers.filter(function (v) { return v.status === '在线' || v.status === '服务中'; }).length;
+            activeEl.textContent = active;
+        }
+        if (eldersEl) {
+            var elders = {};
+            orders.forEach(function (o) { elders[o.elderName] = true; });
+            eldersEl.textContent = Object.keys(elders).length;
+        }
+        if (ratingEl) {
+            var total = 0, cnt = 0;
+            volunteers.forEach(function (v) { total += v.rating; cnt++; });
+            ratingEl.textContent = cnt > 0 ? (total / cnt).toFixed(1) : '0.0';
+        }
+    }
+
+    function switchTimeRange(days) {
+        var btns = document.querySelectorAll('.time-range-btn');
+        btns.forEach(function (b) {
+            if (parseInt(b.getAttribute('data-range')) === days) {
+                b.style.background = 'var(--color-primary)';
+                b.style.color = 'var(--color-text-inverse)';
+            } else {
+                b.style.background = 'transparent';
+                b.style.color = 'var(--color-text-muted)';
+            }
+        });
+        if (window.orderTrendChart) {
+            if (days === 7) {
+                window.orderTrendChart.data.labels = ['6/18', '6/19', '6/20', '6/21', '6/22', '6/23', '6/24'];
+                window.orderTrendChart.data.datasets[0].data = [32, 38, 35, 42, 45, 40, 48];
+            } else {
+                window.orderTrendChart.data.labels = ['5/26', '5/28', '5/30', '6/1', '6/3', '6/5', '6/7', '6/9', '6/11', '6/13', '6/15', '6/17', '6/19', '6/21', '6/23'];
+                window.orderTrendChart.data.datasets[0].data = [28, 30, 33, 35, 31, 36, 38, 34, 40, 37, 42, 44, 41, 45, 48];
+            }
+            window.orderTrendChart.update();
+        }
+        showToast('已切换为近' + days + '天数据', 'info');
+    }
+
+    /* ============================================================
+     * 通知中心
+     * ============================================================ */
+    function toggleNotifications(e) {
+        if (e) e.stopPropagation();
+        var dd = document.getElementById('notification-dropdown');
+        if (!dd) return;
+        dd.classList.toggle('hidden');
+        if (!dd.classList.contains('hidden')) renderNotifications();
+    }
+
+    function renderNotifications() {
+        var list = document.getElementById('notification-list');
+        var countEl = document.getElementById('notif-unread-count');
+        if (!list) return;
+        var alarms = getAlarms();
+        var orders = getOrders();
+        var notifs = [];
+        orders.forEach(function (o) {
+            if (o.status === '待接单') {
+                notifs.push({ icon: 'clipboard-list', color: 'var(--color-primary)', title: '新订单待接单', desc: '#' + o.id + ' ' + o.elderName + ' · ' + o.type, time: o.time });
+            }
+        });
+        alarms.forEach(function (a) {
+            if (a.status !== '已处理' && a.status !== '已确认' && a.status !== '已响应') {
+                notifs.push({ icon: 'shield-alert', color: 'var(--state-error)', title: '安全预警：' + a.type, desc: a.detail || a.location, time: a.time });
+            }
+        });
+        if (notifs.length === 0) {
+            list.innerHTML = '<div class="px-4 py-10 text-center text-sm" style="color:var(--color-text-muted);">暂无未读通知</div>';
+            if (countEl) countEl.textContent = '0 条未读';
+            return;
+        }
+        var html = '';
+        notifs.forEach(function (n) {
+            html += '<div class="px-4 py-3 border-b cursor-pointer transition-colors hover:bg-[var(--color-bg-muted)]" style="border-color:var(--color-border-light);">' +
+                '<div class="flex items-start gap-3">' +
+                    '<div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style="background:var(--color-bg-muted);">' +
+                        '<i data-lucide="' + n.icon + '" class="w-4 h-4" style="color:' + n.color + ';"></i>' +
+                    '</div>' +
+                    '<div class="flex-1 min-w-0">' +
+                        '<div class="text-sm font-medium truncate" style="color:var(--color-text);">' + n.title + '</div>' +
+                        '<div class="text-xs truncate" style="color:var(--color-text-muted);">' + n.desc + '</div>' +
+                        '<div class="text-xs mt-0.5" style="color:var(--color-text-muted);">' + n.time + '</div>' +
+                    '</div>' +
+                '</div>' +
+            '</div>';
+        });
+        list.innerHTML = html;
+        if (countEl) countEl.textContent = notifs.length + ' 条未读';
+        if (window.lucide) lucide.createIcons();
+    }
+
+    // 点击外部关闭通知下拉
+    document.addEventListener('click', function (e) {
+        var dd = document.getElementById('notification-dropdown');
+        var bell = document.getElementById('bell-btn');
+        if (dd && !dd.classList.contains('hidden') && !dd.contains(e.target) && e.target !== bell && !bell.contains(e.target)) {
+            dd.classList.add('hidden');
+        }
+    });
+
+    /* ============================================================
+     * 初始化
+     * ============================================================ */
+    initData();
+    renderOrders();
+    renderVolunteers();
+    renderAlarms();
+    renderContracts();
+    updateOverviewStats();
+    if (window.lucide) lucide.createIcons();
+    </script>
+</body>
+</html>
