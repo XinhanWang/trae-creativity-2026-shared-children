@@ -188,6 +188,11 @@
                     <i data-lucide="shield-check" class="w-[18px] h-[18px] shrink-0"></i>
                     <span>安全监控</span>
                 </button>
+                <button onclick="switchTab('auth')" data-nav="auth" class="sidebar-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors duration-200" style="color: rgba(240,232,223,0.6);">
+                    <i data-lucide="badge-check" class="w-[18px] h-[18px] shrink-0"></i>
+                    <span class="flex-1 text-left">实名认证</span>
+                    <span id="auth-pending-badge" class="text-xs px-1.5 py-0.5 rounded" style="background: var(--state-warning); color: var(--color-text-inverse);">0</span>
+                </button>
                 <button onclick="switchTab('analytics')" data-nav="analytics" class="sidebar-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors duration-200" style="color: rgba(240,232,223,0.6);">
                     <i data-lucide="bar-chart-3" class="w-[18px] h-[18px] shrink-0"></i>
                     <span>数据分析</span>
@@ -876,6 +881,57 @@
                     </div>
                 </div>
 
+                <!-- ========== Tab: 实名认证 ========== -->
+                <div id="tab-auth" class="tab-panel hidden">
+                    <!-- Stats Cards -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
+                        <div class="rounded-lg p-4 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
+                            <div class="text-sm mb-2" style="color: var(--color-text-secondary);">待审核</div>
+                            <div id="stat-auth-pending" class="text-2xl font-bold" style="color: var(--state-warning); font-variant-numeric: tabular-nums;">0</div>
+                        </div>
+                        <div class="rounded-lg p-4 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
+                            <div class="text-sm mb-2" style="color: var(--color-text-secondary);">已通过</div>
+                            <div id="stat-auth-approved" class="text-2xl font-bold" style="color: var(--state-success); font-variant-numeric: tabular-nums;">0</div>
+                        </div>
+                        <div class="rounded-lg p-4 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
+                            <div class="text-sm mb-2" style="color: var(--color-text-secondary);">已拒绝</div>
+                            <div id="stat-auth-rejected" class="text-2xl font-bold" style="color: var(--state-error); font-variant-numeric: tabular-nums;">0</div>
+                        </div>
+                        <div class="rounded-lg p-4 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
+                            <div class="text-sm mb-2" style="color: var(--color-text-secondary);">总申请数</div>
+                            <div id="stat-auth-total" class="text-2xl font-bold" style="color: var(--color-text); font-variant-numeric: tabular-nums;">0</div>
+                        </div>
+                    </div>
+
+                    <!-- Filters -->
+                    <div class="flex items-center gap-3 mb-5 flex-wrap">
+                        <button onclick="filterAuth('全部')" data-auth-filter="全部" class="auth-filter-btn px-3 py-1.5 text-sm rounded-lg border transition-colors duration-200" style="background: var(--color-primary); color: var(--color-text-inverse); border-color: var(--color-primary);">全部</button>
+                        <button onclick="filterAuth('待审核')" data-auth-filter="待审核" class="auth-filter-btn px-3 py-1.5 text-sm rounded-lg border transition-colors duration-200" style="background: var(--color-bg-card); color: var(--color-text-secondary); border-color: var(--color-border);">待审核</button>
+                        <button onclick="filterAuth('已通过')" data-auth-filter="已通过" class="auth-filter-btn px-3 py-1.5 text-sm rounded-lg border transition-colors duration-200" style="background: var(--color-bg-card); color: var(--color-text-secondary); border-color: var(--color-border);">已通过</button>
+                        <button onclick="filterAuth('已拒绝')" data-auth-filter="已拒绝" class="auth-filter-btn px-3 py-1.5 text-sm rounded-lg border transition-colors duration-200" style="background: var(--color-bg-card); color: var(--color-text-secondary); border-color: var(--color-border);">已拒绝</button>
+                    </div>
+
+                    <!-- Auth Records Table -->
+                    <div class="rounded-lg border overflow-hidden" style="background: var(--color-bg-card); border-color: var(--color-border);">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm">
+                                <thead>
+                                    <tr style="background: var(--color-bg-muted);">
+                                        <th class="px-4 py-3 text-left font-medium whitespace-nowrap" style="color: var(--color-text-secondary);">申请人姓名</th>
+                                        <th class="px-4 py-3 text-left font-medium whitespace-nowrap" style="color: var(--color-text-secondary);">角色</th>
+                                        <th class="px-4 py-3 text-left font-medium whitespace-nowrap" style="color: var(--color-text-secondary);">身份证号</th>
+                                        <th class="px-4 py-3 text-left font-medium whitespace-nowrap" style="color: var(--color-text-secondary);">手机号</th>
+                                        <th class="px-4 py-3 text-left font-medium whitespace-nowrap" style="color: var(--color-text-secondary);">提交时间</th>
+                                        <th class="px-4 py-3 text-left font-medium whitespace-nowrap" style="color: var(--color-text-secondary);">状态</th>
+                                        <th class="px-4 py-3 text-left font-medium whitespace-nowrap" style="color: var(--color-text-secondary);">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="auth-tbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </main>
@@ -977,6 +1033,19 @@
         </div>
     </div>
 
+    <!-- Auth Detail Modal -->
+    <div id="modal-auth-detail" class="hidden fixed inset-0 flex items-center justify-center p-4" style="background: rgba(61,46,36,0.45); z-index: var(--z-modal);" onclick="closeModal('modal-auth-detail')">
+        <div class="rounded-lg border w-full max-w-lg shadow-xl" style="background: var(--color-bg-card); border-color: var(--color-border);" onclick="event.stopPropagation()">
+            <div class="px-5 py-4 border-b flex items-center justify-between" style="border-color: var(--color-border);">
+                <h3 class="text-base font-semibold" style="color: var(--color-text); font-family: var(--font-serif);">认证详情</h3>
+                <button onclick="closeModal('modal-auth-detail')" class="p-1 rounded-lg transition-colors hover:bg-[var(--color-bg-muted)]">
+                    <i data-lucide="x" class="w-5 h-5" style="color: var(--color-text-secondary);"></i>
+                </button>
+            </div>
+            <div id="auth-detail-body" class="p-5 max-h-[70vh] overflow-y-auto"></div>
+        </div>
+    </div>
+
     <!-- Toast Container -->
     <div id="toast-container" class="fixed top-6 right-6 space-y-2" style="z-index: var(--z-toast);"></div>
 
@@ -1008,6 +1077,7 @@
             orders: '订单管理',
             volunteers: '暖伴管理',
             safety: '安全监控',
+            auth: '实名认证',
             analytics: '数据分析',
             b2b: 'B端采购'
         };
@@ -1042,6 +1112,8 @@
             }
             // Init charts if analytics tab
             if (tabId === 'analytics') { setTimeout(initAnalyticsCharts, 100); }
+            // Render auth records if auth tab
+            if (tabId === 'auth') { renderAuth(); }
         }
 
         // ===== Mobile Sidebar Toggle =====
@@ -1282,7 +1354,8 @@
         orders: 'sc_orders',
         volunteers: 'sc_volunteers',
         alarms: 'sc_alarms',
-        contracts: 'sc_contracts'
+        contracts: 'sc_contracts',
+        auth: 'sc_auth_records'
     };
 
     function scGet(key) {
@@ -1298,12 +1371,13 @@
     /* ===== 示例数据初始化（仅在 localStorage 为空时写入） ===== */
     function initData() {
         // Force re-init when data version changes
-        if (localStorage.getItem('sc_admin_version') !== '2') {
+        if (localStorage.getItem('sc_admin_version') !== '3') {
             localStorage.removeItem(SC_KEYS.orders);
             localStorage.removeItem(SC_KEYS.volunteers);
             localStorage.removeItem(SC_KEYS.alarms);
             localStorage.removeItem(SC_KEYS.contracts);
-            localStorage.setItem('sc_admin_version', '2');
+            localStorage.removeItem(SC_KEYS.auth);
+            localStorage.setItem('sc_admin_version', '3');
         }
         if (!scGet(SC_KEYS.orders)) {
             scSet(SC_KEYS.orders, [
@@ -1338,6 +1412,14 @@
                 { id: 'HT-2024-002', client: '中国人寿保险湖北分公司', type: '商业保险', amount: 120000, period: '2024.03 - 2025.02', status: '执行中', startDate: '2024-03-01' },
                 { id: 'HT-2024-003', client: '武汉市中南路街道办事处', type: '街道/民政', amount: 96000, period: '2024.06 - 2025.05', status: '待签署', startDate: '2024-06-01' },
                 { id: 'HT-2024-004', client: '东风汽车集团工会委员会', type: '企业工会', amount: 240000, period: '2024.07 - 2025.06', status: '待签署', startDate: '2024-07-01' }
+            ]);
+        }
+        if (!scGet(SC_KEYS.auth)) {
+            scSet(SC_KEYS.auth, [
+                { id: 'AUTH-001', name: '王奶奶', role: '暖家', idCard: '4201**********1234', phone: '138****8888', submitTime: '2026-06-24 10:30', status: '待审核', realName: '王秀兰', area: '武昌区梅苑小区' },
+                { id: 'AUTH-002', name: '张同学', role: '暖伴', idCard: '4201**********5678', phone: '137****7777', submitTime: '2026-06-23 15:20', status: '已通过', realName: '张小雨', area: '武昌区梅苑小区' },
+                { id: 'AUTH-003', name: '李大爷', role: '暖家', idCard: '4201**********9012', phone: '139****0000', submitTime: '2026-06-22 09:15', status: '已拒绝', realName: '李建国', area: '洪山区卓刀泉社区', rejectReason: '身份证照片模糊' },
+                { id: 'AUTH-004', name: '陈思雨', role: '暖伴', idCard: '4201**********3456', phone: '136****3456', submitTime: '2026-06-24 08:45', status: '待审核', realName: '陈思雨', area: '汉阳区翠微街' }
             ]);
         }
     }
@@ -1382,7 +1464,7 @@
     // ESC 键关闭所有弹窗
     document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') {
-            ['modal-order-detail', 'modal-assign', 'modal-volunteer-detail', 'modal-contract'].forEach(function (id) {
+            ['modal-order-detail', 'modal-assign', 'modal-volunteer-detail', 'modal-contract', 'modal-auth-detail'].forEach(function (id) {
                 var m = document.getElementById(id);
                 if (m && !m.classList.contains('hidden')) m.classList.add('hidden');
             });
@@ -1785,6 +1867,198 @@
     }
 
     /* ============================================================
+     * 实名认证审核
+     * ============================================================ */
+    var currentAuthFilter = '全部';
+
+    function getAuthRecords() { return scGet(SC_KEYS.auth) || []; }
+    function saveAuthRecords(records) { scSet(SC_KEYS.auth, records); }
+
+    function authStatusStyle(status) {
+        var map = {
+            '待审核': 'var(--state-warning-bg)|var(--state-warning)',
+            '已通过': 'var(--state-success-bg)|var(--state-success)',
+            '已拒绝': 'var(--state-error-bg)|var(--state-error)'
+        };
+        return map[status] || 'var(--color-bg-muted)|var(--color-text-secondary)';
+    }
+
+    function authRoleStyle(role) {
+        var map = {
+            '暖家': 'var(--color-primary-light)|var(--color-primary)',
+            '暖伴': 'var(--state-success-bg)|var(--state-success)'
+        };
+        return map[role] || 'var(--color-bg-muted)|var(--color-text-secondary)';
+    }
+
+    function updateAuthBadge() {
+        var records = getAuthRecords();
+        var pending = records.filter(function (r) { return r.status === '待审核'; }).length;
+        var badge = document.getElementById('auth-pending-badge');
+        if (badge) badge.textContent = pending;
+    }
+
+    function renderAuth() {
+        var tbody = document.getElementById('auth-tbody');
+        if (!tbody) return;
+        var records = getAuthRecords();
+        // Update stats
+        var pending = records.filter(function (r) { return r.status === '待审核'; }).length;
+        var approved = records.filter(function (r) { return r.status === '已通过'; }).length;
+        var rejected = records.filter(function (r) { return r.status === '已拒绝'; }).length;
+        var pendingEl = document.getElementById('stat-auth-pending');
+        var approvedEl = document.getElementById('stat-auth-approved');
+        var rejectedEl = document.getElementById('stat-auth-rejected');
+        var totalEl = document.getElementById('stat-auth-total');
+        if (pendingEl) pendingEl.textContent = pending;
+        if (approvedEl) approvedEl.textContent = approved;
+        if (rejectedEl) rejectedEl.textContent = rejected;
+        if (totalEl) totalEl.textContent = records.length;
+        updateAuthBadge();
+        // Filter
+        var filtered = records.filter(function (r) {
+            return (currentAuthFilter === '全部') || (r.status === currentAuthFilter);
+        });
+        if (filtered.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" class="px-4 py-10 text-center" style="color:var(--color-text-muted);">暂无符合条件的认证申请</td></tr>';
+            if (window.lucide) lucide.createIcons();
+            return;
+        }
+        var html = '';
+        filtered.forEach(function (r) {
+            var rs = authRoleStyle(r.role).split('|');
+            var ss = authStatusStyle(r.status).split('|');
+            var actionBtn;
+            if (r.status === '待审核') {
+                actionBtn = '<button onclick="approveAuth(\'' + r.id + '\')" class="text-xs mr-2 px-2.5 py-1 rounded" style="background:var(--state-success);color:var(--color-text-inverse);">通过</button>' +
+                            '<button onclick="rejectAuth(\'' + r.id + '\')" class="text-xs mr-2 px-2.5 py-1 rounded" style="background:var(--state-error);color:var(--color-text-inverse);">拒绝</button>' +
+                            '<button onclick="showAuthDetail(\'' + r.id + '\')" class="text-xs" style="color:var(--color-text-secondary);">详情</button>';
+            } else {
+                actionBtn = '<button onclick="showAuthDetail(\'' + r.id + '\')" class="text-xs" style="color:var(--color-primary);">详情</button>';
+            }
+            html += '<tr class="border-t" style="border-color:var(--color-border-light);">' +
+                '<td class="px-4 py-3 whitespace-nowrap truncate" style="color:var(--color-text);">' + r.name + '</td>' +
+                '<td class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background:' + rs[0] + ';color:' + rs[1] + ';">' + r.role + '</span></td>' +
+                '<td class="px-4 py-3 whitespace-nowrap truncate" style="color:var(--color-text-secondary);font-variant-numeric:tabular-nums;">' + r.idCard + '</td>' +
+                '<td class="px-4 py-3 whitespace-nowrap" style="color:var(--color-text-secondary);font-variant-numeric:tabular-nums;">' + r.phone + '</td>' +
+                '<td class="px-4 py-3 whitespace-nowrap" style="color:var(--color-text-secondary);font-variant-numeric:tabular-nums;">' + r.submitTime + '</td>' +
+                '<td class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background:' + ss[0] + ';color:' + ss[1] + ';">' + r.status + '</span></td>' +
+                '<td class="px-4 py-3 whitespace-nowrap">' + actionBtn + '</td>' +
+                '</tr>';
+        });
+        tbody.innerHTML = html;
+        if (window.lucide) lucide.createIcons();
+    }
+
+    function filterAuth(status) {
+        currentAuthFilter = status;
+        var btns = document.querySelectorAll('.auth-filter-btn');
+        btns.forEach(function (b) {
+            if (b.getAttribute('data-auth-filter') === status) {
+                b.style.background = 'var(--color-primary)';
+                b.style.color = 'var(--color-text-inverse)';
+                b.style.borderColor = 'var(--color-primary)';
+            } else {
+                b.style.background = 'var(--color-bg-card)';
+                b.style.color = 'var(--color-text-secondary)';
+                b.style.borderColor = 'var(--color-border)';
+            }
+        });
+        renderAuth();
+    }
+
+    function approveAuth(id) {
+        var records = getAuthRecords();
+        var idx = -1;
+        for (var i = 0; i < records.length; i++) { if (records[i].id === id) { idx = i; break; } }
+        if (idx >= 0) {
+            records[idx].status = '已通过';
+            delete records[idx].rejectReason;
+            saveAuthRecords(records);
+            renderAuth();
+            showToast('已通过 ' + records[idx].name + ' 的实名认证', 'success');
+        }
+    }
+
+    function rejectAuth(id) {
+        var records = getAuthRecords();
+        var idx = -1;
+        var target = null;
+        for (var i = 0; i < records.length; i++) { if (records[i].id === id) { idx = i; target = records[i]; break; } }
+        if (idx >= 0 && target) {
+            var reason = window.prompt('请输入拒绝原因：', '');
+            if (reason === null) return; // 用户取消
+            target.status = '已拒绝';
+            target.rejectReason = reason.trim() || '未提供原因';
+            saveAuthRecords(records);
+            renderAuth();
+            showToast('已拒绝 ' + target.name + ' 的实名认证', 'error');
+        }
+    }
+
+    function showAuthDetail(id) {
+        var records = getAuthRecords();
+        var r = null;
+        for (var i = 0; i < records.length; i++) { if (records[i].id === id) { r = records[i]; break; } }
+        if (!r) return;
+        var body = document.getElementById('auth-detail-body');
+        var rs = authRoleStyle(r.role).split('|');
+        var ss = authStatusStyle(r.status).split('|');
+        var html = '';
+        // 申请人基本信息
+        html += '<div class="mb-4">' +
+            '<div class="text-xs font-semibold mb-2" style="color:var(--color-text-muted);">申请人基本信息</div>' +
+            '<div class="flex items-start gap-4 py-2.5 border-b" style="border-color:var(--color-border-light);"><div class="text-sm w-24 shrink-0" style="color:var(--color-text-secondary);">申请人姓名</div><div class="text-sm flex-1 break-words"><span style="color:var(--color-text);">' + r.name + '</span></div></div>' +
+            '<div class="flex items-start gap-4 py-2.5 border-b" style="border-color:var(--color-border-light);"><div class="text-sm w-24 shrink-0" style="color:var(--color-text-secondary);">角色</div><div class="text-sm flex-1 break-words"><span class="px-2 py-0.5 rounded text-xs" style="background:' + rs[0] + ';color:' + rs[1] + ';">' + r.role + '</span></div></div>' +
+            '<div class="flex items-start gap-4 py-2.5 border-b" style="border-color:var(--color-border-light);"><div class="text-sm w-24 shrink-0" style="color:var(--color-text-secondary);">手机号</div><div class="text-sm flex-1 break-words"><span style="color:var(--color-text);font-variant-numeric:tabular-nums;">' + r.phone + '</span></div></div>' +
+            '<div class="flex items-start gap-4 py-2.5 border-b" style="border-color:var(--color-border-light);"><div class="text-sm w-24 shrink-0" style="color:var(--color-text-secondary);">服务区域</div><div class="text-sm flex-1 break-words"><span style="color:var(--color-text);">' + (r.area || '-') + '</span></div></div>' +
+            '</div>';
+        // 实名信息
+        html += '<div class="mb-4">' +
+            '<div class="text-xs font-semibold mb-2" style="color:var(--color-text-muted);">实名信息</div>' +
+            '<div class="flex items-start gap-4 py-2.5 border-b" style="border-color:var(--color-border-light);"><div class="text-sm w-24 shrink-0" style="color:var(--color-text-secondary);">真实姓名</div><div class="text-sm flex-1 break-words"><span style="color:var(--color-text);">' + (r.realName || '-') + '</span></div></div>' +
+            '<div class="flex items-start gap-4 py-2.5 border-b" style="border-color:var(--color-border-light);"><div class="text-sm w-24 shrink-0" style="color:var(--color-text-secondary);">身份证号</div><div class="text-sm flex-1 break-words"><span style="color:var(--color-text);font-variant-numeric:tabular-nums;">' + (r.idCard || '-') + '</span></div></div>' +
+            '</div>';
+        // 身份证照片占位
+        html += '<div class="mb-4">' +
+            '<div class="text-xs font-semibold mb-2" style="color:var(--color-text-muted);">身份证照片</div>' +
+            '<div class="flex gap-3">' +
+                '<div class="flex-1 flex flex-col items-center justify-center rounded-lg" style="height:100px;background:var(--color-bg-muted);border:1px dashed var(--color-border);">' +
+                    '<i data-lucide="image" class="w-6 h-6 mb-1" style="color:var(--color-text-muted);"></i>' +
+                    '<span class="text-xs" style="color:var(--color-text-muted);">人像面</span>' +
+                '</div>' +
+                '<div class="flex-1 flex flex-col items-center justify-center rounded-lg" style="height:100px;background:var(--color-bg-muted);border:1px dashed var(--color-border);">' +
+                    '<i data-lucide="image" class="w-6 h-6 mb-1" style="color:var(--color-text-muted);"></i>' +
+                    '<span class="text-xs" style="color:var(--color-text-muted);">国徽面</span>' +
+                '</div>' +
+            '</div>' +
+            '</div>';
+        // 提交时间与状态
+        html += '<div class="mb-4">' +
+            '<div class="text-xs font-semibold mb-2" style="color:var(--color-text-muted);">审核信息</div>' +
+            '<div class="flex items-start gap-4 py-2.5 border-b" style="border-color:var(--color-border-light);"><div class="text-sm w-24 shrink-0" style="color:var(--color-text-secondary);">提交时间</div><div class="text-sm flex-1 break-words"><span style="color:var(--color-text);font-variant-numeric:tabular-nums;">' + r.submitTime + '</span></div></div>' +
+            '<div class="flex items-start gap-4 py-2.5 border-b" style="border-color:var(--color-border-light);"><div class="text-sm w-24 shrink-0" style="color:var(--color-text-secondary);">当前状态</div><div class="text-sm flex-1 break-words"><span class="px-2 py-0.5 rounded text-xs" style="background:' + ss[0] + ';color:' + ss[1] + ';">' + r.status + '</span></div></div>';
+        if (r.rejectReason) {
+            html += '<div class="flex items-start gap-4 py-2.5 border-b" style="border-color:var(--color-border-light);"><div class="text-sm w-24 shrink-0" style="color:var(--color-text-secondary);">拒绝原因</div><div class="text-sm flex-1 break-words"><span style="color:var(--state-error);">' + r.rejectReason + '</span></div></div>';
+        }
+        html += '</div>';
+        // 审核操作按钮
+        if (r.status === '待审核') {
+            html += '<div class="flex justify-end gap-3 pt-2">' +
+                '<button onclick="approveAuth(\'' + r.id + '\');closeModal(\'modal-auth-detail\');" class="px-4 py-2 text-sm rounded-lg" style="background:var(--state-success);color:var(--color-text-inverse);">通过认证</button>' +
+                '<button onclick="rejectAuthFromDetail(\'' + r.id + '\')" class="px-4 py-2 text-sm rounded-lg" style="background:var(--state-error);color:var(--color-text-inverse);">拒绝认证</button>' +
+                '</div>';
+        }
+        body.innerHTML = html;
+        openModal('modal-auth-detail');
+    }
+
+    function rejectAuthFromDetail(id) {
+        closeModal('modal-auth-detail');
+        rejectAuth(id);
+    }
+
+    /* ============================================================
      * 数据概览
      * ============================================================ */
     function updateOverviewStats() {
@@ -1905,6 +2179,7 @@
     renderVolunteers();
     renderAlarms();
     renderContracts();
+    renderAuth();
     updateOverviewStats();
     if (window.lucide) lucide.createIcons();
 

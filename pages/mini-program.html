@@ -129,6 +129,7 @@
     </style>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
     <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <script type="text/javascript" src="https://api.map.baidu.com/api?v=3.0&ak=VeydduHr00O5f7G5GOzxlkZ6jOIaSFsH"></script>
     <style type="text/tailwindcss">
   @theme inline {
     --color-primary: var(--color-primary);
@@ -302,6 +303,15 @@
                       <i data-lucide="chevron-right" style="width: 16px; height: 16px; color: var(--color-text-muted);"></i>
                     </div>
 
+                    <!-- Nearby Map -->
+                    <div>
+                      <div class="flex items-center justify-between mb-3">
+                        <p class="text-sm font-semibold" style="color: var(--color-text);">附近地图</p>
+                        <span class="text-xs cursor-pointer" style="color: var(--color-primary);" onclick="initHomeMap()">刷新地图</span>
+                      </div>
+                      <div id="home-map-container" style="height:150px; border-radius:12px; overflow:hidden; border:1px solid var(--color-border-light); background: var(--color-bg-muted);"></div>
+                    </div>
+
                     <!-- Nearby Warm Companions -->
                     <div>
                       <div class="flex items-center justify-between mb-3">
@@ -408,6 +418,17 @@
                         <i data-lucide="chevron-right" style="width: 16px; height: 16px; color: var(--color-text-muted);"></i>
                       </div>
 
+                      <div class="flex items-center gap-3 p-3 rounded-xl cursor-pointer" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" onclick="openAuthModal()">
+                        <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style="background: var(--state-error-bg);">
+                          <i data-lucide="shield-check" style="width: 20px; height: 20px; color: var(--state-error);"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                          <p class="text-sm font-medium" style="color: var(--color-text);">实名认证</p>
+                          <p class="text-xs" style="color: var(--color-text-muted);" id="nuanjia-auth-desc">未认证</p>
+                        </div>
+                        <i data-lucide="chevron-right" style="width: 16px; height: 16px; color: var(--color-text-muted);"></i>
+                      </div>
+
                       <div class="flex items-center gap-3 p-3 rounded-xl cursor-pointer" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" onclick="openSettingsModal()">
                         <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style="background: var(--color-bg-muted);">
                           <i data-lucide="settings" style="width: 20px; height: 20px; color: var(--color-text-secondary);"></i>
@@ -434,7 +455,7 @@
                     <div class="flex items-center justify-between">
                       <div>
                         <p class="text-xs" style="color: var(--color-text-muted);">下午好</p>
-                        <p class="text-lg font-semibold" style="color: var(--color-text); font-family: var(--font-serif);">暖伴 · 张同学</p>
+                        <p class="text-lg font-semibold" style="color: var(--color-text); font-family: var(--font-serif);" id="nuanban-home-name">暖伴 · 张同学</p>
                       </div>
                       <div class="w-10 h-10 rounded-full flex items-center justify-center cursor-pointer" style="background: var(--color-primary-light);" onclick="showToast('暂无新消息')">
                         <i data-lucide="bell" style="width: 18px; height: 18px; color: var(--color-primary);"></i>
@@ -495,12 +516,12 @@
                   <div id="tab-nuanban-me" class="p-4 space-y-4" style="display:none">
                     <!-- Volunteer Card -->
                     <div class="flex items-center gap-3 p-4 rounded-xl" style="background: var(--color-primary); color: var(--color-text-inverse);">
-                      <div class="w-12 h-12 rounded-full flex items-center justify-center shrink-0" style="background: rgba(255,255,255,0.2); font-size: 18px; font-weight: 600;">张</div>
+                      <div class="w-12 h-12 rounded-full flex items-center justify-center shrink-0" style="background: rgba(255,255,255,0.2); font-size: 18px; font-weight: 600;" id="volunteer-avatar">张</div>
                       <div class="flex-1 min-w-0">
-                        <p class="text-base font-semibold">张同学</p>
-                        <p class="text-xs" style="opacity: 0.85;">认证暖伴 · 评分 4.8</p>
+                        <p class="text-base font-semibold" id="volunteer-name">张同学</p>
+                        <p class="text-xs" style="opacity: 0.85;" id="volunteer-subtitle">认证暖伴 · 评分 4.8</p>
                       </div>
-                      <span class="text-xs px-2 py-1 rounded-lg shrink-0" style="background: rgba(255,255,255,0.2);">已认证</span>
+                      <button onclick="openVolunteerProfileModal()" class="text-xs px-3 py-1.5 rounded-lg shrink-0" style="background: rgba(255,255,255,0.2); color: var(--color-text-inverse); border: none; cursor: pointer; font-weight: 500;">编辑</button>
                     </div>
 
                     <!-- Stats -->
@@ -539,6 +560,28 @@
                         <div class="flex-1 min-w-0">
                           <p class="text-sm font-medium" style="color: var(--color-text);">我的订单</p>
                           <p class="text-xs" style="color: var(--color-text-muted);">进行中和已完成的订单</p>
+                        </div>
+                        <i data-lucide="chevron-right" style="width: 16px; height: 16px; color: var(--color-text-muted);"></i>
+                      </div>
+
+                      <div class="flex items-center gap-3 p-3 rounded-xl cursor-pointer" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" onclick="openVolunteerProfileModal()">
+                        <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style="background: var(--color-primary-light);">
+                          <i data-lucide="user" style="width: 20px; height: 20px; color: var(--color-primary);"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                          <p class="text-sm font-medium" style="color: var(--color-text);">个人信息</p>
+                          <p class="text-xs" style="color: var(--color-text-muted);">编辑姓名、电话、服务区域</p>
+                        </div>
+                        <i data-lucide="chevron-right" style="width: 16px; height: 16px; color: var(--color-text-muted);"></i>
+                      </div>
+
+                      <div class="flex items-center gap-3 p-3 rounded-xl cursor-pointer" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" onclick="openAuthModal()">
+                        <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style="background: var(--state-error-bg);">
+                          <i data-lucide="shield-check" style="width: 20px; height: 20px; color: var(--state-error);"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                          <p class="text-sm font-medium" style="color: var(--color-text);">实名认证</p>
+                          <p class="text-xs" style="color: var(--color-text-muted);" id="nuanban-auth-desc">未认证</p>
                         </div>
                         <i data-lucide="chevron-right" style="width: 16px; height: 16px; color: var(--color-text-muted);"></i>
                       </div>
@@ -597,8 +640,8 @@
                       </select>
                     </div>
                     <div class="form-group">
-                      <label>服务时间</label>
-                      <input type="datetime-local" id="order-time">
+                      <label>服务时间<span class="text-xs" style="color: var(--color-text-muted); font-weight: 400;">（按10分钟刻度）</span></label>
+                      <input type="datetime-local" id="order-time" step="600">
                     </div>
                     <div class="form-group">
                       <label>服务时长</label>
@@ -611,8 +654,15 @@
                       </select>
                     </div>
                     <div class="form-group">
+                      <label>服务金额（元）</label>
+                      <input type="number" id="order-price" min="0" step="10" placeholder="请输入愿意支付的金额">
+                      <p class="text-xs mt-1" style="color: var(--color-text-muted);">参考价格：日常陪伴80元/次, 跑腿代办50元/次, 数字辅导30元/次, 陪同就医100元/次</p>
+                    </div>
+                    <div class="form-group">
                       <label>服务地址</label>
                       <input type="text" id="order-address" placeholder="请输入详细地址">
+                      <button type="button" onclick="initOrderMap()" class="text-xs mt-2 px-3 py-1.5 rounded-lg" style="background: var(--color-primary-light); color: var(--color-primary); border: 1px solid var(--color-primary-light); cursor: pointer; font-weight: 500;">使用地图选址</button>
+                      <div id="order-map-container" style="display:none; height:160px; margin-top:8px; border-radius:8px; overflow:hidden; border:1px solid var(--color-border);"></div>
                     </div>
                     <div class="form-group">
                       <label>备注说明</label>
@@ -708,6 +758,65 @@
                       <input type="text" id="profile-emergency" placeholder="紧急联系人姓名和电话">
                     </div>
                     <button onclick="saveProfile()" class="submit-btn">保存信息</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Volunteer Profile Modal -->
+              <div id="modal-volunteer-profile" class="modal-overlay" style="display:none">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h3 class="text-base font-semibold" style="color: var(--color-text);">编辑暖伴信息</h3>
+                    <button onclick="closeModal('modal-volunteer-profile')" class="modal-close-btn"><i data-lucide="x" style="width:20px;height:20px;"></i></button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="form-group">
+                      <label>姓名</label>
+                      <input type="text" id="volunteer-profile-name" placeholder="请输入姓名">
+                    </div>
+                    <div class="form-group">
+                      <label>电话</label>
+                      <input type="tel" id="volunteer-profile-phone" placeholder="请输入电话">
+                    </div>
+                    <div class="form-group">
+                      <label>服务区域</label>
+                      <input type="text" id="volunteer-profile-area" placeholder="请输入服务区域">
+                    </div>
+                    <div class="form-group">
+                      <label>个人简介</label>
+                      <textarea id="volunteer-profile-bio" rows="3" placeholder="请简要介绍自己..." style="resize:none;"></textarea>
+                    </div>
+                    <button onclick="saveVolunteerProfile()" class="submit-btn">保存信息</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Auth Modal -->
+              <div id="modal-auth" class="modal-overlay" style="display:none">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h3 class="text-base font-semibold" style="color: var(--color-text);">实名认证</h3>
+                    <button onclick="closeModal('modal-auth')" class="modal-close-btn"><i data-lucide="x" style="width:20px;height:20px;"></i></button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="form-group">
+                      <label>真实姓名</label>
+                      <input type="text" id="auth-realname" placeholder="请输入真实姓名">
+                    </div>
+                    <div class="form-group">
+                      <label>身份证号</label>
+                      <input type="text" id="auth-idcard" placeholder="请输入身份证号" maxlength="18">
+                    </div>
+                    <div class="form-group">
+                      <label>身份证正面照（请输入图片URL）</label>
+                      <input type="text" id="auth-idfront" placeholder="请输入身份证正面照图片URL">
+                    </div>
+                    <div class="form-group">
+                      <label>身份证反面照（请输入图片URL）</label>
+                      <input type="text" id="auth-idback" placeholder="请输入身份证反面照图片URL">
+                    </div>
+                    <div id="auth-status-display" style="display:none; padding:8px 12px; border-radius:8px; margin-bottom:12px; font-size:13px;"></div>
+                    <button onclick="submitAuth()" class="submit-btn">提交认证</button>
                   </div>
                 </div>
               </div>
@@ -1044,7 +1153,9 @@
         profile: 'sc_profile',
         health: 'sc_health_records',
         alarms: 'sc_alarms',
-        volunteer: 'sc_volunteer_profile'
+        volunteer: 'sc_volunteer_profile',
+        authNuanjia: 'sc_auth_nuanjia',
+        authNuanban: 'sc_auth_nuanban'
       };
 
       var currentRole = 'nuanjia';
@@ -1069,7 +1180,7 @@
       }
 
       /* ===== Initialize Sample Data ===== */
-      var DATA_VERSION = '2';
+      var DATA_VERSION = '3';
       function initData() {
         // Force re-init when data version changes
         if (localStorage.getItem('sc_data_version') !== DATA_VERSION) {
@@ -1078,6 +1189,8 @@
           localStorage.removeItem(SK.health);
           localStorage.removeItem(SK.alarms);
           localStorage.removeItem(SK.volunteer);
+          localStorage.removeItem(SK.authNuanjia);
+          localStorage.removeItem(SK.authNuanban);
           localStorage.removeItem('sc_settings');
           localStorage.setItem('sc_data_version', DATA_VERSION);
         }
@@ -1141,8 +1254,15 @@
         if (!getData(SK.volunteer)) {
           saveData(SK.volunteer, {
             name: VOLUNTEER_NAME, phone: '13777777777', rating: 4.8,
-            totalService: 23, certified: true
+            totalService: 23, certified: true,
+            area: '武汉市武昌区', bio: '热心公益，擅长陪伴老人和数字辅导'
           });
+        }
+        if (!getData(SK.authNuanjia)) {
+          saveData(SK.authNuanjia, { status: '未认证', realname: '', idcard: '', idfront: '', idback: '', submitAt: null });
+        }
+        if (!getData(SK.authNuanban)) {
+          saveData(SK.authNuanban, { status: '已认证', realname: '张明', idcard: '420106********1234', idfront: '', idback: '', submitAt: Date.now() - 86400000 * 30 });
         }
       }
 
@@ -1230,7 +1350,7 @@
 
         // Render content for the active tab
         if (currentRole === 'nuanjia') {
-          if (tab === 'home') renderRecentOrders();
+          if (tab === 'home') { renderRecentOrders(); setTimeout(initHomeMap, 300); }
           if (tab === 'orders') renderNuanjiaOrders();
           if (tab === 'me') renderNuanjiaMe();
         } else {
@@ -1256,6 +1376,10 @@
         // Pre-fill address from profile
         var profile = getData(SK.profile) || {};
         document.getElementById('order-address').value = profile.address || '';
+        // Reset price and map
+        document.getElementById('order-price').value = '';
+        var mapContainer = document.getElementById('order-map-container');
+        if (mapContainer) { mapContainer.style.display = 'none'; mapContainer.innerHTML = ''; }
         openModal('modal-order');
       }
 
@@ -1265,6 +1389,7 @@
         var duration = document.getElementById('order-duration').value;
         var address = document.getElementById('order-address').value.trim();
         var desc = document.getElementById('order-desc').value.trim();
+        var priceInput = document.getElementById('order-price').value;
 
         if (!address) {
           showToast('请填写服务地址');
@@ -1274,6 +1399,11 @@
         var orders = getData(SK.orders) || [];
         var profile = getData(SK.profile) || {};
         var priceMap = { '日常陪伴': 80, '跑腿代办': 50, '数字辅导': 30, '陪同就医': 100, '其他': 60 };
+        var price = priceInput ? parseFloat(priceInput) : (priceMap[type] || 60);
+        if (!price || price <= 0) {
+          showToast('服务金额不能为0或负数');
+          return;
+        }
 
         var timeStr = '';
         if (timeVal) {
@@ -1295,7 +1425,7 @@
           duration: duration,
           description: desc || '无特殊说明',
           volunteer: null,
-          price: priceMap[type] || 60,
+          price: price,
           createdAt: Date.now(),
           ownerId: profile.userId || 'U001'
         };
@@ -1307,10 +1437,147 @@
         document.getElementById('order-time').value = '';
         document.getElementById('order-address').value = '';
         document.getElementById('order-desc').value = '';
+        document.getElementById('order-price').value = '';
+        var mapContainer = document.getElementById('order-map-container');
+        if (mapContainer) { mapContainer.style.display = 'none'; mapContainer.innerHTML = ''; }
 
         closeModal('modal-order');
         showToast('订单提交成功，等待暖伴接单');
         switchTab(currentTab);
+      }
+
+      /* ===== Baidu Map ===== */
+      var MAP_CENTER = { lng: 114.305, lat: 30.593 }; // 武汉武昌区
+      var orderMapInstance = null;
+      var detailMapInstance = null;
+      var homeMapInstance = null;
+
+      function checkBaiduMapReady() {
+        return typeof BMap !== 'undefined' && typeof BMap.Map === 'function';
+      }
+
+      function showMapError(containerId, msg) {
+        var el = document.getElementById(containerId);
+        if (!el) return;
+        el.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;background:var(--color-bg-muted);color:var(--color-text-muted);font-size:12px;">' + (msg || '地图加载失败，请稍后重试') + '</div>';
+      }
+
+      function initOrderMap() {
+        var container = document.getElementById('order-map-container');
+        if (!container) return;
+        container.style.display = 'block';
+        if (!checkBaiduMapReady()) {
+          showMapError('order-map-container', '地图加载中，请稍候...');
+          setTimeout(function () {
+            if (checkBaiduMapReady()) initOrderMap();
+            else showMapError('order-map-container', '地图加载失败，请检查网络');
+          }, 1500);
+          return;
+        }
+        container.innerHTML = '';
+        orderMapInstance = new BMap.Map(container);
+        var point = new BMap.Point(MAP_CENTER.lng, MAP_CENTER.lat);
+        orderMapInstance.centerAndZoom(point, 14);
+        orderMapInstance.enableScrollWheelZoom(true);
+        var marker = new BMap.Marker(point);
+        orderMapInstance.addOverlay(marker);
+        orderMapInstance.addEventListener('click', function (e) {
+          var pt = e.point;
+          orderMapInstance.clearOverlays();
+          var mk = new BMap.Marker(pt);
+          orderMapInstance.addOverlay(mk);
+          var geo = new BMap.Geocoder();
+          geo.getLocation(pt, function (rs) {
+            if (rs) {
+              var addr = rs.address;
+              var addressInput = document.getElementById('order-address');
+              if (addressInput) addressInput.value = addr;
+              showToast('已选取位置：' + addr);
+            }
+          });
+        });
+        showToast('点击地图选取服务位置');
+      }
+
+      function initDetailMap(address) {
+        var container = document.getElementById('detail-map-container');
+        if (!container) return;
+        if (!checkBaiduMapReady()) {
+          showMapError('detail-map-container', '地图加载中...');
+          setTimeout(function () {
+            if (checkBaiduMapReady()) initDetailMap(address);
+            else showMapError('detail-map-container', '地图加载失败');
+          }, 1500);
+          return;
+        }
+        container.innerHTML = '';
+        detailMapInstance = new BMap.Map(container);
+        var point = new BMap.Point(MAP_CENTER.lng, MAP_CENTER.lat);
+        detailMapInstance.centerAndZoom(point, 14);
+        detailMapInstance.disableScrollWheelZoom();
+        var marker = new BMap.Marker(point);
+        detailMapInstance.addOverlay(marker);
+        if (address) {
+          geocodeAddress(address, function (pt) {
+            if (pt && detailMapInstance) {
+              detailMapInstance.clearOverlays();
+              var mk = new BMap.Marker(pt);
+              detailMapInstance.addOverlay(mk);
+              detailMapInstance.centerAndZoom(pt, 15);
+            }
+          });
+        }
+      }
+
+      function initHomeMap() {
+        var container = document.getElementById('home-map-container');
+        if (!container) return;
+        if (!checkBaiduMapReady()) {
+          showMapError('home-map-container', '地图加载中...');
+          setTimeout(function () {
+            if (checkBaiduMapReady()) initHomeMap();
+            else showMapError('home-map-container', '地图加载失败');
+          }, 1500);
+          return;
+        }
+        container.innerHTML = '';
+        homeMapInstance = new BMap.Map(container);
+        var point = new BMap.Point(MAP_CENTER.lng, MAP_CENTER.lat);
+        homeMapInstance.centerAndZoom(point, 14);
+        homeMapInstance.disableScrollWheelZoom();
+        // 当前位置标记
+        var curMarker = new BMap.Marker(point);
+        homeMapInstance.addOverlay(curMarker);
+        var label = new BMap.Label('我的位置', { offset: new BMap.Size(-20, -25) });
+        label.setStyle({ color: '#fff', background: 'var(--color-primary)', border: 'none', padding: '2px 6px', borderRadius: '4px', fontSize: '11px' });
+        curMarker.setLabel(label);
+        // 附近暖伴标记点（模拟位置）
+        var companions = [
+          { lng: 114.308, lat: 30.595, name: '李阿姨' },
+          { lng: 114.302, lat: 30.591, name: '张同学' },
+          { lng: 114.310, lat: 30.590, name: '王师傅' }
+        ];
+        companions.forEach(function (c) {
+          var pt = new BMap.Point(c.lng, c.lat);
+          var icon = new BMap.Icon('https://api.map.baidu.com/images/markers.png', new BMap.Size(23, 25), { offset: new BMap.Size(10, 25), imageOffset: new BMap.Size(0, -250) });
+          var mk = new BMap.Marker(pt, { icon: icon });
+          homeMapInstance.addOverlay(mk);
+          var lbl = new BMap.Label(c.name, { offset: new BMap.Size(-20, -25) });
+          lbl.setStyle({ color: '#fff', background: 'var(--state-success)', border: 'none', padding: '2px 6px', borderRadius: '4px', fontSize: '11px' });
+          mk.setLabel(lbl);
+        });
+      }
+
+      function geocodeAddress(address, callback) {
+        if (!checkBaiduMapReady()) {
+          if (callback) callback(null);
+          return;
+        }
+        var geo = new BMap.Geocoder();
+        geo.getPoint(address, function (pt) {
+          if (pt && callback) callback(pt);
+          else if (callback) callback(null);
+        }, '武汉市');
       }
 
       /* ===== Alarm ===== */
@@ -1427,6 +1694,128 @@
         if (homeName) homeName.textContent = (profile.name || '我的') + '的家';
       }
 
+      /* ===== Volunteer Profile ===== */
+      function openVolunteerProfileModal() {
+        var v = getData(SK.volunteer) || {};
+        document.getElementById('volunteer-profile-name').value = v.name || '';
+        document.getElementById('volunteer-profile-phone').value = v.phone || '';
+        document.getElementById('volunteer-profile-area').value = v.area || '';
+        document.getElementById('volunteer-profile-bio').value = v.bio || '';
+        openModal('modal-volunteer-profile');
+      }
+
+      function saveVolunteerProfile() {
+        var name = document.getElementById('volunteer-profile-name').value.trim();
+        if (!name) {
+          showToast('请填写姓名');
+          return;
+        }
+        var old = getData(SK.volunteer) || {};
+        var volunteer = {
+          name: name,
+          phone: document.getElementById('volunteer-profile-phone').value.trim(),
+          rating: old.rating || 4.8,
+          totalService: old.totalService || 0,
+          certified: old.certified !== undefined ? old.certified : true,
+          area: document.getElementById('volunteer-profile-area').value.trim(),
+          bio: document.getElementById('volunteer-profile-bio').value.trim()
+        };
+        saveData(SK.volunteer, volunteer);
+        VOLUNTEER_NAME = name;
+        closeModal('modal-volunteer-profile');
+        showToast('暖伴信息已保存');
+        updateVolunteerDisplay();
+        switchTab(currentTab);
+      }
+
+      function updateVolunteerDisplay() {
+        var v = getData(SK.volunteer) || {};
+        var avatar = document.getElementById('volunteer-avatar');
+        var nameEl = document.getElementById('volunteer-name');
+        var subtitleEl = document.getElementById('volunteer-subtitle');
+        if (avatar) avatar.textContent = (v.name || '张').charAt(0);
+        if (nameEl) nameEl.textContent = v.name || '暖伴';
+        if (subtitleEl) subtitleEl.textContent = '认证暖伴 · 评分 ' + (v.rating || 4.8);
+        // Update nuanban home greeting
+        var homeName = document.getElementById('nuanban-home-name');
+        if (homeName) homeName.textContent = '暖伴 · ' + (v.name || '张同学');
+      }
+
+      /* ===== Real-name Authentication ===== */
+      function getAuthKey() {
+        return currentRole === 'nuanjia' ? SK.authNuanjia : SK.authNuanban;
+      }
+
+      function getAuthStatusStyle(status) {
+        var styles = {
+          '未认证': { bg: 'var(--state-error-bg)', color: 'var(--state-error)' },
+          '待审核': { bg: 'var(--state-warning-bg)', color: 'var(--state-warning)' },
+          '已认证': { bg: 'var(--state-success-bg)', color: 'var(--state-success)' },
+          '已拒绝': { bg: 'var(--state-error-bg)', color: 'var(--state-error)' }
+        };
+        return styles[status] || styles['未认证'];
+      }
+
+      function updateAuthDisplay() {
+        var auth = getData(getAuthKey()) || { status: '未认证' };
+        var descId = currentRole === 'nuanjia' ? 'nuanjia-auth-desc' : 'nuanban-auth-desc';
+        var descEl = document.getElementById(descId);
+        if (descEl) {
+          var st = getAuthStatusStyle(auth.status);
+          descEl.textContent = auth.status;
+          descEl.style.color = st.color;
+        }
+      }
+
+      function openAuthModal() {
+        var auth = getData(getAuthKey()) || { status: '未认证' };
+        document.getElementById('auth-realname').value = auth.realname || '';
+        document.getElementById('auth-idcard').value = auth.idcard || '';
+        document.getElementById('auth-idfront').value = auth.idfront || '';
+        document.getElementById('auth-idback').value = auth.idback || '';
+        // Show current status
+        var statusDisplay = document.getElementById('auth-status-display');
+        if (auth.status && auth.status !== '未认证') {
+          var st = getAuthStatusStyle(auth.status);
+          statusDisplay.style.display = 'block';
+          statusDisplay.style.background = st.bg;
+          statusDisplay.style.color = st.color;
+          statusDisplay.textContent = '当前状态：' + auth.status + (auth.status === '已拒绝' ? '，请修改后重新提交' : '');
+        } else {
+          statusDisplay.style.display = 'none';
+        }
+        openModal('modal-auth');
+      }
+
+      function submitAuth() {
+        var realname = document.getElementById('auth-realname').value.trim();
+        var idcard = document.getElementById('auth-idcard').value.trim();
+        var idfront = document.getElementById('auth-idfront').value.trim();
+        var idback = document.getElementById('auth-idback').value.trim();
+
+        if (!realname) {
+          showToast('请填写真实姓名');
+          return;
+        }
+        if (!idcard || idcard.length < 15) {
+          showToast('请填写正确的身份证号');
+          return;
+        }
+
+        var auth = {
+          status: '待审核',
+          realname: realname,
+          idcard: idcard,
+          idfront: idfront,
+          idback: idback,
+          submitAt: Date.now()
+        };
+        saveData(getAuthKey(), auth);
+        closeModal('modal-auth');
+        showToast('实名认证已提交，等待审核');
+        updateAuthDisplay();
+      }
+
       /* ===== Order Detail ===== */
       function openOrderDetail(id) {
         var orders = getData(SK.orders) || [];
@@ -1439,6 +1828,7 @@
         var statusStyles = {
           '待接单': { bg: 'var(--state-warning-bg)', color: 'var(--state-warning)' },
           '进行中': { bg: 'var(--state-info-bg)', color: 'var(--state-info)' },
+          '待确认': { bg: '#F0E6F5', color: '#8B5CA8' },
           '已完成': { bg: 'var(--state-success-bg)', color: 'var(--state-success)' }
         };
         var s = statusStyles[order.status] || { bg: 'var(--color-bg-muted)', color: 'var(--color-text-muted)' };
@@ -1462,16 +1852,25 @@
         html += '<div class="flex"><span style="color:var(--color-text-muted); width:72px; flex-shrink:0;">服务费用</span><span style="color:var(--color-primary); font-weight:600;">' + order.price + ' 元</span></div>';
         html += '</div>';
 
+        // Detail map
+        html += '<div id="detail-map-container" style="height:120px; border-radius:8px; overflow:hidden; border:1px solid var(--color-border-light); background: var(--color-bg-muted);"></div>';
+
         // Action buttons
         if (currentRole === 'nuanban' && order.status === '待接单') {
           html += '<button onclick="acceptOrder(\'' + order.id + '\')" class="submit-btn">接单</button>';
         } else if (currentRole === 'nuanban' && order.status === '进行中') {
           html += '<button onclick="completeOrder(\'' + order.id + '\')" class="submit-btn" style="background: var(--state-success);">完成服务</button>';
+        } else if (currentRole === 'nuanjia' && order.status === '待确认') {
+          html += '<button onclick="confirmCompleteOrder(\'' + order.id + '\')" class="submit-btn" style="background: var(--state-success);">确认完成</button>';
         }
         html += '</div>';
 
         document.getElementById('order-detail-body').innerHTML = html;
         openModal('modal-order-detail');
+        // 延迟初始化详情地图，避免隐藏容器初始化失败
+        setTimeout(function () {
+          initDetailMap(order.address);
+        }, 300);
       }
 
       /* ===== Volunteer Accept / Complete ===== */
@@ -1493,13 +1892,27 @@
         var orders = getData(SK.orders) || [];
         orders.forEach(function (o) {
           if (o.id === id) {
+            o.status = '待确认';
+            o.completedAt = Date.now();
+          }
+        });
+        saveData(SK.orders, orders);
+        closeModal('modal-order-detail');
+        showToast('服务已完成，等待暖家确认');
+        switchTab(currentTab);
+      }
+
+      function confirmCompleteOrder(id) {
+        var orders = getData(SK.orders) || [];
+        orders.forEach(function (o) {
+          if (o.id === id) {
             o.status = '已完成';
             o.completedAt = Date.now();
           }
         });
         saveData(SK.orders, orders);
         closeModal('modal-order-detail');
-        showToast('服务已完成');
+        showToast('服务已确认完成');
         switchTab(currentTab);
       }
 
@@ -1574,6 +1987,7 @@
         var styles = {
           '待接单': { bg: 'var(--state-warning-bg)', color: 'var(--state-warning)' },
           '进行中': { bg: 'var(--state-info-bg)', color: 'var(--state-info)' },
+          '待确认': { bg: '#F0E6F5', color: '#8B5CA8' },
           '已完成': { bg: 'var(--state-success-bg)', color: 'var(--state-success)' }
         };
         return styles[status] || { bg: 'var(--color-bg-muted)', color: 'var(--color-text-muted)' };
@@ -1661,6 +2075,7 @@
       /* ===== Render: Nuanjia Me ===== */
       function renderNuanjiaMe() {
         updateProfileDisplay();
+        updateAuthDisplay();
       }
 
       /* ===== Render: Nuanban Home ===== */
@@ -1668,6 +2083,9 @@
         var orders = getData(SK.orders) || [];
         var available = orders.filter(function (o) { return o.status === '待接单'; });
         var completed = orders.filter(function (o) { return o.status === '已完成' && o.volunteer === VOLUNTEER_NAME; });
+
+        // Update volunteer greeting
+        updateVolunteerDisplay();
 
         // Income stats
         var income = completed.reduce(function (sum, o) { return sum + (o.price || 0); }, 0);
@@ -1780,6 +2198,8 @@
         var meCount = document.getElementById('me-count');
         if (meIncome) meIncome.textContent = income;
         if (meCount) meCount.textContent = completed.length;
+        updateVolunteerDisplay();
+        updateAuthDisplay();
       }
 
       /* ===== Settings ===== */
