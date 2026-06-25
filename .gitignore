@@ -1,9 +1,3 @@
-# Local working directory
-shared-children-warm/
-
-# Uploads
-.uploads/
-
 # OS files
 Thumbs.db
 .DS_Store

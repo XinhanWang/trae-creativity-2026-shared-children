@@ -1,0 +1,321 @@
+{
+  "project": {
+    "name": "共享儿女 · 暖陪伴计划",
+    "path": "c:\\Users\\u2021\\Desktop\\资料\\科研\\创造力大赛\\shared-children-warm",
+    "operation": "create",
+    "deviceType": "desktop",
+    "language": "zh-CN",
+    "dashboardMode": false,
+    "replicationMode": null,
+    "sourceUrl": null,
+    "visualSpecExcerpt": null,
+    "styleDefinitionBrief": "银发陪伴社会服务平台，温暖人文风格，暖陶土色主色调搭配鼠尾草绿，柔和圆角，衬线标题字体，像邻家厨房般亲切",
+    "designRead": "social service landing / elderly families + volunteers / warm human / medium density / avoid cold tech blue",
+    "designDials": {
+      "layoutVariance": 3,
+      "motionIntensity": 2,
+      "visualDensity": 3
+    },
+    "styleContinuityAnchors": {
+      "colorSystem": {
+        "primaryColorRole": "warm terracotta #D4654A for CTA, accents, and active states",
+        "brandHuePolicy": "single primary hue; secondary green #5B8A72 for nature/trust signals; accent amber #E8A838 for warmth highlights",
+        "stateColors": "semantic success/warning/error/info tokens defined"
+      },
+      "shapeSystem": "rounded corners: 4px/8px/12px/16px; full-radius for pills/badges",
+      "typographySystem": "Noto Serif SC for headings, Noto Sans SC for body; tight tracking for large titles",
+      "spacingSystem": "4px base grid; generous section padding (80-96px)",
+      "componentLanguage": "border-led cards with warm background tints; subtle shadows only for floating layers",
+      "surfaceAndDepth": "border-first surfaces; shadow alpha <= 0.05 for static; deeper shadows only for modals/popovers",
+      "imageryAndIconography": "warm-toned photography; inline SVG icons with warm stroke colors",
+      "interactionTone": "gentle transitions (250ms); subtle hover lifts (2-4px); warm focus rings"
+    },
+    "specsConstraints": null,
+    "sharedProjectShellContract": {
+      "navigationShell": "top navigation bar with warm cream background, logo on left, nav links center-right, subtle bottom border",
+      "primaryColorSystem": "warm terracotta #D4654A as single primary brand hue",
+      "typographySystem": "Noto Serif SC for headings (display), Noto Sans SC for body text, JetBrains Mono for data/labels",
+      "radiusScale": "4px/8px/12px/16px scale; max 16px for cards/buttons",
+      "surfaceDepthModel": "border-first cards on warm cream background; shadow only for floating layers (alpha <= 0.05)",
+      "ctaStyle": "filled terracotta buttons with white text, rounded-lg radius, subtle hover darkening",
+      "alignmentRules": "max-width 1200px centered container; 24-32px horizontal padding; generous vertical rhythm"
+    },
+    "generationTree": {
+      "root": {
+        "nodeId": "gen-project-shell",
+        "kind": "project-shell",
+        "pageIds": ["page-index", "page-mini-program", "page-web-admin", "page-proposal"],
+        "output": "partials/project-shell.html",
+        "sharedRegions": ["header", "footer", "global-styles"],
+        "privateRegions": [],
+        "mutableSlots": ["activeNavItem", "pageTitle"],
+        "status": "planned",
+        "children": [
+          {
+            "nodeId": "gen-page-index",
+            "kind": "page-leaf",
+            "pageIds": ["page-index"],
+            "output": "pages/index.html",
+            "sharedRegions": [],
+            "privateRegions": ["hero section", "stats row", "demo cards grid", "features grid"],
+            "mutableSlots": ["activeNavItem"],
+            "status": "planned",
+            "children": []
+          },
+          {
+            "nodeId": "gen-page-mini-program",
+            "kind": "page-leaf",
+            "pageIds": ["page-mini-program"],
+            "output": "pages/mini-program.html",
+            "sharedRegions": [],
+            "privateRegions": ["phone mockup with mini-program UI"],
+            "mutableSlots": ["activeNavItem"],
+            "status": "planned",
+            "children": []
+          },
+          {
+            "nodeId": "gen-page-web-admin",
+            "kind": "page-leaf",
+            "pageIds": ["page-web-admin"],
+            "output": "pages/web-admin.html",
+            "sharedRegions": [],
+            "privateRegions": ["admin dashboard with sidebar, charts, tables"],
+            "mutableSlots": ["activeNavItem"],
+            "status": "planned",
+            "children": []
+          },
+          {
+            "nodeId": "gen-page-proposal",
+            "kind": "page-leaf",
+            "pageIds": ["page-proposal"],
+            "output": "pages/proposal.html",
+            "sharedRegions": [],
+            "privateRegions": ["long-form editorial content with charts and tables"],
+            "mutableSlots": ["activeNavItem"],
+            "status": "planned",
+            "children": []
+          }
+        ]
+      }
+    }
+  },
+  "designSource": {
+    "operatingMode": "free-explore",
+    "libraryIdentity": {
+      "name": null,
+      "id": null,
+      "version": null,
+      "scope": null,
+      "path": null,
+      "versionSource": null
+    },
+    "libraryPath": null,
+    "cssFilePath": "c:\\Users\\u2021\\Desktop\\资料\\科研\\创造力大赛\\shared-children-warm\\colors_and_type.css",
+    "brandPrefix": "",
+    "themeMode": "light",
+    "designDecisionSummary": "Warm terracotta primary with sage green secondary; serif headings for editorial warmth; border-first card surfaces on cream backgrounds",
+    "componentContractKind": null,
+    "forbiddenInventedComponents": [],
+    "allowedComponents": [],
+    "styleConstraints": {
+      "radiusMax": 16,
+      "spacingBase": 4,
+      "fontSizeBody": 16,
+      "fontSizeMin": 12,
+      "controlHeightDefault": 40,
+      "controlHeightLarge": 48
+    },
+    "productContext": {
+      "kitType": null,
+      "productType": "social service platform for elderly care"
+    },
+    "actualTokenNameReference": [
+      { "semanticPurpose": "Primary brand color", "tokenName": "--color-primary" },
+      { "semanticPurpose": "Secondary/trust color", "tokenName": "--color-secondary" },
+      { "semanticPurpose": "Warm accent", "tokenName": "--color-accent" },
+      { "semanticPurpose": "Page background", "tokenName": "--color-bg" },
+      { "semanticPurpose": "Card background", "tokenName": "--color-bg-card" },
+      { "semanticPurpose": "Primary text", "tokenName": "--color-text" },
+      { "semanticPurpose": "Secondary text", "tokenName": "--color-text-secondary" },
+      { "semanticPurpose": "Border", "tokenName": "--color-border" },
+      { "semanticPurpose": "Body font", "tokenName": "--font-sans" },
+      { "semanticPurpose": "Heading font", "tokenName": "--font-serif" }
+    ]
+  },
+  "pages": [
+    {
+      "nodeId": "page-index",
+      "slug": "index",
+      "title": "首页",
+      "htmlSrc": "pages/index.html",
+      "pageIndex": 1,
+      "stateGroupId": null,
+      "stateRole": null,
+      "baseStatePageId": null,
+      "sharedShellContract": [],
+      "mutableRegions": [],
+      "derivedFromHtmlSrc": null,
+      "derivationType": "original",
+      "sourcePageId": null,
+      "sourceHtmlSrc": null,
+      "pageType": "showcase",
+      "businessScenario": "项目首页，展示平台概览、核心数据、两个Demo入口和六大服务模块",
+      "visualNorthStar": "温暖的邻里感 — 柔和的奶油色背景上，陶土色标题传达人文关怀，数据以亲切的方式呈现",
+      "compositionPattern": "Hero with centered serif headline + stats bar + dual-card CTA section + feature grid",
+      "continuityAnchors": ["warm cream background", "terracotta CTA buttons", "serif headings", "border-first cards"],
+      "libraryRestraintMode": false,
+      "uiKitPath": null,
+      "componentPlan": [],
+      "imagePlan": [],
+      "chartsRequired": false,
+      "miniProgramStyle": false,
+      "qualityRisks": []
+    },
+    {
+      "nodeId": "page-mini-program",
+      "slug": "mini-program",
+      "title": "小程序Demo",
+      "htmlSrc": "pages/mini-program.html",
+      "pageIndex": 2,
+      "stateGroupId": null,
+      "stateRole": null,
+      "baseStatePageId": null,
+      "sharedShellContract": [],
+      "mutableRegions": [],
+      "derivedFromHtmlSrc": null,
+      "derivationType": "original",
+      "sourcePageId": null,
+      "sourceHtmlSrc": null,
+      "pageType": "showcase",
+      "businessScenario": "微信小程序模拟界面，展示暖家和暖伴双角色切换、服务下单、订单跟踪等核心功能",
+      "visualNorthStar": "手机模拟器中的温暖界面 — 圆润的卡片、大字体、暖色调按钮，让老人一眼就能看懂",
+      "compositionPattern": "Centered phone mockup with side info panel; phone contains tabbed mini-program UI",
+      "continuityAnchors": ["warm cream background", "terracotta CTA buttons", "serif headings", "border-first cards"],
+      "libraryRestraintMode": false,
+      "uiKitPath": null,
+      "componentPlan": [],
+      "imagePlan": [],
+      "chartsRequired": false,
+      "miniProgramStyle": true,
+      "qualityRisks": ["complex phone mockup layout", "tab switching within phone frame"]
+    },
+    {
+      "nodeId": "page-web-admin",
+      "slug": "web-admin",
+      "title": "Web调度后台",
+      "htmlSrc": "pages/web-admin.html",
+      "pageIndex": 3,
+      "stateGroupId": null,
+      "stateRole": null,
+      "baseStatePageId": null,
+      "sharedShellContract": [],
+      "mutableRegions": [],
+      "derivedFromHtmlSrc": null,
+      "derivationType": "original",
+      "sourcePageId": null,
+      "sourceHtmlSrc": null,
+      "pageType": "information-dense",
+      "businessScenario": "运营管理后台，包含数据概览仪表盘、订单管理、暖伴管理、安全监控、数据分析、B端采购六大模块",
+      "visualNorthStar": "温暖但不失专业的管理界面 — 深色侧边栏搭配暖色数据卡片，让运营工作也有温度",
+      "compositionPattern": "Sidebar navigation + top bar + main content area with stat cards, charts, and data tables",
+      "continuityAnchors": ["warm cream background", "terracotta CTA buttons", "serif headings", "border-first cards"],
+      "libraryRestraintMode": false,
+      "uiKitPath": null,
+      "componentPlan": [],
+      "imagePlan": [],
+      "chartsRequired": true,
+      "miniProgramStyle": false,
+      "qualityRisks": ["dense dashboard layout", "multiple chart instances", "sidebar navigation JS"]
+    },
+    {
+      "nodeId": "page-proposal",
+      "slug": "proposal",
+      "title": "创意方案",
+      "htmlSrc": "pages/proposal.html",
+      "pageIndex": 4,
+      "stateGroupId": null,
+      "stateRole": null,
+      "baseStatePageId": null,
+      "sharedShellContract": [],
+      "mutableRegions": [],
+      "derivedFromHtmlSrc": null,
+      "derivationType": "original",
+      "sourcePageId": null,
+      "sourceHtmlSrc": null,
+      "pageType": "showcase",
+      "businessScenario": "完整的创意方案详情页，包含创意概述、用户痛点、价值意义、市场规模、解决方案、典型场景、商业模式、本地化护城河、发展路线等10个章节",
+      "visualNorthStar": "像一本温暖的杂志 — 编辑式排版，衬线标题搭配温暖纸张色背景，图表和数据以优雅的方式嵌入叙事",
+      "compositionPattern": "Editorial long-form with hero, section dividers, card grids, pull quotes, data tables, and charts",
+      "continuityAnchors": ["warm cream background", "terracotta CTA buttons", "serif headings", "border-first cards"],
+      "libraryRestraintMode": false,
+      "uiKitPath": null,
+      "componentPlan": [],
+      "imagePlan": [],
+      "chartsRequired": true,
+      "miniProgramStyle": false,
+      "qualityRisks": ["very long page content", "multiple chart instances", "ECharts dependency"]
+    }
+  ],
+  "assets": [],
+  "wiringPlan": [
+    {
+      "sourceNodeId": "page-index",
+      "domId": "cta-mini-program",
+      "targetPageId": "page-mini-program"
+    },
+    {
+      "sourceNodeId": "page-index",
+      "domId": "cta-web-admin",
+      "targetPageId": "page-web-admin"
+    },
+    {
+      "sourceNodeId": "page-index",
+      "domId": "nav-proposal",
+      "targetPageId": "page-proposal"
+    }
+  ],
+  "hiddenInteractionPlan": [
+    {
+      "sourceNodeId": "page-mini-program",
+      "domId": "back-to-index",
+      "targetPageId": "page-index",
+      "hideEdge": true,
+      "reason": "return navigation"
+    },
+    {
+      "sourceNodeId": "page-web-admin",
+      "domId": "back-to-index",
+      "targetPageId": "page-index",
+      "hideEdge": true,
+      "reason": "return navigation"
+    },
+    {
+      "sourceNodeId": "page-proposal",
+      "domId": "back-to-index",
+      "targetPageId": "page-index",
+      "hideEdge": true,
+      "reason": "return navigation"
+    },
+    {
+      "sourceNodeId": "page-mini-program",
+      "domId": "nav-index",
+      "targetPageId": "page-index",
+      "hideEdge": true,
+      "reason": "global nav"
+    },
+    {
+      "sourceNodeId": "page-web-admin",
+      "domId": "nav-index",
+      "targetPageId": "page-index",
+      "hideEdge": true,
+      "reason": "global nav"
+    },
+    {
+      "sourceNodeId": "page-proposal",
+      "domId": "nav-index",
+      "targetPageId": "page-index",
+      "hideEdge": true,
+      "reason": "global nav"
+    }
+  ]
+}

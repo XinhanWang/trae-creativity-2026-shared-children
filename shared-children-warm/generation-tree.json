@@ -1,0 +1,58 @@
+{
+  "root": {
+    "nodeId": "gen-project-shell",
+    "kind": "project-shell",
+    "pageIds": ["page-index", "page-mini-program", "page-web-admin", "page-proposal"],
+    "output": "partials/project-shell.html",
+    "sharedRegions": ["header", "footer", "global-styles"],
+    "privateRegions": [],
+    "mutableSlots": ["activeNavItem"],
+    "status": "planned",
+    "children": [
+      {
+        "nodeId": "gen-page-index",
+        "kind": "page-leaf",
+        "pageIds": ["page-index"],
+        "output": "pages/index.html",
+        "sharedRegions": [],
+        "privateRegions": ["hero section", "stats row", "demo cards grid", "features grid"],
+        "mutableSlots": ["activeNavItem"],
+        "status": "planned",
+        "children": []
+      },
+      {
+        "nodeId": "gen-page-mini-program",
+        "kind": "page-leaf",
+        "pageIds": ["page-mini-program"],
+        "output": "pages/mini-program.html",
+        "sharedRegions": [],
+        "privateRegions": ["phone mockup with mini-program UI"],
+        "mutableSlots": ["activeNavItem"],
+        "status": "planned",
+        "children": []
+      },
+      {
+        "nodeId": "gen-page-web-admin",
+        "kind": "page-leaf",
+        "pageIds": ["page-web-admin"],
+        "output": "pages/web-admin.html",
+        "sharedRegions": [],
+        "privateRegions": ["admin dashboard with sidebar, charts, tables"],
+        "mutableSlots": ["activeNavItem"],
+        "status": "planned",
+        "children": []
+      },
+      {
+        "nodeId": "gen-page-proposal",
+        "kind": "page-leaf",
+        "pageIds": ["page-proposal"],
+        "output": "pages/proposal.html",
+        "sharedRegions": [],
+        "privateRegions": ["long-form editorial content with charts and tables"],
+        "mutableSlots": ["activeNavItem"],
+        "status": "planned",
+        "children": []
+      }
+    ]
+  }
+}

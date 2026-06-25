@@ -1,0 +1,120 @@
+{
+  "data": [
+    {
+      "id": "page-index",
+      "title": "首页",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1782301800000,
+      "canvasData": {
+        "x": 0,
+        "y": 0,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/index.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-mini-program",
+      "title": "小程序Demo",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1782301800000,
+      "canvasData": {
+        "x": 420,
+        "y": 0,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/mini-program.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-web-admin",
+      "title": "Web调度后台",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1782301800000,
+      "canvasData": {
+        "x": 840,
+        "y": 0,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/web-admin.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-proposal",
+      "title": "创意方案",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1782301800000,
+      "canvasData": {
+        "x": 1428,
+        "y": -96,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/proposal.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "image-001",
+      "title": "首页主视觉",
+      "type": "image",
+      "version": 1,
+      "createdAt": 1782302000000,
+      "canvasData": {
+        "x": 0,
+        "y": 9494
+      },
+      "devMetadata": {
+        "imageSrc": "assets/hero-warm-companion.jpg"
+      }
+    },
+    {
+      "id": "image-002",
+      "title": "公园陪伴场景",
+      "type": "image",
+      "version": 1,
+      "createdAt": 1782302000000,
+      "canvasData": {
+        "x": 420,
+        "y": 9494
+      },
+      "devMetadata": {
+        "imageSrc": "assets/scenario-park-walk.jpg"
+      }
+    },
+    {
+      "id": "image-003",
+      "title": "跑腿代办场景",
+      "type": "image",
+      "version": 1,
+      "createdAt": 1782302000000,
+      "canvasData": {
+        "x": 840,
+        "y": 9494
+      },
+      "devMetadata": {
+        "imageSrc": "assets/scenario-errand-pharmacy.jpg"
+      }
+    }
+  ],
+  "config": {
+    "autoLayout": false,
+    "deviceType": "desktop",
+    "projectName": "共享儿女 · 暖陪伴计划",
+    "designLibrary": null,
+    "windowSize": {
+      "width": 800,
+      "height": 600
+    }
+  }
+}

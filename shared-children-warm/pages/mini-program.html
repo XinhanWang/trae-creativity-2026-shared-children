@@ -641,12 +641,7 @@
                     </div>
                     <div class="form-group">
                       <label>服务时间<span class="text-xs" style="color: var(--color-text-muted); font-weight: 400;">（按10分钟刻度）</span></label>
-                      <div class="flex gap-2 items-center">
-                        <input type="date" id="order-date" style="flex:1; min-width:0;">
-                        <select id="order-hour" style="width:64px;"></select>
-                        <span style="color: var(--color-text-muted);">:</span>
-                        <select id="order-minute" style="width:72px;"></select>
-                      </div>
+                      <input type="datetime-local" id="order-time" step="600">
                     </div>
                     <div class="form-group">
                       <label>服务时长</label>
@@ -665,15 +660,12 @@
                     </div>
                     <div class="form-group">
                       <label>服务地址</label>
-                      <input type="text" id="order-address" placeholder="请输入详细地址">
-                      <button type="button" onclick="initOrderMap()" class="text-xs mt-2 px-3 py-1.5 rounded-lg" style="background: var(--color-primary-light); color: var(--color-primary); border: 1px solid var(--color-primary-light); cursor: pointer; font-weight: 500;">使用地图选址</button>
-                      <div id="order-map-wrap" style="display:none; margin-top:8px;">
-                        <div class="flex gap-2 mb-2">
-                          <input type="text" id="order-map-search" placeholder="搜索地点，如：武汉大学中南医院" style="flex:1; min-width:0;">
-                          <button type="button" onclick="searchOrderMap()" class="text-xs px-3 py-1.5 rounded-lg shrink-0" style="background: var(--color-primary); color: var(--color-text-inverse); border: none; cursor: pointer; font-weight: 500;">搜索</button>
-                        </div>
-                        <div id="order-map-container" style="height:160px; border-radius:8px; overflow:hidden; border:1px solid var(--color-border);"></div>
+                      <div style="position:relative;">
+                        <input type="text" id="order-address" placeholder="输入地址关键词搜索，如：梅苑小区" autocomplete="off" oninput="searchAddress(this.value)" onfocus="showAddressSuggestions()" onblur="setTimeout(function(){hideAddressSuggestions();},200)">
+                        <div id="address-suggestions" style="display:none;position:absolute;top:100%;left:0;right:0;max-height:200px;overflow-y:auto;background:var(--color-bg-card);border:1px solid var(--color-border);border-radius:0 0 8px 8px;box-shadow:0 4px 12px rgba(0,0,0,0.08);z-index:100;"></div>
                       </div>
+                      <button type="button" onclick="initOrderMap()" class="text-xs mt-2 px-3 py-1.5 rounded-lg" style="background: var(--color-primary-light); color: var(--color-primary); border: 1px solid var(--color-primary-light); cursor: pointer; font-weight: 500;">使用地图选址</button>
+                      <div id="order-map-container" style="display:none; height:160px; margin-top:8px; border-radius:8px; overflow:hidden; border:1px solid var(--color-border);"></div>
                     </div>
                     <div class="form-group">
                       <label>备注说明</label>
@@ -819,14 +811,12 @@
                       <input type="text" id="auth-idcard" placeholder="请输入身份证号" maxlength="18">
                     </div>
                     <div class="form-group">
-                      <label>身份证正面照</label>
-                      <div id="auth-idfront-preview" class="idcard-preview">点击下方按钮上传照片</div>
-                      <input type="file" id="auth-idfront" accept="image/*" class="idcard-input" onchange="handleIdcardUpload(this, 'auth-idfront-preview')">
+                      <label>身份证正面照（请输入图片URL）</label>
+                      <input type="text" id="auth-idfront" placeholder="请输入身份证正面照图片URL">
                     </div>
                     <div class="form-group">
-                      <label>身份证反面照</label>
-                      <div id="auth-idback-preview" class="idcard-preview">点击下方按钮上传照片</div>
-                      <input type="file" id="auth-idback" accept="image/*" class="idcard-input" onchange="handleIdcardUpload(this, 'auth-idback-preview')">
+                      <label>身份证反面照（请输入图片URL）</label>
+                      <input type="text" id="auth-idback" placeholder="请输入身份证反面照图片URL">
                     </div>
                     <div id="auth-status-display" style="display:none; padding:8px 12px; border-radius:8px; margin-bottom:12px; font-size:13px;"></div>
                     <button onclick="submitAuth()" class="submit-btn">提交认证</button>
@@ -1063,28 +1053,6 @@
         outline: none;
         border-color: var(--color-border-focus);
       }
-      .idcard-preview {
-        width: 100%;
-        height: 110px;
-        border: 1px dashed var(--color-border);
-        border-radius: 8px;
-        margin-bottom: 6px;
-        background: var(--color-bg-muted);
-        background-size: cover;
-        background-position: center;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--color-text-muted);
-        font-size: 12px;
-        overflow: hidden;
-      }
-      .idcard-preview.has-img { border-style: solid; }
-      .idcard-preview img { width: 100%; height: 100%; object-fit: cover; }
-      .idcard-input {
-        font-size: 12px !important;
-        padding: 6px 8px !important;
-      }
       .submit-btn {
         width: 100%;
         padding: 10px;
@@ -1215,7 +1183,7 @@
       }
 
       /* ===== Initialize Sample Data ===== */
-      var DATA_VERSION = '3';
+      var DATA_VERSION = '4';
       function initData() {
         // Force re-init when data version changes
         if (localStorage.getItem('sc_data_version') !== DATA_VERSION) {
@@ -1233,35 +1201,35 @@
           var now = Date.now();
           saveData(SK.orders, [
             {
-              id: 'ORD20260625001', type: '日常陪伴', status: '待接单',
+              id: 'ORD202606250001', type: '日常陪伴', status: '待接单',
               elderName: '李奶奶', address: '武汉市武昌区中南路街梅苑小区3栋',
               time: '2026-06-25 09:00', duration: '2小时',
               description: '陪老人散步聊天', volunteer: null,
               price: 80, createdAt: now - 86400000, ownerId: null
             },
             {
-              id: 'ORD20260625002', type: '跑腿代办', status: '待接单',
+              id: 'ORD202606250002', type: '跑腿代办', status: '待接单',
               elderName: '赵爷爷', address: '武汉市洪山区珞南街卓刀泉社区5栋',
               time: '2026-06-25 10:00', duration: '1小时',
               description: '帮忙去超市买菜', volunteer: null,
               price: 50, createdAt: now - 43200000, ownerId: null
             },
             {
-              id: 'ORD20260624001', type: '数字辅导', status: '待接单',
+              id: 'ORD202606250003', type: '数字辅导', status: '待接单',
               elderName: '孙奶奶', address: '武汉市江汉区万松街武展社区2号',
               time: '2026-06-24 14:00', duration: '1小时',
               description: '教老人使用微信视频通话', volunteer: null,
               price: 30, createdAt: now - 3600000, ownerId: null
             },
             {
-              id: 'ORD20260623001', type: '陪同就医', status: '已完成',
+              id: 'ORD202606230001', type: '陪同就医', status: '已完成',
               elderName: '王奶奶', address: '武汉市武昌区中南路街梅苑小区3栋',
               time: '2026-06-23 09:00', duration: '半天',
               description: '陪同去武汉大学中南医院复查', volunteer: VOLUNTEER_NAME,
               price: 100, createdAt: now - 172800000, completedAt: now - 86400000, ownerId: 'U001'
             },
             {
-              id: 'ORD20260622001', type: '日常陪伴', status: '已完成',
+              id: 'ORD202606220001', type: '日常陪伴', status: '已完成',
               elderName: '刘大爷', address: '武汉市江岸区大智街同安里1号',
               time: '2026-06-22 14:00', duration: '2小时',
               description: '陪老人聊天解闷', volunteer: VOLUNTEER_NAME,
@@ -1397,34 +1365,6 @@
       }
 
       /* ===== Order Create ===== */
-      function pad2(n) { return String(n).padStart(2, '0'); }
-      function genOrderId() {
-        var d = new Date();
-        var ymd = d.getFullYear() + pad2(d.getMonth() + 1) + pad2(d.getDate());
-        var rand = String(Math.floor(Math.random() * 9000) + 1000);
-        return 'ORD' + ymd + rand;
-      }
-      function initTimeSelects() {
-        var hourSel = document.getElementById('order-hour');
-        var minSel = document.getElementById('order-minute');
-        if (!hourSel || !minSel) return;
-        if (hourSel.options.length) return;
-        var h = '', m = '';
-        for (var i = 0; i < 24; i++) h += '<option value="' + pad2(i) + '">' + pad2(i) + '时</option>';
-        for (var j = 0; j < 60; j += 10) m += '<option value="' + pad2(j) + '">' + pad2(j) + '分</option>';
-        hourSel.innerHTML = h;
-        minSel.innerHTML = m;
-      }
-      function setOrderTimeDefault() {
-        var d = new Date();
-        var dateEl = document.getElementById('order-date');
-        var hourEl = document.getElementById('order-hour');
-        var minEl = document.getElementById('order-minute');
-        if (dateEl) dateEl.value = d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
-        if (hourEl) hourEl.value = pad2(d.getHours());
-        if (minEl) minEl.value = pad2(Math.floor(d.getMinutes() / 10) * 10);
-      }
-
       function openOrderModal(type) {
         var select = document.getElementById('order-type');
         if (type) {
@@ -1441,23 +1381,31 @@
         document.getElementById('order-address').value = profile.address || '';
         // Reset price and map
         document.getElementById('order-price').value = '';
-        var mapWrap = document.getElementById('order-map-wrap');
-        if (mapWrap) { mapWrap.style.display = 'none'; }
         var mapContainer = document.getElementById('order-map-container');
-        if (mapContainer) { mapContainer.innerHTML = ''; }
-        var searchInput = document.getElementById('order-map-search');
-        if (searchInput) searchInput.value = '';
-        // Init time selects with 10-minute scale
-        initTimeSelects();
-        setOrderTimeDefault();
+        if (mapContainer) { mapContainer.style.display = 'none'; mapContainer.innerHTML = ''; }
         openModal('modal-order');
+      }
+
+      function generateOrderId() {
+        var d = new Date();
+        var dateStr = d.getFullYear().toString() +
+          String(d.getMonth() + 1).padStart(2, '0') +
+          String(d.getDate()).padStart(2, '0');
+        var seq = 1;
+        var orders = getData(SK.orders) || [];
+        var prefix = 'ORD' + dateStr;
+        for (var i = 0; i < orders.length; i++) {
+          if (orders[i].id && orders[i].id.indexOf(prefix) === 0) {
+            var num = parseInt(orders[i].id.substring(prefix.length), 10);
+            if (!isNaN(num) && num >= seq) seq = num + 1;
+          }
+        }
+        return prefix + String(seq).padStart(4, '0');
       }
 
       function submitOrder() {
         var type = document.getElementById('order-type').value;
-        var dateVal = document.getElementById('order-date').value;
-        var hourVal = document.getElementById('order-hour').value;
-        var minVal = document.getElementById('order-minute').value;
+        var timeVal = document.getElementById('order-time').value;
         var duration = document.getElementById('order-duration').value;
         var address = document.getElementById('order-address').value.trim();
         var desc = document.getElementById('order-desc').value.trim();
@@ -1478,12 +1426,17 @@
         }
 
         var timeStr = '';
-        if (dateVal) {
-          timeStr = dateVal + ' ' + (hourVal || '00') + ':' + (minVal || '00');
+        if (timeVal) {
+          var d = new Date(timeVal);
+          timeStr = d.getFullYear() + '-' +
+            String(d.getMonth() + 1).padStart(2, '0') + '-' +
+            String(d.getDate()).padStart(2, '0') + ' ' +
+            String(d.getHours()).padStart(2, '0') + ':' +
+            String(d.getMinutes()).padStart(2, '0');
         }
 
         var newOrder = {
-          id: genOrderId(),
+          id: generateOrderId(),
           type: type,
           status: '待接单',
           elderName: profile.name || '匿名用户',
@@ -1501,13 +1454,12 @@
         saveData(SK.orders, orders);
 
         // Reset form
+        document.getElementById('order-time').value = '';
         document.getElementById('order-address').value = '';
         document.getElementById('order-desc').value = '';
         document.getElementById('order-price').value = '';
-        var mapWrap = document.getElementById('order-map-wrap');
-        if (mapWrap) { mapWrap.style.display = 'none'; }
         var mapContainer = document.getElementById('order-map-container');
-        if (mapContainer) { mapContainer.innerHTML = ''; }
+        if (mapContainer) { mapContainer.style.display = 'none'; mapContainer.innerHTML = ''; }
 
         closeModal('modal-order');
         showToast('订单提交成功，等待暖伴接单');
@@ -1531,10 +1483,9 @@
       }
 
       function initOrderMap() {
-        var wrap = document.getElementById('order-map-wrap');
         var container = document.getElementById('order-map-container');
         if (!container) return;
-        if (wrap) wrap.style.display = 'block';
+        container.style.display = 'block';
         if (!checkBaiduMapReady()) {
           showMapError('order-map-container', '地图加载中，请稍候...');
           setTimeout(function () {
@@ -1545,23 +1496,11 @@
         }
         container.innerHTML = '';
         orderMapInstance = new BMap.Map(container);
+        var point = new BMap.Point(MAP_CENTER.lng, MAP_CENTER.lat);
+        orderMapInstance.centerAndZoom(point, 14);
         orderMapInstance.enableScrollWheelZoom(true);
-        var setupOrderMap = function (lng, lat) {
-          var point = new BMap.Point(lng, lat);
-          orderMapInstance.centerAndZoom(point, 14);
-          var marker = new BMap.Marker(point);
-          orderMapInstance.addOverlay(marker);
-        };
-        // 优先使用浏览器真实定位，失败则回退到默认中心
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(
-            function (pos) { setupOrderMap(pos.coords.longitude, pos.coords.latitude); },
-            function () { setupOrderMap(MAP_CENTER.lng, MAP_CENTER.lat); },
-            { timeout: 5000, enableHighAccuracy: true }
-          );
-        } else {
-          setupOrderMap(MAP_CENTER.lng, MAP_CENTER.lat);
-        }
+        var marker = new BMap.Marker(point);
+        orderMapInstance.addOverlay(marker);
         orderMapInstance.addEventListener('click', function (e) {
           var pt = e.point;
           orderMapInstance.clearOverlays();
@@ -1577,27 +1516,7 @@
             }
           });
         });
-        showToast('点击地图或搜索地点选取服务位置');
-      }
-
-      function searchOrderMap() {
-        var keyword = document.getElementById('order-map-search').value.trim();
-        if (!keyword) { showToast('请输入搜索地点'); return; }
-        if (!checkBaiduMapReady() || !orderMapInstance) { showToast('地图未就绪，请稍候'); return; }
-        var local = new BMap.LocalSearch(orderMapInstance, {
-          renderOptions: { map: orderMapInstance, autoViewport: true },
-          onMarkersSet: function (pois) {
-            if (pois && pois.length) {
-              var poi = pois[0];
-              var addressInput = document.getElementById('order-address');
-              if (addressInput && poi.address) addressInput.value = poi.address;
-              showToast('已定位到：' + poi.title);
-            } else {
-              showToast('未找到相关地点');
-            }
-          }
-        });
-        local.search(keyword);
+        showToast('点击地图选取服务位置');
       }
 
       function initDetailMap(address) {
@@ -1643,43 +1562,30 @@
         }
         container.innerHTML = '';
         homeMapInstance = new BMap.Map(container);
+        var point = new BMap.Point(MAP_CENTER.lng, MAP_CENTER.lat);
+        homeMapInstance.centerAndZoom(point, 14);
         homeMapInstance.disableScrollWheelZoom();
-        // 渲染地图：真实定位 + 附近示例暖伴
-        var renderHomeMap = function (lng, lat) {
-          var point = new BMap.Point(lng, lat);
-          homeMapInstance.centerAndZoom(point, 14);
-          // 当前位置标记
-          var curMarker = new BMap.Marker(point);
-          homeMapInstance.addOverlay(curMarker);
-          var label = new BMap.Label('我的位置', { offset: new BMap.Size(-20, -25) });
-          label.setStyle({ color: '#fff', background: 'var(--color-primary)', border: 'none', padding: '2px 6px', borderRadius: '4px', fontSize: '11px' });
-          curMarker.setLabel(label);
-          // 附近暖伴标记点（基于真实定位的相对偏移）
-          var companions = [
-            { dlng: 0.008, dlat: 0.004, name: '李阿姨', dist: '500m' },
-            { dlng: -0.006, dlat: -0.003, name: '张同学', dist: '800m' },
-            { dlng: 0.010, dlat: -0.005, name: '王师傅', dist: '1.2km' }
-          ];
-          companions.forEach(function (c) {
-            var pt = new BMap.Point(lng + c.dlng, lat + c.dlat);
-            var icon = new BMap.Icon('https://api.map.baidu.com/images/markers.png', new BMap.Size(23, 25), { offset: new BMap.Size(10, 25), imageOffset: new BMap.Size(0, -250) });
-            var mk = new BMap.Marker(pt, { icon: icon });
-            homeMapInstance.addOverlay(mk);
-            var lbl = new BMap.Label(c.name + ' · ' + c.dist, { offset: new BMap.Size(-20, -25) });
-            lbl.setStyle({ color: '#fff', background: 'var(--state-success)', border: 'none', padding: '2px 6px', borderRadius: '4px', fontSize: '11px' });
-            mk.setLabel(lbl);
-          });
-        };
-        // 优先使用浏览器真实定位，失败则回退到默认中心
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(
-            function (pos) { renderHomeMap(pos.coords.longitude, pos.coords.latitude); },
-            function () { renderHomeMap(MAP_CENTER.lng, MAP_CENTER.lat); },
-            { timeout: 5000, enableHighAccuracy: true }
-          );
-        } else {
-          renderHomeMap(MAP_CENTER.lng, MAP_CENTER.lat);
-        }
+        // 当前位置标记
+        var curMarker = new BMap.Marker(point);
+        homeMapInstance.addOverlay(curMarker);
+        var label = new BMap.Label('我的位置', { offset: new BMap.Size(-20, -25) });
+        label.setStyle({ color: '#fff', background: 'var(--color-primary)', border: 'none', padding: '2px 6px', borderRadius: '4px', fontSize: '11px' });
+        curMarker.setLabel(label);
+        // 附近暖伴标记点（模拟位置）
+        var companions = [
+          { lng: 114.308, lat: 30.595, name: '李阿姨' },
+          { lng: 114.302, lat: 30.591, name: '张同学' },
+          { lng: 114.310, lat: 30.590, name: '王师傅' }
+        ];
+        companions.forEach(function (c) {
+          var pt = new BMap.Point(c.lng, c.lat);
+          var icon = new BMap.Icon('https://api.map.baidu.com/images/markers.png', new BMap.Size(23, 25), { offset: new BMap.Size(10, 25), imageOffset: new BMap.Size(0, -250) });
+          var mk = new BMap.Marker(pt, { icon: icon });
+          homeMapInstance.addOverlay(mk);
+          var lbl = new BMap.Label(c.name, { offset: new BMap.Size(-20, -25) });
+          lbl.setStyle({ color: '#fff', background: 'var(--state-success)', border: 'none', padding: '2px 6px', borderRadius: '4px', fontSize: '11px' });
+          mk.setLabel(lbl);
+        });
       }
 
       function geocodeAddress(address, callback) {
@@ -1692,6 +1598,114 @@
           if (pt && callback) callback(pt);
           else if (callback) callback(null);
         }, '武汉市');
+      }
+
+      /* ===== 地址搜索联想 ===== */
+      var addressAc = null;
+      var addressSearchTimer = null;
+
+      function initAddressAutocomplete() {
+        if (addressAc || !checkBaiduMapReady()) return;
+        addressAc = new BMap.Autocomplete({
+          input: 'order-address',
+          location: '武汉',
+          onSearchComplete: function (results) {
+            renderAddressSuggestions(results);
+          }
+        });
+      }
+
+      function searchAddress(keyword) {
+        if (!keyword || keyword.trim().length < 2) {
+          hideAddressSuggestions();
+          return;
+        }
+        if (!checkBaiduMapReady()) {
+          // Fallback: 如果百度地图未加载，使用简单匹配
+          var fallback = [
+            '武汉市武昌区中南路街梅苑小区',
+            '武汉市洪山区珞南街卓刀泉社区',
+            '武汉市江汉区万松街武展社区',
+            '武汉市江岸区大智街同安里',
+            '武汉市汉阳区翠微街',
+            '武汉市青山区金色港湾'
+          ].filter(function (a) { return a.indexOf(keyword) >= 0; });
+          renderFallbackSuggestions(fallback);
+          return;
+        }
+        if (!addressAc) initAddressAutocomplete();
+        // Autocomplete 会自动触发 onSearchComplete
+      }
+
+      function renderAddressSuggestions(results) {
+        var container = document.getElementById('address-suggestions');
+        if (!container) return;
+        if (!results || results.getNumPois() === 0) {
+          container.innerHTML = '<div style="padding:12px;text-align:center;color:var(--color-text-muted);font-size:13px;">未找到相关地址</div>';
+          container.style.display = 'block';
+          return;
+        }
+        var html = '';
+        for (var i = 0; i < results.getNumPoi(); i++) {
+          var poi = results.getPoi(i);
+          if (!poi) continue;
+          var addr = (poi.province || '') + (poi.city || '') + (poi.district || '') + (poi.street || '') + (poi.business || '');
+          var displayAddr = (poi.district || '') + (poi.street || '') + (poi.business || '');
+          if (!displayAddr) displayAddr = poi.address || poi.title || addr;
+          html += '<div onclick="selectAddress(\'' + addr.replace(/'/g, "\\'") + '\', ' + (poi.point ? poi.point.lng + ', ' + poi.point.lat : 'null, null') + ')" style="padding:8px 12px;cursor:pointer;border-bottom:1px solid var(--color-border-light);font-size:13px;color:var(--color-text);transition:background 0.15s;" onmouseover="this.style.background=\'var(--color-bg-muted)\'" onmouseout="this.style.background=\'transparent\'">' +
+            '<div style="font-weight:500;">' + (poi.title || poi.business || displayAddr) + '</div>' +
+            '<div style="font-size:11px;color:var(--color-text-muted);margin-top:2px;">' + displayAddr + '</div>' +
+            '</div>';
+        }
+        container.innerHTML = html;
+        container.style.display = 'block';
+      }
+
+      function renderFallbackSuggestions(matches) {
+        var container = document.getElementById('address-suggestions');
+        if (!container) return;
+        if (matches.length === 0) {
+          container.innerHTML = '<div style="padding:12px;text-align:center;color:var(--color-text-muted);font-size:13px;">未找到相关地址</div>';
+          container.style.display = 'block';
+          return;
+        }
+        var html = '';
+        matches.forEach(function (addr) {
+          html += '<div onclick="selectAddress(\'' + addr.replace(/'/g, "\\'") + '\', null, null)" style="padding:8px 12px;cursor:pointer;border-bottom:1px solid var(--color-border-light);font-size:13px;color:var(--color-text);transition:background 0.15s;" onmouseover="this.style.background=\'var(--color-bg-muted)\'" onmouseout="this.style.background=\'transparent\'">' +
+            '<div style="font-weight:500;">' + addr + '</div>' +
+            '</div>';
+        });
+        container.innerHTML = html;
+        container.style.display = 'block';
+      }
+
+      function selectAddress(address, lng, lat) {
+        var input = document.getElementById('order-address');
+        if (input) input.value = address;
+        hideAddressSuggestions();
+        // 如果有坐标，更新地图标记
+        if (lng && lat && orderMapInstance) {
+          var pt = new BMap.Point(lng, lat);
+          orderMapInstance.clearOverlays();
+          var mk = new BMap.Marker(pt);
+          orderMapInstance.addOverlay(mk);
+          orderMapInstance.centerAndZoom(pt, 16);
+        }
+        showToast('已选择地址：' + address);
+      }
+
+      function showAddressSuggestions() {
+        var input = document.getElementById('order-address');
+        var container = document.getElementById('address-suggestions');
+        if (!input || !container) return;
+        if (input.value && input.value.trim().length >= 2) {
+          searchAddress(input.value);
+        }
+      }
+
+      function hideAddressSuggestions() {
+        var container = document.getElementById('address-suggestions');
+        if (container) container.style.display = 'none';
       }
 
       /* ===== Alarm ===== */
@@ -1881,44 +1895,12 @@
         }
       }
 
-      function setAuthPreview(previewId, dataUrl) {
-        var el = document.getElementById(previewId);
-        if (!el) return;
-        if (dataUrl) {
-          el.innerHTML = '<img src="' + dataUrl + '" alt="证件照">';
-          el.classList.add('has-img');
-        } else {
-          el.innerHTML = '点击下方按钮上传照片';
-          el.classList.remove('has-img');
-        }
-      }
-      function handleIdcardUpload(input, previewId) {
-        var file = input.files && input.files[0];
-        var preview = document.getElementById(previewId);
-        if (!file) {
-          input.dataset.dataurl = '';
-          if (preview) { preview.innerHTML = '点击下方按钮上传照片'; preview.classList.remove('has-img'); }
-          return;
-        }
-        var reader = new FileReader();
-        reader.onload = function (e) {
-          var dataUrl = e.target.result;
-          input.dataset.dataurl = dataUrl;
-          if (preview) { preview.innerHTML = '<img src="' + dataUrl + '" alt="证件照">'; preview.classList.add('has-img'); }
-        };
-        reader.readAsDataURL(file);
-      }
-
       function openAuthModal() {
         var auth = getData(getAuthKey()) || { status: '未认证' };
         document.getElementById('auth-realname').value = auth.realname || '';
         document.getElementById('auth-idcard').value = auth.idcard || '';
-        var frontInput = document.getElementById('auth-idfront');
-        var backInput = document.getElementById('auth-idback');
-        if (frontInput) { frontInput.value = ''; frontInput.dataset.dataurl = auth.idfront || ''; }
-        if (backInput) { backInput.value = ''; backInput.dataset.dataurl = auth.idback || ''; }
-        setAuthPreview('auth-idfront-preview', auth.idfront);
-        setAuthPreview('auth-idback-preview', auth.idback);
+        document.getElementById('auth-idfront').value = auth.idfront || '';
+        document.getElementById('auth-idback').value = auth.idback || '';
         // Show current status
         var statusDisplay = document.getElementById('auth-status-display');
         if (auth.status && auth.status !== '未认证') {
@@ -1936,10 +1918,8 @@
       function submitAuth() {
         var realname = document.getElementById('auth-realname').value.trim();
         var idcard = document.getElementById('auth-idcard').value.trim();
-        var frontInput = document.getElementById('auth-idfront');
-        var backInput = document.getElementById('auth-idback');
-        var idfront = frontInput ? (frontInput.dataset.dataurl || '') : '';
-        var idback = backInput ? (backInput.dataset.dataurl || '') : '';
+        var idfront = document.getElementById('auth-idfront').value.trim();
+        var idback = document.getElementById('auth-idback').value.trim();
 
         if (!realname) {
           showToast('请填写真实姓名');
@@ -1959,6 +1939,41 @@
           submitAt: Date.now()
         };
         saveData(getAuthKey(), auth);
+
+        /* 同步写入后台实名认证记录（sc_auth_records），打通前后端数据 */
+        var profile = getData(SK.profile) || {};
+        var maskedId = idcard.length >= 18
+          ? idcard.substring(0, 4) + '**********' + idcard.substring(14)
+          : idcard.substring(0, 4) + '*****' + idcard.substring(idcard.length - 4);
+        var maskedPhone = profile.phone
+          ? profile.phone.substring(0, 3) + '****' + profile.phone.substring(7)
+          : '-';
+        var now = new Date();
+        var submitTime = now.getFullYear() + '-' +
+          String(now.getMonth() + 1).padStart(2, '0') + '-' +
+          String(now.getDate()).padStart(2, '0') + ' ' +
+          String(now.getHours()).padStart(2, '0') + ':' +
+          String(now.getMinutes()).padStart(2, '0');
+        var role = currentRole === 'nuanjia' ? '暖家' : '暖伴';
+        var backendRecords = getData('sc_auth_records') || [];
+        var authId = 'AUTH-' + String(backendRecords.length + 1).padStart(3, '0');
+        while (backendRecords.some(function (r) { return r.id === authId; })) {
+          var num = parseInt(authId.split('-')[1], 10) + 1;
+          authId = 'AUTH-' + String(num).padStart(3, '0');
+        }
+        backendRecords.push({
+          id: authId,
+          name: profile.name || '匿名用户',
+          role: role,
+          idCard: maskedId,
+          phone: maskedPhone,
+          submitTime: submitTime,
+          status: '待审核',
+          realName: realname,
+          area: (profile.address || '').replace(/^武汉市?/, '').split('区')[0] + '区' || '-'
+        });
+        saveData('sc_auth_records', backendRecords);
+
         closeModal('modal-auth');
         showToast('实名认证已提交，等待审核');
         updateAuthDisplay();
