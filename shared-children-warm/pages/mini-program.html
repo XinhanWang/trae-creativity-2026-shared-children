@@ -641,7 +641,12 @@
                     </div>
                     <div class="form-group">
                       <label>服务时间<span class="text-xs" style="color: var(--color-text-muted); font-weight: 400;">（按10分钟刻度）</span></label>
-                      <input type="datetime-local" id="order-time" step="600">
+                      <div class="flex gap-2 items-center">
+                        <input type="date" id="order-date" style="flex:1; min-width:0;">
+                        <select id="order-hour" style="width:64px;"></select>
+                        <span style="color: var(--color-text-muted);">:</span>
+                        <select id="order-minute" style="width:72px;"></select>
+                      </div>
                     </div>
                     <div class="form-group">
                       <label>服务时长</label>
@@ -665,7 +670,13 @@
                         <div id="address-suggestions" style="display:none;position:absolute;top:100%;left:0;right:0;max-height:200px;overflow-y:auto;background:var(--color-bg-card);border:1px solid var(--color-border);border-radius:0 0 8px 8px;box-shadow:0 4px 12px rgba(0,0,0,0.08);z-index:100;"></div>
                       </div>
                       <button type="button" onclick="initOrderMap()" class="text-xs mt-2 px-3 py-1.5 rounded-lg" style="background: var(--color-primary-light); color: var(--color-primary); border: 1px solid var(--color-primary-light); cursor: pointer; font-weight: 500;">使用地图选址</button>
-                      <div id="order-map-container" style="display:none; height:160px; margin-top:8px; border-radius:8px; overflow:hidden; border:1px solid var(--color-border);"></div>
+                      <div id="order-map-wrap" style="display:none; margin-top:8px;">
+                        <div class="flex gap-2 mb-2">
+                          <input type="text" id="order-map-search" placeholder="搜索地点，如：武汉大学中南医院" style="flex:1; min-width:0;">
+                          <button type="button" onclick="searchOrderMap()" class="text-xs px-3 py-1.5 rounded-lg shrink-0" style="background: var(--color-primary); color: var(--color-text-inverse); border: none; cursor: pointer; font-weight: 500;">搜索</button>
+                        </div>
+                        <div id="order-map-container" style="height:160px; border-radius:8px; overflow:hidden; border:1px solid var(--color-border);"></div>
+                      </div>
                     </div>
                     <div class="form-group">
                       <label>备注说明</label>
@@ -811,12 +822,14 @@
                       <input type="text" id="auth-idcard" placeholder="请输入身份证号" maxlength="18">
                     </div>
                     <div class="form-group">
-                      <label>身份证正面照（请输入图片URL）</label>
-                      <input type="text" id="auth-idfront" placeholder="请输入身份证正面照图片URL">
+                      <label>身份证正面照</label>
+                      <div id="auth-idfront-preview" class="idcard-preview">点击下方按钮上传照片</div>
+                      <input type="file" id="auth-idfront" accept="image/*" class="idcard-input" onchange="handleIdcardUpload(this, 'auth-idfront-preview')">
                     </div>
                     <div class="form-group">
-                      <label>身份证反面照（请输入图片URL）</label>
-                      <input type="text" id="auth-idback" placeholder="请输入身份证反面照图片URL">
+                      <label>身份证反面照</label>
+                      <div id="auth-idback-preview" class="idcard-preview">点击下方按钮上传照片</div>
+                      <input type="file" id="auth-idback" accept="image/*" class="idcard-input" onchange="handleIdcardUpload(this, 'auth-idback-preview')">
                     </div>
                     <div id="auth-status-display" style="display:none; padding:8px 12px; border-radius:8px; margin-bottom:12px; font-size:13px;"></div>
                     <button onclick="submitAuth()" class="submit-btn">提交认证</button>
@@ -1084,6 +1097,33 @@
       .cancel-btn:hover {
         background: var(--color-bg-muted);
       }
+
+      /* 身份证上传预览 */
+      .idcard-preview {
+        width: 100%;
+        height: 110px;
+        border: 1px dashed var(--color-border);
+        border-radius: 8px;
+        margin-bottom: 6px;
+        background: var(--color-bg-muted);
+        background-size: cover;
+        background-position: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--color-text-muted);
+        font-size: 12px;
+        overflow: hidden;
+      }
+      .idcard-preview.has-img { border-style: solid; }
+      .idcard-preview img { width: 100%; height: 100%; object-fit: cover; }
+      .idcard-input {
+        font-size: 12px !important;
+        padding: 6px 8px !important;
+      }
+
+      /* 隐藏百度地图 Autocomplete 自带下拉面板，仅使用自定义面板 */
+      .tangram-suggestion-main { display: none !important; }
 
       /* Toast */
       .toast {
@@ -1381,9 +1421,36 @@
         document.getElementById('order-address').value = profile.address || '';
         // Reset price and map
         document.getElementById('order-price').value = '';
+        var mapWrap = document.getElementById('order-map-wrap');
+        if (mapWrap) { mapWrap.style.display = 'none'; }
         var mapContainer = document.getElementById('order-map-container');
-        if (mapContainer) { mapContainer.style.display = 'none'; mapContainer.innerHTML = ''; }
+        if (mapContainer) { mapContainer.innerHTML = ''; }
+        // 初始化时间选择器并设默认值
+        initTimeSelects();
+        setOrderTimeDefault();
         openModal('modal-order');
+      }
+
+      function pad2(n) { return String(n).padStart(2, '0'); }
+      function initTimeSelects() {
+        var hourSel = document.getElementById('order-hour');
+        var minSel = document.getElementById('order-minute');
+        if (!hourSel || !minSel) return;
+        if (hourSel.options.length) return;
+        var h = '', m = '';
+        for (var i = 0; i < 24; i++) h += '<option value="' + pad2(i) + '">' + pad2(i) + '时</option>';
+        for (var j = 0; j < 60; j += 10) m += '<option value="' + pad2(j) + '">' + pad2(j) + '分</option>';
+        hourSel.innerHTML = h;
+        minSel.innerHTML = m;
+      }
+      function setOrderTimeDefault() {
+        var d = new Date();
+        var dateEl = document.getElementById('order-date');
+        var hourEl = document.getElementById('order-hour');
+        var minEl = document.getElementById('order-minute');
+        if (dateEl) dateEl.value = d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
+        if (hourEl) hourEl.value = pad2(d.getHours());
+        if (minEl) minEl.value = pad2(Math.floor(d.getMinutes() / 10) * 10);
       }
 
       function generateOrderId() {
@@ -1405,7 +1472,9 @@
 
       function submitOrder() {
         var type = document.getElementById('order-type').value;
-        var timeVal = document.getElementById('order-time').value;
+        var dateVal = document.getElementById('order-date').value;
+        var hourVal = document.getElementById('order-hour').value;
+        var minVal = document.getElementById('order-minute').value;
         var duration = document.getElementById('order-duration').value;
         var address = document.getElementById('order-address').value.trim();
         var desc = document.getElementById('order-desc').value.trim();
@@ -1426,13 +1495,8 @@
         }
 
         var timeStr = '';
-        if (timeVal) {
-          var d = new Date(timeVal);
-          timeStr = d.getFullYear() + '-' +
-            String(d.getMonth() + 1).padStart(2, '0') + '-' +
-            String(d.getDate()).padStart(2, '0') + ' ' +
-            String(d.getHours()).padStart(2, '0') + ':' +
-            String(d.getMinutes()).padStart(2, '0');
+        if (dateVal) {
+          timeStr = dateVal + ' ' + (hourVal || '00') + ':' + (minVal || '00');
         }
 
         var newOrder = {
@@ -1454,12 +1518,13 @@
         saveData(SK.orders, orders);
 
         // Reset form
-        document.getElementById('order-time').value = '';
         document.getElementById('order-address').value = '';
         document.getElementById('order-desc').value = '';
         document.getElementById('order-price').value = '';
+        var mapWrap = document.getElementById('order-map-wrap');
+        if (mapWrap) { mapWrap.style.display = 'none'; }
         var mapContainer = document.getElementById('order-map-container');
-        if (mapContainer) { mapContainer.style.display = 'none'; mapContainer.innerHTML = ''; }
+        if (mapContainer) { mapContainer.innerHTML = ''; }
 
         closeModal('modal-order');
         showToast('订单提交成功，等待暖伴接单');
@@ -1483,9 +1548,10 @@
       }
 
       function initOrderMap() {
+        var wrap = document.getElementById('order-map-wrap');
         var container = document.getElementById('order-map-container');
         if (!container) return;
-        container.style.display = 'block';
+        if (wrap) wrap.style.display = 'block';
         if (!checkBaiduMapReady()) {
           showMapError('order-map-container', '地图加载中，请稍候...');
           setTimeout(function () {
@@ -1496,11 +1562,23 @@
         }
         container.innerHTML = '';
         orderMapInstance = new BMap.Map(container);
-        var point = new BMap.Point(MAP_CENTER.lng, MAP_CENTER.lat);
-        orderMapInstance.centerAndZoom(point, 14);
         orderMapInstance.enableScrollWheelZoom(true);
-        var marker = new BMap.Marker(point);
-        orderMapInstance.addOverlay(marker);
+        var setupOrderMap = function (lng, lat) {
+          var point = new BMap.Point(lng, lat);
+          orderMapInstance.centerAndZoom(point, 14);
+          var marker = new BMap.Marker(point);
+          orderMapInstance.addOverlay(marker);
+        };
+        // 优先使用浏览器真实定位，失败则回退到默认中心
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            function (pos) { setupOrderMap(pos.coords.longitude, pos.coords.latitude); },
+            function () { setupOrderMap(MAP_CENTER.lng, MAP_CENTER.lat); },
+            { timeout: 5000, enableHighAccuracy: true }
+          );
+        } else {
+          setupOrderMap(MAP_CENTER.lng, MAP_CENTER.lat);
+        }
         orderMapInstance.addEventListener('click', function (e) {
           var pt = e.point;
           orderMapInstance.clearOverlays();
@@ -1516,7 +1594,27 @@
             }
           });
         });
-        showToast('点击地图选取服务位置');
+        showToast('点击地图或搜索地点选取服务位置');
+      }
+
+      function searchOrderMap() {
+        var keyword = document.getElementById('order-map-search').value.trim();
+        if (!keyword) { showToast('请输入搜索地点'); return; }
+        if (!checkBaiduMapReady() || !orderMapInstance) { showToast('地图未就绪，请稍候'); return; }
+        var local = new BMap.LocalSearch(orderMapInstance, {
+          renderOptions: { map: orderMapInstance, autoViewport: true },
+          onMarkersSet: function (pois) {
+            if (pois && pois.length) {
+              var poi = pois[0];
+              var addressInput = document.getElementById('order-address');
+              if (addressInput && poi.address) addressInput.value = poi.address;
+              showToast('已定位到：' + poi.title);
+            } else {
+              showToast('未找到相关地点');
+            }
+          }
+        });
+        local.search(keyword);
       }
 
       function initDetailMap(address) {
@@ -1606,6 +1704,8 @@
 
       function initAddressAutocomplete() {
         if (addressAc || !checkBaiduMapReady()) return;
+        // 绑定 input 让 Autocomplete 自动搜索，通过 CSS 隐藏百度自带下拉面板，
+        // 仅用 onSearchComplete 回调渲染自定义面板，避免双下拉冲突
         addressAc = new BMap.Autocomplete({
           input: 'order-address',
           location: '武汉',
@@ -1616,6 +1716,7 @@
       }
 
       function searchAddress(keyword) {
+        if (addressSearchTimer) clearTimeout(addressSearchTimer);
         if (!keyword || keyword.trim().length < 2) {
           hideAddressSuggestions();
           return;
@@ -1634,7 +1735,7 @@
           return;
         }
         if (!addressAc) initAddressAutocomplete();
-        // Autocomplete 会自动触发 onSearchComplete
+        // Autocomplete 已绑定 input，输入时自动搜索并触发 onSearchComplete
       }
 
       function renderAddressSuggestions(results) {
@@ -1646,7 +1747,7 @@
           return;
         }
         var html = '';
-        for (var i = 0; i < results.getNumPoi(); i++) {
+        for (var i = 0; i < results.getNumPois(); i++) {
           var poi = results.getPoi(i);
           if (!poi) continue;
           var addr = (poi.province || '') + (poi.city || '') + (poi.district || '') + (poi.street || '') + (poi.business || '');
@@ -1895,12 +1996,44 @@
         }
       }
 
+      function setAuthPreview(previewId, dataUrl) {
+        var el = document.getElementById(previewId);
+        if (!el) return;
+        if (dataUrl) {
+          el.innerHTML = '<img src="' + dataUrl + '" alt="证件照">';
+          el.classList.add('has-img');
+        } else {
+          el.innerHTML = '点击下方按钮上传照片';
+          el.classList.remove('has-img');
+        }
+      }
+      function handleIdcardUpload(input, previewId) {
+        var file = input.files && input.files[0];
+        var preview = document.getElementById(previewId);
+        if (!file) {
+          input.dataset.dataurl = '';
+          if (preview) { preview.innerHTML = '点击下方按钮上传照片'; preview.classList.remove('has-img'); }
+          return;
+        }
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          var dataUrl = e.target.result;
+          input.dataset.dataurl = dataUrl;
+          if (preview) { preview.innerHTML = '<img src="' + dataUrl + '" alt="证件照">'; preview.classList.add('has-img'); }
+        };
+        reader.readAsDataURL(file);
+      }
+
       function openAuthModal() {
         var auth = getData(getAuthKey()) || { status: '未认证' };
         document.getElementById('auth-realname').value = auth.realname || '';
         document.getElementById('auth-idcard').value = auth.idcard || '';
-        document.getElementById('auth-idfront').value = auth.idfront || '';
-        document.getElementById('auth-idback').value = auth.idback || '';
+        var frontInput = document.getElementById('auth-idfront');
+        var backInput = document.getElementById('auth-idback');
+        if (frontInput) { frontInput.value = ''; frontInput.dataset.dataurl = auth.idfront || ''; }
+        if (backInput) { backInput.value = ''; backInput.dataset.dataurl = auth.idback || ''; }
+        setAuthPreview('auth-idfront-preview', auth.idfront);
+        setAuthPreview('auth-idback-preview', auth.idback);
         // Show current status
         var statusDisplay = document.getElementById('auth-status-display');
         if (auth.status && auth.status !== '未认证') {
@@ -1918,8 +2051,10 @@
       function submitAuth() {
         var realname = document.getElementById('auth-realname').value.trim();
         var idcard = document.getElementById('auth-idcard').value.trim();
-        var idfront = document.getElementById('auth-idfront').value.trim();
-        var idback = document.getElementById('auth-idback').value.trim();
+        var frontInput = document.getElementById('auth-idfront');
+        var backInput = document.getElementById('auth-idback');
+        var idfront = frontInput ? (frontInput.dataset.dataurl || '') : '';
+        var idback = backInput ? (backInput.dataset.dataurl || '') : '';
 
         if (!realname) {
           showToast('请填写真实姓名');
