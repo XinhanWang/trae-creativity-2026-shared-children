@@ -156,7 +156,7 @@
     <main class="flex h-screen overflow-hidden" style="font-family: var(--font-sans);">
 
         <!-- ===== Sidebar ===== -->
-        <aside class="w-60 shrink-0 flex flex-col" style="background: var(--color-sidebar-bg); color: var(--color-sidebar-text);">
+        <aside id="sidebar" class="w-60 shrink-0 flex flex-col fixed lg:static lg:translate-x-0 inset-y-0 left-0 z-50 transition-transform duration-300 -translate-x-full" style="background: var(--color-sidebar-bg); color: var(--color-sidebar-text);">
             <!-- Logo -->
             <div class="px-5 py-5 flex items-center gap-3 border-b" style="border-color: rgba(240,232,223,0.12);">
                 <div class="w-9 h-9 rounded-lg flex items-center justify-center" style="background: var(--color-primary);">
@@ -209,17 +209,23 @@
             </div>
         </aside>
 
+        <!-- Sidebar Overlay (mobile only) -->
+        <div id="sidebar-overlay" class="hidden lg:hidden fixed inset-0 z-40 bg-black/40" onclick="toggleSidebar()"></div>
+
         <!-- ===== Main Area ===== -->
         <div class="flex-1 flex flex-col overflow-hidden" style="background: var(--color-bg);">
 
             <!-- Top Bar -->
-            <header class="h-14 shrink-0 flex items-center justify-between px-6 border-b" style="background: var(--color-bg-card); border-color: var(--color-border);">
+            <header class="h-14 shrink-0 flex items-center justify-between px-3 sm:px-4 lg:px-6 border-b" style="background: var(--color-bg-card); border-color: var(--color-border);">
                 <div class="flex items-center gap-3">
+                    <button class="lg:hidden p-2 -ml-1 rounded-lg transition-colors duration-200 hover:bg-[var(--color-bg-muted)]" onclick="toggleSidebar()" aria-label="打开菜单">
+                        <i data-lucide="menu" class="w-5 h-5" style="color: var(--color-text-secondary);"></i>
+                    </button>
                     <h1 id="page-title" class="text-lg font-semibold" style="font-family: var(--font-serif); color: var(--color-text);">数据概览</h1>
                     <span class="text-xs px-2 py-0.5 rounded" style="background: var(--color-primary-light); color: var(--color-primary);">实时</span>
                 </div>
-                <div class="flex items-center gap-4 relative">
-                    <div class="flex items-center gap-2 text-sm" style="color: var(--color-text-secondary);">
+                <div class="flex items-center gap-3 sm:gap-4 relative">
+                    <div class="hidden sm:flex items-center gap-2 text-sm" style="color: var(--color-text-secondary);">
                         <i data-lucide="clock" class="w-4 h-4"></i>
                         <span id="current-time">--:--:--</span>
                     </div>
@@ -227,26 +233,26 @@
                         <i data-lucide="bell" class="w-[18px] h-[18px]" style="color: var(--color-text-secondary);"></i>
                         <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full" style="background: var(--color-primary);"></span>
                     </button>
-                    <div id="notification-dropdown" class="hidden absolute right-0 top-12 w-80 rounded-lg border shadow-lg" style="background: var(--color-bg-card); border-color: var(--color-border); z-index: var(--z-dropdown);">
+                    <div id="notification-dropdown" class="hidden absolute right-0 top-12 w-72 sm:w-80 max-w-[calc(100vw-1.5rem)] rounded-lg border shadow-lg" style="background: var(--color-bg-card); border-color: var(--color-border); z-index: var(--z-dropdown);">
                         <div class="px-4 py-3 border-b flex items-center justify-between" style="border-color: var(--color-border);">
                             <span class="text-sm font-semibold" style="color: var(--color-text);">通知中心</span>
                             <span id="notif-unread-count" class="text-xs px-2 py-0.5 rounded" style="background: var(--color-primary-light); color: var(--color-primary);">0 条未读</span>
                         </div>
                         <div id="notification-list" class="max-h-80 overflow-y-auto"></div>
                     </div>
-                    <button class="p-2 rounded-lg transition-colors duration-200 hover:bg-[var(--color-bg-muted)]">
+                    <button class="p-2 rounded-lg transition-colors duration-200 hover:bg-[var(--color-bg-muted)]" onclick="openAdminSettings()">
                         <i data-lucide="settings" class="w-[18px] h-[18px]" style="color: var(--color-text-secondary);"></i>
                     </button>
                 </div>
             </header>
 
             <!-- Content Area -->
-            <div class="flex-1 overflow-y-auto p-6" style="scrollbar-gutter: stable;">
+            <div class="flex-1 overflow-y-auto p-3 sm:p-4 lg:p-6" style="scrollbar-gutter: stable;">
 
                 <!-- ========== Tab: 数据概览 ========== -->
                 <div id="tab-overview" class="tab-panel">
                     <!-- Stats Cards -->
-                    <div class="grid grid-cols-4 gap-4 mb-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
                         <div class="rounded-lg p-4 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
                             <div class="flex items-center justify-between mb-3">
                                 <span class="text-sm" style="color: var(--color-text-secondary);">今日订单</span>
@@ -299,9 +305,9 @@
                     </div>
 
                     <!-- Charts Row -->
-                    <div class="grid grid-cols-12 gap-4 mb-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-4 mb-6">
                         <!-- Order Trend Line Chart -->
-                        <div class="col-span-8 rounded-lg p-5 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
+                        <div class="lg:col-span-8 rounded-lg p-5 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
                             <div class="flex items-center justify-between mb-4">
                                 <h3 class="text-sm font-semibold" style="color: var(--color-text);">订单趋势</h3>
                                 <div class="flex gap-1" id="time-range-btns">
@@ -312,15 +318,15 @@
                             <div style="height: 220px;"><canvas id="chart-order-trend"></canvas></div>
                         </div>
                         <!-- Service Type Pie Chart -->
-                        <div class="col-span-4 rounded-lg p-5 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
+                        <div class="lg:col-span-4 rounded-lg p-5 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
                             <h3 class="text-sm font-semibold mb-4" style="color: var(--color-text);">服务类型分布</h3>
                             <div style="height: 220px;"><canvas id="chart-service-type"></canvas></div>
                         </div>
                     </div>
 
                     <!-- Real-time Orders Table + Heatmap -->
-                    <div class="grid grid-cols-12 gap-4">
-                        <div class="col-span-7 rounded-lg border" style="background: var(--color-bg-card); border-color: var(--color-border);">
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-4">
+                        <div class="lg:col-span-7 rounded-lg border" style="background: var(--color-bg-card); border-color: var(--color-border);">
                             <div class="px-5 py-3 border-b flex items-center justify-between" style="border-color: var(--color-border);">
                                 <h3 class="text-sm font-semibold" style="color: var(--color-text);">实时订单</h3>
                                 <span class="flex items-center gap-1.5 text-xs" style="color: var(--state-success);">
@@ -380,7 +386,7 @@
                             </div>
                         </div>
                         <!-- Time Heatmap Bar Chart -->
-                        <div class="col-span-5 rounded-lg p-5 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
+                        <div class="lg:col-span-5 rounded-lg p-5 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
                             <h3 class="text-sm font-semibold mb-4" style="color: var(--color-text);">时段订单热力</h3>
                             <div style="height: 220px;"><canvas id="chart-time-heatmap"></canvas></div>
                         </div>
@@ -481,7 +487,7 @@
                 <!-- ========== Tab: 暖伴管理 ========== -->
                 <div id="tab-volunteers" class="tab-panel hidden">
                     <!-- Stats -->
-                    <div class="grid grid-cols-4 gap-4 mb-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
                         <div class="rounded-lg p-4 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
                             <div class="text-sm mb-2" style="color: var(--color-text-secondary);">注册暖伴</div>
                             <div class="text-2xl font-bold" style="color: var(--color-text); font-variant-numeric: tabular-nums;">186</div>
@@ -500,7 +506,7 @@
                         </div>
                     </div>
                     <!-- Volunteer Cards -->
-                    <div id="volunteers-grid" class="grid grid-cols-3 gap-4">
+                    <div id="volunteers-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                         <div class="rounded-lg p-5 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
                             <div class="flex items-center gap-3 mb-4">
                                 <div class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold" style="background: var(--color-primary-light); color: var(--color-primary);">张</div>
@@ -597,7 +603,7 @@
                 <!-- ========== Tab: 安全监控 ========== -->
                 <div id="tab-safety" class="tab-panel hidden">
                     <!-- Stats -->
-                    <div class="grid grid-cols-4 gap-4 mb-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
                         <div class="rounded-lg p-4 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
                             <div class="text-sm mb-2" style="color: var(--color-text-secondary);">实时会话</div>
                             <div class="text-2xl font-bold" style="color: var(--state-success); font-variant-numeric: tabular-nums;">18</div>
@@ -616,22 +622,22 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-12 gap-4 mb-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-4 mb-6">
                         <!-- Map Placeholder -->
-                        <div class="col-span-8 rounded-lg border" style="background: var(--color-bg-card); border-color: var(--color-border);">
+                        <div class="lg:col-span-8 rounded-lg border" style="background: var(--color-bg-card); border-color: var(--color-border);">
                             <div class="px-5 py-3 border-b" style="border-color: var(--color-border);">
                                 <h3 class="text-sm font-semibold" style="color: var(--color-text);">服务区域实时地图</h3>
                             </div>
                             <div class="flex items-center justify-center" style="height: 320px; background: var(--color-bg-muted);">
                                 <div class="text-center">
                                     <i data-lucide="map-pin" class="w-12 h-12 mx-auto mb-3" style="color: var(--color-text-muted);"></i>
-                                    <div class="text-sm" style="color: var(--color-text-muted);">地图服务接入中</div>
-                                    <div class="text-xs mt-1" style="color: var(--color-text-muted);">将展示暖伴实时位置与服务覆盖范围</div>
+                                    <div class="text-sm" style="color: var(--color-text-muted);">武汉市服务覆盖地图</div>
+                                    <div class="text-xs mt-1" style="color: var(--color-text-muted);">覆盖中南路街道、珞南街道、万松街道等6个核心街道</div>
                                 </div>
                             </div>
                         </div>
                         <!-- Real-time Sessions -->
-                        <div class="col-span-4 rounded-lg border" style="background: var(--color-bg-card); border-color: var(--color-border);">
+                        <div class="lg:col-span-4 rounded-lg border" style="background: var(--color-bg-card); border-color: var(--color-border);">
                             <div class="px-5 py-3 border-b" style="border-color: var(--color-border);">
                                 <h3 class="text-sm font-semibold" style="color: var(--color-text);">实时会话</h3>
                             </div>
@@ -745,7 +751,7 @@
                 <!-- ========== Tab: B端采购 ========== -->
                 <div id="tab-b2b" class="tab-panel hidden">
                     <!-- Stats -->
-                    <div class="grid grid-cols-4 gap-4 mb-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
                         <div class="rounded-lg p-4 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
                             <div class="text-sm mb-2" style="color: var(--color-text-secondary);">合作企业</div>
                             <div class="text-2xl font-bold" style="color: var(--color-text); font-variant-numeric: tabular-nums;">28</div>
@@ -765,7 +771,7 @@
                     </div>
 
                     <!-- B2B Type Cards -->
-                    <div class="grid grid-cols-3 gap-4 mb-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-6">
                         <div class="rounded-lg p-5 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
                             <div class="flex items-center gap-3 mb-3">
                                 <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: var(--color-primary-light);">
@@ -1027,8 +1033,24 @@
             // Update page title
             var titleEl = document.getElementById('page-title');
             if (titleEl && tabTitles[tabId]) titleEl.textContent = tabTitles[tabId];
+            // Close sidebar on mobile after switching
+            var sidebar = document.getElementById('sidebar');
+            var overlay = document.getElementById('sidebar-overlay');
+            if (sidebar && !sidebar.classList.contains('-translate-x-full')) {
+                sidebar.classList.add('-translate-x-full');
+                if (overlay) overlay.classList.add('hidden');
+            }
             // Init charts if analytics tab
             if (tabId === 'analytics') { setTimeout(initAnalyticsCharts, 100); }
+        }
+
+        // ===== Mobile Sidebar Toggle =====
+        function toggleSidebar() {
+            var sidebar = document.getElementById('sidebar');
+            var overlay = document.getElementById('sidebar-overlay');
+            if (!sidebar || !overlay) return;
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
         }
 
         // Clock
@@ -1185,7 +1207,7 @@
                 new Chart(ctx2, {
                     type: 'bar',
                     data: {
-                        labels: ['中南路街', '珞南街', '万松街', '大智街', '建桥街', '红钢城街'],
+                        labels: ['中南路街道', '珞南街道', '万松街道', '大智街道', '建桥街道', '红钢城街道'],
                         datasets: [{
                             label: '覆盖家庭',
                             data: [86, 72, 65, 58, 48, 42],
@@ -1885,6 +1907,201 @@
     renderContracts();
     updateOverviewStats();
     if (window.lucide) lucide.createIcons();
+
+    /* ============================================================
+     * 管理后台设置
+     * ============================================================ */
+    function getAdminSettings() {
+        try {
+            var raw = localStorage.getItem('sc_admin_settings');
+            return raw ? JSON.parse(raw) : {
+                notifyNewOrder: true, notifySafety: true, notifyDailyReport: false,
+                refreshInterval: '60', autoAssign: true, matchRadius: 3, timeoutThreshold: 120
+            };
+        } catch (e) {
+            return { notifyNewOrder: true, notifySafety: true, notifyDailyReport: false, refreshInterval: '60', autoAssign: true, matchRadius: 3, timeoutThreshold: 120 };
+        }
+    }
+    function saveAdminSettings(s) {
+        try { localStorage.setItem('sc_admin_settings', JSON.stringify(s)); } catch (e) {}
+    }
+    function openAdminSettings() {
+        var s = getAdminSettings();
+        var toggles = document.querySelectorAll('#admin-settings-modal .admin-toggle');
+        toggles.forEach(function (t) {
+            var key = t.getAttribute('data-key');
+            if (s[key]) t.classList.add('active');
+            else t.classList.remove('active');
+        });
+        var refreshSel = document.getElementById('admin-refresh-interval');
+        if (refreshSel) refreshSel.value = s.refreshInterval || '60';
+        var radiusInput = document.getElementById('admin-match-radius');
+        if (radiusInput) radiusInput.value = s.matchRadius || 3;
+        var timeoutInput = document.getElementById('admin-timeout');
+        if (timeoutInput) timeoutInput.value = s.timeoutThreshold || 120;
+        var modal = document.getElementById('admin-settings-modal');
+        if (modal) modal.classList.remove('hidden');
+    }
+    function closeAdminSettings() {
+        var modal = document.getElementById('admin-settings-modal');
+        if (modal) modal.classList.add('hidden');
+    }
+    function toggleAdminSetting(el) {
+        var key = el.getAttribute('data-key');
+        var s = getAdminSettings();
+        s[key] = !s[key];
+        saveAdminSettings(s);
+        if (s[key]) el.classList.add('active');
+        else el.classList.remove('active');
+    }
+    function saveAdminSettingsForm() {
+        var s = getAdminSettings();
+        var refreshSel = document.getElementById('admin-refresh-interval');
+        var radiusInput = document.getElementById('admin-match-radius');
+        var timeoutInput = document.getElementById('admin-timeout');
+        if (refreshSel) s.refreshInterval = refreshSel.value;
+        if (radiusInput) s.matchRadius = parseInt(radiusInput.value) || 3;
+        if (timeoutInput) s.timeoutThreshold = parseInt(timeoutInput.value) || 120;
+        saveAdminSettings(s);
+        closeAdminSettings();
+        showToast('设置已保存');
+    }
+    function clearAdminCache() {
+        Object.keys(localStorage).forEach(function(k) { if (k.indexOf('sc_') === 0) localStorage.removeItem(k); });
+        showToast('缓存已清除');
+        setTimeout(function() { location.reload(); }, 1000);
+    }
     </script>
+
+    <!-- Admin Settings Modal -->
+    <div id="admin-settings-modal" class="hidden fixed inset-0 z-[500] flex items-center justify-center p-4" style="background: rgba(61,46,36,0.4);">
+        <div class="w-full max-w-md rounded-xl shadow-xl max-h-[90vh] overflow-y-auto" style="background: var(--color-bg-card);">
+            <!-- Header -->
+            <div class="px-6 py-4 border-b flex items-center justify-between" style="border-color: var(--color-border);">
+                <h3 class="text-base font-semibold" style="color: var(--color-text); font-family: var(--font-serif);">后台设置</h3>
+                <button onclick="closeAdminSettings()" class="p-1 rounded-lg transition-colors duration-200 hover:bg-[var(--color-bg-muted)]">
+                    <i data-lucide="x" class="w-5 h-5" style="color: var(--color-text-secondary);"></i>
+                </button>
+            </div>
+            <!-- Body -->
+            <div class="px-6 py-4 space-y-5">
+                <!-- 通知设置 -->
+                <div>
+                    <p class="text-xs font-semibold mb-3" style="color: var(--color-text-secondary);">通知设置</p>
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between p-3 rounded-lg" style="background: var(--color-bg); border: 1px solid var(--color-border-light);">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="bell" class="w-4 h-4" style="color: var(--color-primary);"></i>
+                                <span class="text-sm" style="color: var(--color-text);">新订单提醒</span>
+                            </div>
+                            <div class="admin-toggle w-10 h-6 rounded-full relative cursor-pointer transition-colors duration-200" data-key="notifyNewOrder" onclick="toggleAdminSetting(this)" style="background: var(--color-border);">
+                                <span class="absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white transition-transform duration-200" style="box-shadow: 0 1px 3px rgba(0,0,0,0.2);"></span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between p-3 rounded-lg" style="background: var(--color-bg); border: 1px solid var(--color-border-light);">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="shield-alert" class="w-4 h-4" style="color: var(--state-error);"></i>
+                                <span class="text-sm" style="color: var(--color-text);">安全预警提醒</span>
+                            </div>
+                            <div class="admin-toggle w-10 h-6 rounded-full relative cursor-pointer transition-colors duration-200" data-key="notifySafety" onclick="toggleAdminSetting(this)" style="background: var(--color-border);">
+                                <span class="absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white transition-transform duration-200" style="box-shadow: 0 1px 3px rgba(0,0,0,0.2);"></span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between p-3 rounded-lg" style="background: var(--color-bg); border: 1px solid var(--color-border-light);">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="file-text" class="w-4 h-4" style="color: var(--state-info);"></i>
+                                <span class="text-sm" style="color: var(--color-text);">每日运营报告</span>
+                            </div>
+                            <div class="admin-toggle w-10 h-6 rounded-full relative cursor-pointer transition-colors duration-200" data-key="notifyDailyReport" onclick="toggleAdminSetting(this)" style="background: var(--color-border);">
+                                <span class="absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white transition-transform duration-200" style="box-shadow: 0 1px 3px rgba(0,0,0,0.2);"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 显示设置 -->
+                <div>
+                    <p class="text-xs font-semibold mb-3" style="color: var(--color-text-secondary);">显示设置</p>
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between p-3 rounded-lg" style="background: var(--color-bg); border: 1px solid var(--color-border-light);">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="refresh-cw" class="w-4 h-4" style="color: var(--state-success);"></i>
+                                <span class="text-sm" style="color: var(--color-text);">数据刷新频率</span>
+                            </div>
+                            <select id="admin-refresh-interval" class="text-sm rounded-lg px-2 py-1.5" style="background: var(--color-bg-card); border: 1px solid var(--color-border); color: var(--color-text);">
+                                <option value="30">30秒</option>
+                                <option value="60">1分钟</option>
+                                <option value="300">5分钟</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <!-- 运营参数 -->
+                <div>
+                    <p class="text-xs font-semibold mb-3" style="color: var(--color-text-secondary);">运营参数</p>
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between p-3 rounded-lg" style="background: var(--color-bg); border: 1px solid var(--color-border-light);">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="map-pin" class="w-4 h-4" style="color: var(--color-primary);"></i>
+                                <span class="text-sm" style="color: var(--color-text);">默认匹配半径</span>
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <input id="admin-match-radius" type="number" min="1" max="20" class="w-16 text-sm text-center rounded-lg px-2 py-1.5" style="background: var(--color-bg-card); border: 1px solid var(--color-border); color: var(--color-text);">
+                                <span class="text-xs" style="color: var(--color-text-muted);">km</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between p-3 rounded-lg" style="background: var(--color-bg); border: 1px solid var(--color-border-light);">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="zap" class="w-4 h-4" style="color: var(--state-warning);"></i>
+                                <span class="text-sm" style="color: var(--color-text);">自动派单</span>
+                            </div>
+                            <div class="admin-toggle w-10 h-6 rounded-full relative cursor-pointer transition-colors duration-200" data-key="autoAssign" onclick="toggleAdminSetting(this)" style="background: var(--color-border);">
+                                <span class="absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white transition-transform duration-200" style="box-shadow: 0 1px 3px rgba(0,0,0,0.2);"></span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between p-3 rounded-lg" style="background: var(--color-bg); border: 1px solid var(--color-border-light);">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="clock" class="w-4 h-4" style="color: var(--state-info);"></i>
+                                <span class="text-sm" style="color: var(--color-text);">服务超时阈值</span>
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <input id="admin-timeout" type="number" min="30" max="480" step="10" class="w-16 text-sm text-center rounded-lg px-2 py-1.5" style="background: var(--color-bg-card); border: 1px solid var(--color-border); color: var(--color-text);">
+                                <span class="text-xs" style="color: var(--color-text-muted);">分钟</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 系统 -->
+                <div>
+                    <p class="text-xs font-semibold mb-3" style="color: var(--color-text-secondary);">系统</p>
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between p-3 rounded-lg cursor-pointer" style="background: var(--color-bg); border: 1px solid var(--color-border-light);" onclick="clearAdminCache()">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="trash-2" class="w-4 h-4" style="color: var(--state-error);"></i>
+                                <span class="text-sm" style="color: var(--color-text);">清除缓存</span>
+                            </div>
+                            <i data-lucide="chevron-right" class="w-4 h-4" style="color: var(--color-text-muted);"></i>
+                        </div>
+                        <div class="flex items-center justify-between p-3 rounded-lg" style="background: var(--color-bg); border: 1px solid var(--color-border-light);">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="info" class="w-4 h-4" style="color: var(--color-text-muted);"></i>
+                                <span class="text-sm" style="color: var(--color-text);">关于版本</span>
+                            </div>
+                            <span class="text-xs" style="color: var(--color-text-muted);">v1.0.0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Footer -->
+            <div class="px-6 py-4 border-t flex items-center justify-end gap-3" style="border-color: var(--color-border);">
+                <button onclick="closeAdminSettings()" class="px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200" style="background: var(--color-bg); border: 1px solid var(--color-border); color: var(--color-text-secondary);">取消</button>
+                <button onclick="saveAdminSettingsForm()" class="px-4 py-2 rounded-lg text-sm font-semibold transition-colors duration-200" style="background: var(--color-primary); color: var(--color-text-inverse);">保存设置</button>
+            </div>
+        </div>
+    </div>
+    <style>
+    .admin-toggle.active { background: var(--color-primary) !important; }
+    .admin-toggle.active span { transform: translateX(16px); }
+    </style>
+    <script>lucide.createIcons();</script>
 </body>
 </html>
