@@ -313,7 +313,7 @@
     用"共享儿女"的方式，<em class="italic" style="color: var(--color-primary);">重新定义老年陪伴</em>
   </h2>
   <p class="text-base sm:text-lg leading-relaxed mb-8" style="color: var(--color-text-secondary);">
-    当 60 岁以上人口突破 2.8 亿，独居与空巢老人数量持续攀升，"谁来陪爸妈说话、跑跑腿"正在变成一个社会化问题。
+    当 60 岁以上人口突破 3.23 亿，独居与空巢老人数量持续攀升，"谁来陪爸妈说话、跑跑腿"正在变成一个社会化问题。
   </p>
 
   <h3 class="text-lg sm:text-xl font-semibold mt-10 mb-3" style="color: var(--color-text); font-family: var(--font-sans);">要解决什么问题</h3>
@@ -338,7 +338,7 @@
       <div class="text-xs tracking-wider uppercase whitespace-nowrap" style="font-family: var(--font-mono); color: var(--color-text-muted);">独居/空巢老人</div>
     </div>
     <div class="p-5 sm:p-6 text-center" style="background: var(--color-bg-card);">
-      <div class="text-3xl sm:text-4xl font-normal leading-none mb-2" style="font-family: var(--font-serif); color: var(--color-primary); font-variant-numeric: tabular-nums;">2.8亿</div>
+      <div class="text-3xl sm:text-4xl font-normal leading-none mb-2" style="font-family: var(--font-serif); color: var(--color-primary); font-variant-numeric: tabular-nums;">3.23亿</div>
       <div class="text-xs tracking-wider uppercase whitespace-nowrap" style="font-family: var(--font-mono); color: var(--color-text-muted);">60岁以上人口</div>
     </div>
     <div class="p-5 sm:p-6 text-center" style="background: var(--color-bg-card);">
@@ -938,8 +938,8 @@
     <h2 class="text-xl sm:text-2xl font-normal mb-6" style="font-family: var(--font-serif); color: var(--color-bg);">引用与参考</h2>
     <ol class="space-y-4 pl-5 text-sm" style="color: var(--color-bg-warm); list-style: decimal;">
       <li id="cite-1">
-        <span class="block" style="color: var(--color-bg);">国家统计局 & 民政部公开数据, 2024 中国老龄事业发展公报 / 独居老人统计. 中国独居与空巢老人已超过 1.18 亿。</span>
-        <a href="https://www.gov.cn" target="_blank" rel="noopener" class="block mt-1 text-xs underline" style="color: var(--color-bg-warm);">https://www.gov.cn</a>
+        <span class="block" style="color: var(--color-bg);">国家统计局, 2025年国民经济和社会发展统计公报 (2026年2月发布). 2025年末全国60周岁及以上人口32338万人，占23.0%；民政部, 2024 中国老龄事业发展公报 — 独居与空巢老人已超过 1.18 亿。</span>
+        <a href="https://www.stats.gov.cn/sj/zxfbhjd/202602/t20260228_1962662.html" target="_blank" rel="noopener" class="block mt-1 text-xs underline" style="color: var(--color-bg-warm);">https://www.stats.gov.cn/sj/zxfbhjd/202602/t20260228_1962662.html</a>
       </li>
       <li id="cite-2">
         <span class="block" style="color: var(--color-bg);">Y Combinator, Papa 公司页 (Summer 2018 Batch). 介绍 Papa 是一家为家庭提供灵活陪伴与协助服务的平台，估值曾达独角兽级别。</span>
@@ -976,7 +976,7 @@
         xAxis: { type: 'category', data: ['2020', '2022', '2024', '2026E', '2028E', '2030E', '2035E'], axisLine: { lineStyle: { color: borderColor } }, axisLabel: { color: mutedColor, fontSize: 12 } },
         yAxis: { type: 'value', name: '亿人', nameTextStyle: { color: mutedColor, fontSize: 11 }, axisLine: { show: false }, splitLine: { lineStyle: { color: borderColor, type: 'dashed' } }, axisLabel: { color: mutedColor, fontSize: 12 } },
         series: [
-          { name: '60+ 总人口', type: 'bar', data: [2.64, 2.80, 2.97, 3.10, 3.25, 3.40, 3.80], itemStyle: { color: warmPalette[0], borderRadius: [4,4,0,0] }, barWidth: '28%' },
+          { name: '60+ 总人口', type: 'bar', data: [2.64, 2.80, 3.10, 3.40, 3.60, 3.85, 4.20], itemStyle: { color: warmPalette[0], borderRadius: [4,4,0,0] }, barWidth: '28%' },
           { name: '独居/空巢老人', type: 'line', data: [0.98, 1.05, 1.18, 1.28, 1.38, 1.50, 1.75], smooth: true, lineStyle: { color: warmPalette[1], width: 2.5 }, itemStyle: { color: warmPalette[1] }, areaStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: 'rgba(91,138,114,0.15)' }, { offset: 1, color: 'rgba(91,138,114,0)' }] } }, symbol: 'circle', symbolSize: 6 }
         ]
       });
