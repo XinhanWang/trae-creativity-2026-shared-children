@@ -1566,13 +1566,39 @@
         var setupOrderMap = function (lng, lat) {
           var point = new BMap.Point(lng, lat);
           orderMapInstance.centerAndZoom(point, 14);
+          orderMapInstance.clearOverlays();
           var marker = new BMap.Marker(point);
           orderMapInstance.addOverlay(marker);
+          // 反地理编码：将定位坐标转为地址并自动回填到服务地址输入框
+          var geo = new BMap.Geocoder();
+          geo.getLocation(point, function (rs) {
+            if (rs) {
+              var addr = rs.address;
+              var addressInput = document.getElementById('order-address');
+              if (addressInput) addressInput.value = addr;
+              showToast('已定位到当前位置：' + addr);
+            }
+          });
         };
         // 优先使用浏览器真实定位，失败则回退到默认中心
         if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(
-            function (pos) { setupOrderMap(pos.coords.longitude, pos.coords.latitude); },
+            function (pos) {
+              // WGS84 坐标需转换为百度 BD09 坐标
+              var bdPoint = BMap.Convertor ? null : null;
+              if (typeof BMap.Convertor !== 'undefined' && BMap.Convertor && BMap.Convertor.translate) {
+                var convertor = new BMap.Convertor();
+                convertor.translate([new BMap.Point(pos.coords.longitude, pos.coords.latitude)], 1, 5, function (data) {
+                  if (data && data.status === 0 && data.points && data.points[0]) {
+                    setupOrderMap(data.points[0].lng, data.points[0].lat);
+                  } else {
+                    setupOrderMap(pos.coords.longitude, pos.coords.latitude);
+                  }
+                });
+              } else {
+                setupOrderMap(pos.coords.longitude, pos.coords.latitude);
+              }
+            },
             function () { setupOrderMap(MAP_CENTER.lng, MAP_CENTER.lat); },
             { timeout: 5000, enableHighAccuracy: true }
           );
@@ -1660,30 +1686,59 @@
         }
         container.innerHTML = '';
         homeMapInstance = new BMap.Map(container);
-        var point = new BMap.Point(MAP_CENTER.lng, MAP_CENTER.lat);
-        homeMapInstance.centerAndZoom(point, 14);
-        homeMapInstance.disableScrollWheelZoom();
-        // 当前位置标记
-        var curMarker = new BMap.Marker(point);
-        homeMapInstance.addOverlay(curMarker);
-        var label = new BMap.Label('我的位置', { offset: new BMap.Size(-20, -25) });
-        label.setStyle({ color: '#fff', background: 'var(--color-primary)', border: 'none', padding: '2px 6px', borderRadius: '4px', fontSize: '11px' });
-        curMarker.setLabel(label);
-        // 附近暖伴标记点（模拟位置）
-        var companions = [
-          { lng: 114.308, lat: 30.595, name: '李阿姨' },
-          { lng: 114.302, lat: 30.591, name: '张同学' },
-          { lng: 114.310, lat: 30.590, name: '王师傅' }
-        ];
-        companions.forEach(function (c) {
-          var pt = new BMap.Point(c.lng, c.lat);
-          var icon = new BMap.Icon('https://api.map.baidu.com/images/markers.png', new BMap.Size(23, 25), { offset: new BMap.Size(10, 25), imageOffset: new BMap.Size(0, -250) });
-          var mk = new BMap.Marker(pt, { icon: icon });
-          homeMapInstance.addOverlay(mk);
-          var lbl = new BMap.Label(c.name, { offset: new BMap.Size(-20, -25) });
-          lbl.setStyle({ color: '#fff', background: 'var(--state-success)', border: 'none', padding: '2px 6px', borderRadius: '4px', fontSize: '11px' });
-          mk.setLabel(lbl);
-        });
+
+        // 绘制地图（含当前位置标记和附近暖伴）
+        var drawHomeMap = function (lng, lat) {
+          var point = new BMap.Point(lng, lat);
+          homeMapInstance.centerAndZoom(point, 14);
+          homeMapInstance.disableScrollWheelZoom();
+          // 当前位置标记（实时定位）
+          homeMapInstance.clearOverlays();
+          var curMarker = new BMap.Marker(point);
+          homeMapInstance.addOverlay(curMarker);
+          var label = new BMap.Label('我的位置', { offset: new BMap.Size(-20, -25) });
+          label.setStyle({ color: '#fff', background: '#C44D3E', border: 'none', padding: '2px 6px', borderRadius: '4px', fontSize: '11px' });
+          curMarker.setLabel(label);
+          // 附近暖伴标记点（基于当前位置的相对偏移）
+          var companions = [
+            { dLng: 0.003, dLat: 0.002, name: '李阿姨' },
+            { dLng: -0.003, dLat: -0.002, name: '张同学' },
+            { dLng: 0.005, dLat: -0.003, name: '王师傅' }
+          ];
+          companions.forEach(function (c) {
+            var pt = new BMap.Point(lng + c.dLng, lat + c.dLat);
+            var icon = new BMap.Icon('https://api.map.baidu.com/images/markers.png', new BMap.Size(23, 25), { offset: new BMap.Size(10, 25), imageOffset: new BMap.Size(0, -250) });
+            var mk = new BMap.Marker(pt, { icon: icon });
+            homeMapInstance.addOverlay(mk);
+            var lbl = new BMap.Label(c.name, { offset: new BMap.Size(-20, -25) });
+            lbl.setStyle({ color: '#fff', background: '#5B8A72', border: 'none', padding: '2px 6px', borderRadius: '4px', fontSize: '11px' });
+            mk.setLabel(lbl);
+          });
+        };
+
+        // 优先使用浏览器实时定位
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            function (pos) {
+              if (typeof BMap.Convertor !== 'undefined' && BMap.Convertor && BMap.Convertor.translate) {
+                var convertor = new BMap.Convertor();
+                convertor.translate([new BMap.Point(pos.coords.longitude, pos.coords.latitude)], 1, 5, function (data) {
+                  if (data && data.status === 0 && data.points && data.points[0]) {
+                    drawHomeMap(data.points[0].lng, data.points[0].lat);
+                  } else {
+                    drawHomeMap(pos.coords.longitude, pos.coords.latitude);
+                  }
+                });
+              } else {
+                drawHomeMap(pos.coords.longitude, pos.coords.latitude);
+              }
+            },
+            function () { drawHomeMap(MAP_CENTER.lng, MAP_CENTER.lat); },
+            { timeout: 5000, enableHighAccuracy: true }
+          );
+        } else {
+          drawHomeMap(MAP_CENTER.lng, MAP_CENTER.lat);
+        }
       }
 
       function geocodeAddress(address, callback) {
