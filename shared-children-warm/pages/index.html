@@ -145,6 +145,7 @@
         background-color: currentColor;
       }
     </style>
+    <link rel="stylesheet" href="../../shared/css/animations.css">
 </head>
 <body class="min-h-screen font-sans antialiased" style="background:var(--color-bg); color:var(--color-text);">
 
@@ -212,19 +213,19 @@
         </section>
 
         <!-- Stats Bar -->
-        <section class="w-full" style="background:var(--color-bg-card); border-bottom:1px solid var(--color-border);">
+        <section class="w-full reveal" style="background:var(--color-bg-card); border-bottom:1px solid var(--color-border);">
             <div class="mx-auto max-w-6xl px-6 lg:px-8 py-10 lg:py-14">
                 <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
                     <div class="flex flex-col items-center lg:items-start text-center lg:text-left">
-                        <span class="font-semibold whitespace-nowrap" style="font-family:var(--font-serif); font-size:clamp(28px, 3.5vw, 42px); line-height:1.1; color:var(--color-primary); font-variant-numeric:tabular-nums;">1.18亿</span>
+                        <span class="font-semibold whitespace-nowrap counter" data-target="1.18" data-suffix="亿" data-decimals="2" style="font-family:var(--font-serif); font-size:clamp(28px, 3.5vw, 42px); line-height:1.1; color:var(--color-primary); font-variant-numeric:tabular-nums;">0亿</span>
                         <span class="text-sm mt-1.5 truncate" style="color:var(--color-text-secondary);">独居/空巢老人</span>
                     </div>
                     <div class="flex flex-col items-center lg:items-start text-center lg:text-left">
-                        <span class="font-semibold whitespace-nowrap" style="font-family:var(--font-serif); font-size:clamp(28px, 3.5vw, 42px); line-height:1.1; color:var(--color-primary); font-variant-numeric:tabular-nums;">3.23亿</span>
+                        <span class="font-semibold whitespace-nowrap counter" data-target="3.23" data-suffix="亿" data-decimals="2" style="font-family:var(--font-serif); font-size:clamp(28px, 3.5vw, 42px); line-height:1.1; color:var(--color-primary); font-variant-numeric:tabular-nums;">0亿</span>
                         <span class="text-sm mt-1.5 truncate" style="color:var(--color-text-secondary);">60岁以上人口</span>
                     </div>
                     <div class="flex flex-col items-center lg:items-start text-center lg:text-left">
-                        <span class="font-semibold whitespace-nowrap" style="font-family:var(--font-serif); font-size:clamp(28px, 3.5vw, 42px); line-height:1.1; color:var(--color-primary); font-variant-numeric:tabular-nums;">7万亿</span>
+                        <span class="font-semibold whitespace-nowrap counter" data-target="7" data-suffix="万亿" data-decimals="0" style="font-family:var(--font-serif); font-size:clamp(28px, 3.5vw, 42px); line-height:1.1; color:var(--color-primary); font-variant-numeric:tabular-nums;">0万亿</span>
                         <span class="text-sm mt-1.5 truncate" style="color:var(--color-text-secondary);">银发经济规模</span>
                     </div>
                     <div class="flex flex-col items-center lg:items-start text-center lg:text-left">
@@ -236,7 +237,7 @@
         </section>
 
         <!-- Demo Cards Section -->
-        <section class="w-full" style="background:var(--color-bg);">
+        <section class="w-full reveal" style="background:var(--color-bg);">
             <div class="mx-auto max-w-6xl px-6 lg:px-8 py-16 lg:py-24">
                 <div class="text-center mb-12">
                     <h2 class="font-semibold mb-3" style="font-family:var(--font-serif); font-size:clamp(22px, 2.8vw, 32px); line-height:1.2; color:var(--color-text); text-wrap:balance; word-break:keep-all;">
@@ -300,7 +301,7 @@
         </section>
 
         <!-- Feature Grid Section -->
-        <section class="w-full" style="background:var(--color-bg-warm);">
+        <section class="w-full reveal" style="background:var(--color-bg-warm);">
             <div class="mx-auto max-w-6xl px-6 lg:px-8 py-16 lg:py-24">
                 <div class="text-center mb-12">
                     <h2 class="font-semibold mb-3" style="font-family:var(--font-serif); font-size:clamp(22px, 2.8vw, 32px); line-height:1.2; color:var(--color-text); text-wrap:balance; word-break:keep-all;">
@@ -375,17 +376,240 @@
             </div>
         </section>
 
+        <!-- How It Works Section -->
+        <section class="w-full reveal" style="background:var(--color-bg);">
+            <div class="mx-auto max-w-6xl px-6 lg:px-8 py-16 lg:py-24">
+                <div class="text-center mb-12">
+                    <div class="section-divider"></div>
+                    <h2 class="font-semibold mb-3" style="font-family:var(--font-serif); font-size:clamp(22px, 2.8vw, 32px); line-height:1.2; color:var(--color-text); text-wrap:balance; word-break:keep-all;">
+                        四步开启温暖陪伴
+                    </h2>
+                    <p class="text-base max-w-lg mx-auto" style="color:var(--color-text-secondary); line-height:1.6;">
+                        从注册到服务完成，全流程线上化，让陪伴触手可及
+                    </p>
+                </div>
+                <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+                    <div class="reveal reveal-delay-1 text-center">
+                        <div class="flex items-center justify-center rounded-2xl mx-auto mb-4 float-animate" style="width:56px; height:56px; background:var(--color-primary-light);">
+                            <i data-lucide="user-plus" style="width:26px; height:26px; color:var(--color-primary);"></i>
+                        </div>
+                        <div class="text-xs font-semibold mb-2" style="color:var(--color-primary); letter-spacing:var(--tracking-wider);">STEP 01</div>
+                        <h3 class="font-semibold text-base mb-2" style="font-family:var(--font-serif); color:var(--color-text);">注册认证</h3>
+                        <p class="text-sm" style="color:var(--color-text-secondary); line-height:1.6;">暖家与暖伴实名注册，公安背调+人脸识别，安全可信</p>
+                    </div>
+                    <div class="reveal reveal-delay-2 text-center">
+                        <div class="flex items-center justify-center rounded-2xl mx-auto mb-4 float-animate" style="width:56px; height:56px; background:var(--state-success-bg); animation-delay:0.5s;">
+                            <i data-lucide="hand-heart" style="width:26px; height:26px; color:var(--state-success);"></i>
+                        </div>
+                        <div class="text-xs font-semibold mb-2" style="color:var(--state-success); letter-spacing:var(--tracking-wider);">STEP 02</div>
+                        <h3 class="font-semibold text-base mb-2" style="font-family:var(--font-serif); color:var(--color-text);">发布需求</h3>
+                        <p class="text-sm" style="color:var(--color-text-secondary); line-height:1.6;">暖家一键发布陪伴需求，系统就近匹配优质暖伴</p>
+                    </div>
+                    <div class="reveal reveal-delay-3 text-center">
+                        <div class="flex items-center justify-center rounded-2xl mx-auto mb-4 float-animate" style="width:56px; height:56px; background:var(--state-warning-bg); animation-delay:1s;">
+                            <i data-lucide="zap" style="width:26px; height:26px; color:var(--state-warning);"></i>
+                        </div>
+                        <div class="text-xs font-semibold mb-2" style="color:var(--state-warning); letter-spacing:var(--tracking-wider);">STEP 03</div>
+                        <h3 class="font-semibold text-base mb-2" style="font-family:var(--font-serif); color:var(--color-text);">智能匹配</h3>
+                        <p class="text-sm" style="color:var(--color-text-secondary); line-height:1.6;">AI调度引擎根据距离、技能、评价多维匹配最优暖伴</p>
+                    </div>
+                    <div class="reveal reveal-delay-4 text-center">
+                        <div class="flex items-center justify-center rounded-2xl mx-auto mb-4 float-animate" style="width:56px; height:56px; background:var(--state-info-bg); animation-delay:1.5s;">
+                            <i data-lucide="heart-handshake" style="width:26px; height:26px; color:var(--state-info);"></i>
+                        </div>
+                        <div class="text-xs font-semibold mb-2" style="color:var(--state-info); letter-spacing:var(--tracking-wider);">STEP 04</div>
+                        <h3 class="font-semibold text-base mb-2" style="font-family:var(--font-serif); color:var(--color-text);">温暖陪伴</h3>
+                        <p class="text-sm" style="color:var(--color-text-secondary); line-height:1.6;">全程录音定位保障安全，服务结束双向评价持续优化</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Safety & Trust Section -->
+        <section class="w-full reveal" style="background:var(--color-bg-warm);">
+            <div class="mx-auto max-w-6xl px-6 lg:px-8 py-16 lg:py-24">
+                <div class="text-center mb-12">
+                    <div class="section-divider"></div>
+                    <h2 class="font-semibold mb-3" style="font-family:var(--font-serif); font-size:clamp(22px, 2.8vw, 32px); line-height:1.2; color:var(--color-text); text-wrap:balance; word-break:keep-all;">
+                        五重安全保障
+                    </h2>
+                    <p class="text-base max-w-lg mx-auto" style="color:var(--color-text-secondary); line-height:1.6;">
+                        让每一次陪伴都安心、放心、暖心
+                    </p>
+                </div>
+                <div class="grid sm:grid-cols-2 lg:grid-cols-5 gap-4 lg:gap-5">
+                    <div class="reveal reveal-delay-1 rounded-xl p-5 text-center card-lift" style="background:var(--color-bg-card); border:1px solid var(--color-border);">
+                        <div class="flex items-center justify-center rounded-xl mx-auto mb-3" style="width:44px; height:44px; background:var(--state-error-bg);">
+                            <i data-lucide="shield-check" style="width:22px; height:22px; color:var(--state-error);"></i>
+                        </div>
+                        <h3 class="font-semibold text-sm mb-1.5" style="font-family:var(--font-serif); color:var(--color-text);">实名+背调</h3>
+                        <p class="text-xs" style="color:var(--color-text-secondary); line-height:1.5;">公安系统实名核验，无犯罪记录背调</p>
+                    </div>
+                    <div class="reveal reveal-delay-2 rounded-xl p-5 text-center card-lift" style="background:var(--color-bg-card); border:1px solid var(--color-border);">
+                        <div class="flex items-center justify-center rounded-xl mx-auto mb-3" style="width:44px; height:44px; background:var(--state-warning-bg);">
+                            <i data-lucide="map-pin" style="width:22px; height:22px; color:var(--state-warning);"></i>
+                        </div>
+                        <h3 class="font-semibold text-sm mb-1.5" style="font-family:var(--font-serif); color:var(--color-text);">全程定位</h3>
+                        <p class="text-xs" style="color:var(--color-text-secondary); line-height:1.5;">服务期间实时位置共享，轨迹可追溯</p>
+                    </div>
+                    <div class="reveal reveal-delay-3 rounded-xl p-5 text-center card-lift" style="background:var(--color-bg-card); border:1px solid var(--color-border);">
+                        <div class="flex items-center justify-center rounded-xl mx-auto mb-3" style="width:44px; height:44px; background:var(--state-info-bg);">
+                            <i data-lucide="mic" style="width:22px; height:22px; color:var(--state-info);"></i>
+                        </div>
+                        <h3 class="font-semibold text-sm mb-1.5" style="font-family:var(--font-serif); color:var(--color-text);">录音留痕</h3>
+                        <p class="text-xs" style="color:var(--color-text-secondary); line-height:1.5;">服务全程录音，纠纷可回溯查明</p>
+                    </div>
+                    <div class="reveal reveal-delay-4 rounded-xl p-5 text-center card-lift" style="background:var(--color-bg-card); border:1px solid var(--color-border);">
+                        <div class="flex items-center justify-center rounded-xl mx-auto mb-3" style="width:44px; height:44px; background:var(--state-success-bg);">
+                            <i data-lucide="umbrella" style="width:22px; height:22px; color:var(--state-success);"></i>
+                        </div>
+                        <h3 class="font-semibold text-sm mb-1.5" style="font-family:var(--font-serif); color:var(--color-text);">意外保险</h3>
+                        <p class="text-xs" style="color:var(--color-text-secondary); line-height:1.5;">每单自动投保意外险，最高赔付50万</p>
+                    </div>
+                    <div class="reveal reveal-delay-5 rounded-xl p-5 text-center card-lift" style="background:var(--color-bg-card); border:1px solid var(--color-border);">
+                        <div class="flex items-center justify-center rounded-xl mx-auto mb-3" style="width:44px; height:44px; background:var(--color-primary-light);">
+                            <i data-lucide="star" style="width:22px; height:22px; color:var(--color-primary);"></i>
+                        </div>
+                        <h3 class="font-semibold text-sm mb-1.5" style="font-family:var(--font-serif); color:var(--color-text);">双向评价</h3>
+                        <p class="text-xs" style="color:var(--color-text-secondary); line-height:1.5;">服务后双向打分，信用体系持续优化</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- User Stories Section -->
+        <section class="w-full reveal" style="background:var(--color-bg);">
+            <div class="mx-auto max-w-6xl px-6 lg:px-8 py-16 lg:py-24">
+                <div class="text-center mb-12">
+                    <div class="section-divider"></div>
+                    <h2 class="font-semibold mb-3" style="font-family:var(--font-serif); font-size:clamp(22px, 2.8vw, 32px); line-height:1.2; color:var(--color-text); text-wrap:balance; word-break:keep-all;">
+                        温暖正在发生
+                    </h2>
+                    <p class="text-base max-w-lg mx-auto" style="color:var(--color-text-secondary); line-height:1.6;">
+                        来自暖家和暖伴的真实声音
+                    </p>
+                </div>
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="reveal reveal-delay-1 rounded-xl p-6 card-lift" style="background:var(--color-bg-card); border:1px solid var(--color-border);">
+                        <div class="flex items-center gap-1 mb-4">
+                            <i data-lucide="star" style="width:16px; height:16px; color:var(--state-warning); fill:var(--state-warning);"></i>
+                            <i data-lucide="star" style="width:16px; height:16px; color:var(--state-warning); fill:var(--state-warning);"></i>
+                            <i data-lucide="star" style="width:16px; height:16px; color:var(--state-warning); fill:var(--state-warning);"></i>
+                            <i data-lucide="star" style="width:16px; height:16px; color:var(--state-warning); fill:var(--state-warning);"></i>
+                            <i data-lucide="star" style="width:16px; height:16px; color:var(--state-warning); fill:var(--state-warning);"></i>
+                        </div>
+                        <p class="text-sm mb-4" style="color:var(--color-text); line-height:1.7; font-family:var(--font-serif);">"孩子们都在外地工作，平时一个人在家挺孤单的。暖伴小李每周来陪我聊天散步，就像自己的孙女一样贴心。"</p>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style="background:var(--color-primary-light); color:var(--color-primary); font-weight:600; font-size:14px;">王</div>
+                            <div>
+                                <p class="text-sm font-medium" style="color:var(--color-text);">王奶奶</p>
+                                <p class="text-xs" style="color:var(--color-text-muted);">78岁 · 朝阳区</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="reveal reveal-delay-2 rounded-xl p-6 card-lift" style="background:var(--color-bg-card); border:1px solid var(--color-border);">
+                        <div class="flex items-center gap-1 mb-4">
+                            <i data-lucide="star" style="width:16px; height:16px; color:var(--state-warning); fill:var(--state-warning);"></i>
+                            <i data-lucide="star" style="width:16px; height:16px; color:var(--state-warning); fill:var(--state-warning);"></i>
+                            <i data-lucide="star" style="width:16px; height:16px; color:var(--state-warning); fill:var(--state-warning);"></i>
+                            <i data-lucide="star" style="width:16px; height:16px; color:var(--state-warning); fill:var(--state-warning);"></i>
+                            <i data-lucide="star" style="width:16px; height:16px; color:var(--state-warning); fill:var(--state-warning);"></i>
+                        </div>
+                        <p class="text-sm mb-4" style="color:var(--color-text); line-height:1.7; font-family:var(--font-serif);">"作为大学生志愿者，在这里不仅能帮到老人，还能获得志愿服务时长和补贴。平台的安全保障让我爸妈也很放心。"</p>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style="background:var(--state-success-bg); color:var(--state-success); font-weight:600; font-size:14px;">张</div>
+                            <div>
+                                <p class="text-sm font-medium" style="color:var(--color-text);">张同学</p>
+                                <p class="text-xs" style="color:var(--color-text-muted);">暖伴 · 服务56次</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="reveal reveal-delay-3 rounded-xl p-6 card-lift" style="background:var(--color-bg-card); border:1px solid var(--color-border);">
+                        <div class="flex items-center gap-1 mb-4">
+                            <i data-lucide="star" style="width:16px; height:16px; color:var(--state-warning); fill:var(--state-warning);"></i>
+                            <i data-lucide="star" style="width:16px; height:16px; color:var(--state-warning); fill:var(--state-warning);"></i>
+                            <i data-lucide="star" style="width:16px; height:16px; color:var(--state-warning); fill:var(--state-warning);"></i>
+                            <i data-lucide="star" style="width:16px; height:16px; color:var(--state-warning); fill:var(--state-warning);"></i>
+                            <i data-lucide="star" style="width:16px; height:16px; color:var(--state-warning); fill:var(--state-warning);"></i>
+                        </div>
+                        <p class="text-sm mb-4" style="color:var(--color-text); line-height:1.7; font-family:var(--font-serif);">"通过街道批量采购暖伴服务，辖区内独居老人的陪伴需求得到了系统性解决，民政工作也有了数字化抓手。"</p>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style="background:var(--state-info-bg); color:var(--state-info); font-weight:600; font-size:14px;">李</div>
+                            <div>
+                                <p class="text-sm font-medium" style="color:var(--color-text);">李主任</p>
+                                <p class="text-xs" style="color:var(--color-text-muted);">街道民政 · 海淀区</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Footer -->
         <footer class="w-full" style="background:var(--color-bg-card); border-top:1px solid var(--color-border);">
-            <div class="mx-auto max-w-6xl px-6 lg:px-8 py-10 lg:py-14 text-center">
-                <p class="text-sm" style="color:var(--color-text-muted); font-family:var(--font-serif); line-height:1.6;">
-                    用平台的方式，重塑城市的邻里温度
-                </p>
-                <p class="text-xs mt-3" style="color:var(--color-text-muted); opacity:0.6;">
-                    共享儿女 · 暖陪伴计划 — TRAE AI 创造力大赛参赛作品
-                </p>
+            <div class="mx-auto max-w-6xl px-6 lg:px-8 py-12 lg:py-16">
+                <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
+                    <div>
+                        <div class="flex items-center gap-2 mb-4">
+                            <div class="flex items-center justify-center rounded-lg" style="width:32px; height:32px; background:var(--color-primary);">
+                                <i data-lucide="heart-handshake" style="width:18px; height:18px; color:var(--color-text-inverse);"></i>
+                            </div>
+                            <span class="font-semibold text-base" style="font-family:var(--font-serif); color:var(--color-text);">共享儿女</span>
+                        </div>
+                        <p class="text-sm" style="color:var(--color-text-secondary); line-height:1.6;">用平台的方式，重塑城市的邻里温度</p>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-semibold mb-3" style="color:var(--color-text); letter-spacing:var(--tracking-wider);">产品体验</h4>
+                        <div class="space-y-2">
+                            <a href="mini-program.html" class="block text-sm no-underline" style="color:var(--color-text-secondary);" onmouseover="this.style.color='var(--color-primary)'" onmouseout="this.style.color='var(--color-text-secondary)'">小程序 Demo</a>
+                            <a href="web-admin.html" class="block text-sm no-underline" style="color:var(--color-text-secondary);" onmouseover="this.style.color='var(--color-primary)'" onmouseout="this.style.color='var(--color-text-secondary)'">Web 调度后台</a>
+                            <a href="proposal.html" class="block text-sm no-underline" style="color:var(--color-text-secondary);" onmouseover="this.style.color='var(--color-primary)'" onmouseout="this.style.color='var(--color-text-secondary)'">创意方案</a>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-semibold mb-3" style="color:var(--color-text); letter-spacing:var(--tracking-wider);">核心服务</h4>
+                        <div class="space-y-2">
+                            <span class="block text-sm" style="color:var(--color-text-secondary);">日常陪伴</span>
+                            <span class="block text-sm" style="color:var(--color-text-secondary);">跑腿代办</span>
+                            <span class="block text-sm" style="color:var(--color-text-secondary);">数字辅导</span>
+                            <span class="block text-sm" style="color:var(--color-text-secondary);">安全兜底</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-semibold mb-3" style="color:var(--color-text); letter-spacing:var(--tracking-wider);">关于项目</h4>
+                        <div class="space-y-2">
+                            <span class="block text-sm" style="color:var(--color-text-secondary);">社会服务赛道</span>
+                            <span class="block text-sm" style="color:var(--color-text-secondary);">TRAE AI 创造力大赛</span>
+                            <span class="block text-sm" style="color:var(--color-text-secondary);">作者：王心瀚</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="pt-6 text-center" style="border-top:1px solid var(--color-border-light);">
+                    <p class="text-xs" style="color:var(--color-text-muted); opacity:0.7;">
+                        共享儿女 · 暖陪伴计划 — TRAE AI 创造力大赛参赛作品 · MIT License
+                    </p>
+                </div>
             </div>
         </footer>
+
+        <!-- Back to Top Button -->
+        <button id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" class="fixed bottom-6 right-6 z-50 flex items-center justify-center rounded-full transition-all duration-300" style="width:44px; height:44px; background:var(--color-primary); color:var(--color-text-inverse); border:none; cursor:pointer; box-shadow:var(--shadow-lg); opacity:0; visibility:hidden; transform:translateY(10px);">
+            <i data-lucide="arrow-up" style="width:20px; height:20px;"></i>
+        </button>
+        <script>
+          window.addEventListener('scroll', function() {
+            var btn = document.getElementById('back-to-top');
+            if (window.scrollY > 400) {
+              btn.style.opacity = '1';
+              btn.style.visibility = 'visible';
+              btn.style.transform = 'translateY(0)';
+            } else {
+              btn.style.opacity = '0';
+              btn.style.visibility = 'hidden';
+              btn.style.transform = 'translateY(10px)';
+            }
+          }, { passive: true });
+        </script>
 
     </main>
 
@@ -395,6 +619,7 @@
         menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
       }
     </script>
+    <script src="../../shared/js/common.js"></script>
     <script>lucide.createIcons();</script>
 </body>
 </html>

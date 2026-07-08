@@ -1,0 +1,287 @@
+/* ===== Shared Animation System — 共享儿女 · 暖陪伴计划 ===== */
+
+/* --- Scroll Progress Bar --- */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--color-primary), var(--state-warning));
+  z-index: 9999;
+  transition: width 0.1s ease;
+  border-radius: 0 3px 3px 0;
+}
+
+/* --- Scroll Reveal Animations --- */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+.reveal.reveal-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-40px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal-left.reveal-visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+.reveal-right {
+  opacity: 0;
+  transform: translateX(40px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal-right.reveal-visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+.reveal-scale {
+  opacity: 0;
+  transform: scale(0.92);
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal-scale.reveal-visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Stagger delays */
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+.reveal-delay-5 { transition-delay: 0.5s; }
+.reveal-delay-6 { transition-delay: 0.6s; }
+
+/* --- Number Counter --- */
+.counter {
+  display: inline-block;
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Hero Gradient Animation --- */
+@keyframes heroGradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.hero-gradient-animate {
+  background-size: 200% 200%;
+  animation: heroGradientShift 8s ease infinite;
+}
+
+/* --- Floating Animation --- */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.float-animate {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* --- Pulse Glow --- */
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(212, 101, 74, 0.3); }
+  50% { box-shadow: 0 0 0 12px rgba(212, 101, 74, 0); }
+}
+.pulse-glow {
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+/* --- Shimmer Loading --- */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, var(--color-bg-muted) 25%, var(--color-bg-sunken) 50%, var(--color-bg-muted) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-md);
+}
+
+/* --- Button Ripple --- */
+.ripple-btn {
+  position: relative;
+  overflow: hidden;
+}
+.ripple-effect {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+  transform: scale(0);
+  animation: rippleExpand 0.6s ease-out;
+  pointer-events: none;
+}
+@keyframes rippleExpand {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* --- Card Hover Lift --- */
+.card-lift {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.card-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(61, 46, 36, 0.1);
+}
+
+/* --- Fade In Up (for dynamic content) --- */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.fade-in-up {
+  animation: fadeInUp 0.4s ease-out forwards;
+}
+
+/* --- Slide In Right (for toasts) --- */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+@keyframes slideOutRight {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
+.toast-animate {
+  animation: slideInRight 0.3s ease-out forwards;
+}
+.toast-animate-out {
+  animation: slideOutRight 0.3s ease-out forwards;
+}
+
+/* --- Modal Animation --- */
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes modalSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.modal-overlay-animate {
+  animation: modalFadeIn 0.2s ease-out forwards;
+}
+.modal-content-animate {
+  animation: modalSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* --- Tab Switch Animation --- */
+@keyframes tabFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.tab-content-animate {
+  animation: tabFadeIn 0.25s ease-out forwards;
+}
+
+/* --- Spinner --- */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.spinner {
+  width: 24px;
+  height: 24px;
+  border: 2.5px solid var(--color-border);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+/* --- Gradient Text --- */
+.gradient-text {
+  background: linear-gradient(135deg, var(--color-primary), var(--state-warning));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* --- Section Divider --- */
+.section-divider {
+  width: 48px;
+  height: 3px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--color-primary), var(--state-warning));
+  margin: 0 auto 16px;
+}
+
+/* --- Step Connector --- */
+.step-connector {
+  position: relative;
+}
+.step-connector::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: -50%;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, var(--color-border), var(--color-border-light));
+}
+.step-connector:last-child::after {
+  display: none;
+}
+
+/* --- Smooth Scroll --- */
+html {
+  scroll-behavior: smooth;
+}
+
+/* --- Selection --- */
+::selection {
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+}
+
+/* --- Reduced Motion --- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .reveal, .reveal-left, .reveal-right, .reveal-scale {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

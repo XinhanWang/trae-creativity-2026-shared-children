@@ -168,6 +168,7 @@
       #phone-screen .text-2xl { font-size: calc(1.5rem * var(--font-scale, 1)); }
       #phone-screen .text-3xl { font-size: calc(1.875rem * var(--font-scale, 1)); }
     </style>
+    <link rel="stylesheet" href="../../shared/css/animations.css">
 </head>
 <body class="min-h-screen font-sans antialiased">
     <main class="min-h-screen flex items-center justify-center" style="background: var(--color-bg); padding: var(--space-8);">
@@ -181,11 +182,11 @@
 
           <!-- Role Switch Buttons -->
           <div class="flex flex-col sm:flex-row gap-3 mb-8">
-            <button id="btn-nuanjia" onclick="switchRole('nuanjia')" class="flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-base font-semibold transition-all duration-250" style="background: var(--color-primary); color: var(--color-text-inverse); border: none; cursor: pointer; box-shadow: var(--shadow-sm);">
+            <button id="btn-nuanjia" onclick="switchRole('nuanjia')" class="ripple-btn flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-base font-semibold transition-all duration-250" style="background: var(--color-primary); color: var(--color-text-inverse); border: none; cursor: pointer; box-shadow: var(--shadow-sm);">
               <i data-lucide="home" style="width: 18px; height: 18px;"></i>
               <span>暖家模式</span>
             </button>
-            <button id="btn-nuanban" onclick="switchRole('nuanban')" class="flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-base font-semibold transition-all duration-250" style="background: transparent; color: var(--color-text); border: 1px solid var(--color-border); cursor: pointer;">
+            <button id="btn-nuanban" onclick="switchRole('nuanban')" class="ripple-btn flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-base font-semibold transition-all duration-250" style="background: transparent; color: var(--color-text); border: 1px solid var(--color-border); cursor: pointer;">
               <i data-lucide="heart-handshake" style="width: 18px; height: 18px;"></i>
               <span>暖伴模式</span>
             </button>
@@ -1315,15 +1316,29 @@
         var toast = document.getElementById('toast');
         toast.textContent = msg;
         toast.style.display = 'block';
+        toast.classList.remove('toast-animate');
+        void toast.offsetWidth;
+        toast.classList.add('toast-animate');
         if (toastTimer) clearTimeout(toastTimer);
         toastTimer = setTimeout(function () {
           toast.style.display = 'none';
+          toast.classList.remove('toast-animate');
         }, 2200);
       }
 
       /* ===== Modal ===== */
       function openModal(id) {
-        document.getElementById(id).style.display = 'flex';
+        var overlay = document.getElementById(id);
+        overlay.style.display = 'flex';
+        overlay.classList.remove('modal-overlay-animate');
+        var content = overlay.querySelector('.modal-content');
+        if (content) {
+          content.classList.remove('modal-content-animate');
+          void content.offsetWidth;
+          content.classList.add('modal-content-animate');
+        }
+        void overlay.offsetWidth;
+        overlay.classList.add('modal-overlay-animate');
         lucide.createIcons();
       }
       function closeModal(id) {
@@ -1342,6 +1357,9 @@
 
         if (role === 'nuanjia') {
           nuanjia.style.display = 'block';
+          nuanjia.classList.remove('fade-in-up');
+          void nuanjia.offsetWidth;
+          nuanjia.classList.add('fade-in-up');
           nuanban.style.display = 'none';
           btnJia.className = btnJia.className.replace('role-inactive', '') + ' role-active';
           btnBan.className = btnBan.className.replace('role-active', '') + ' role-inactive';
@@ -1350,6 +1368,9 @@
         } else {
           nuanjia.style.display = 'none';
           nuanban.style.display = 'block';
+          nuanban.classList.remove('fade-in-up');
+          void nuanban.offsetWidth;
+          nuanban.classList.add('fade-in-up');
           btnBan.className = btnBan.className.replace('role-inactive', '') + ' role-active';
           btnJia.className = btnJia.className.replace('role-active', '') + ' role-inactive';
           descText.textContent = '暖伴模式面向志愿者，可浏览并接取附近服务订单，查看收入统计与服务记录，参与培训提升技能。';
@@ -1367,13 +1388,13 @@
         tabs.forEach(function (t) {
           var nj = document.getElementById('tab-nuanjia-' + t);
           var nb = document.getElementById('tab-nuanban-' + t);
-          if (nj) nj.style.display = 'none';
-          if (nb) nb.style.display = 'none';
+          if (nj) { nj.style.display = 'none'; nj.classList.remove('tab-content-animate'); }
+          if (nb) { nb.style.display = 'none'; nb.classList.remove('tab-content-animate'); }
         });
 
         // Show active tab for current role
         var active = document.getElementById('tab-' + currentRole + '-' + tab);
-        if (active) active.style.display = 'block';
+        if (active) { active.style.display = 'block'; active.classList.add('tab-content-animate'); }
 
         // Update tab bar styles
         tabs.forEach(function (t) {
@@ -2407,7 +2428,7 @@
         myOrders.forEach(function (o) {
           var st = getStatusStyle(o.status);
           var icon = getOrderIcon(o.type);
-          html += '<div class="flex items-center gap-3 p-3 rounded-xl cursor-pointer" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" onclick="openOrderDetail(\'' + o.id + '\')">';
+          html += '<div class="fade-in-up flex items-center gap-3 p-3 rounded-xl cursor-pointer" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" onclick="openOrderDetail(\'' + o.id + '\')">';
           html += '<div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style="background: var(--color-primary-light);">';
           html += '<i data-lucide="' + icon + '" style="width: 20px; height: 20px; color: var(--color-primary);"></i>';
           html += '</div>';
@@ -2460,7 +2481,7 @@
         var html = '';
         available.forEach(function (o) {
           var icon = getOrderIcon(o.type);
-          html += '<div class="p-3 rounded-xl" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);">';
+          html += '<div class="fade-in-up p-3 rounded-xl" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);">';
           html += '<div class="flex items-center justify-between mb-1">';
           html += '<div class="flex items-center gap-2">';
           html += '<i data-lucide="' + icon + '" style="width: 16px; height: 16px; color: var(--color-primary);"></i>';
@@ -2495,7 +2516,7 @@
             var html = '';
             ongoing.forEach(function (o) {
               var icon = getOrderIcon(o.type);
-              html += '<div class="p-3 rounded-xl" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);">';
+              html += '<div class="fade-in-up p-3 rounded-xl" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);">';
               html += '<div class="flex items-center justify-between mb-1">';
               html += '<div class="flex items-center gap-2">';
               html += '<i data-lucide="' + icon + '" style="width: 16px; height: 16px; color: var(--state-info);"></i>';
@@ -2524,7 +2545,7 @@
             var html2 = '';
             completed.forEach(function (o) {
               var icon = getOrderIcon(o.type);
-              html2 += '<div class="flex items-center gap-3 p-3 rounded-xl cursor-pointer" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" onclick="openOrderDetail(\'' + o.id + '\')">';
+              html2 += '<div class="fade-in-up flex items-center gap-3 p-3 rounded-xl cursor-pointer" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" onclick="openOrderDetail(\'' + o.id + '\')">';
               html2 += '<div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style="background: var(--state-success-bg);">';
               html2 += '<i data-lucide="' + icon + '" style="width: 16px; height: 16px; color: var(--state-success);"></i>';
               html2 += '</div>';
@@ -2626,5 +2647,6 @@
         if (screen) screen.style.setProperty('--font-scale', scale[s.fontSize] || 1);
       })();
     </script>
+    <script src="../../shared/js/common.js"></script>
 </body>
 </html>

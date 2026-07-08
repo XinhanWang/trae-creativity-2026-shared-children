@@ -152,6 +152,7 @@
         background-color: currentColor;
       }
     </style>
+    <link rel="stylesheet" href="../../shared/css/animations.css">
 </head>
 <body class="min-h-screen font-sans antialiased">
 
@@ -175,7 +176,7 @@
                     <input id="login-password" type="password" placeholder="请输入密码" class="w-full px-4 py-2.5 rounded-lg border text-sm outline-none transition-colors" style="background: var(--color-bg); border-color: var(--color-border); color: var(--color-text);" onfocus="this.style.borderColor='var(--color-primary)'" onblur="this.style.borderColor='var(--color-border)'" onkeydown="if(event.key==='Enter')doLogin()">
                 </div>
                 <div id="login-error" class="hidden text-xs px-3 py-2 rounded-lg" style="background: var(--state-error-bg); color: var(--state-error);">账号或密码错误，请重试</div>
-                <button onclick="doLogin()" class="w-full py-2.5 rounded-lg text-sm font-semibold transition-colors duration-200" style="background: var(--color-primary); color: var(--color-text-inverse);">登 录</button>
+                <button onclick="doLogin()" class="ripple-btn w-full py-2.5 rounded-lg text-sm font-semibold transition-colors duration-200" style="background: var(--color-primary); color: var(--color-text-inverse);">登 录</button>
                 <div class="text-center text-xs" style="color: var(--color-text-muted);">示例账号：admin　密码：123456</div>
             </div>
         </div>
@@ -286,7 +287,7 @@
                 <div id="tab-overview" class="tab-panel">
                     <!-- Stats Cards -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
-                        <div class="rounded-lg p-4 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
+                        <div class="rounded-lg p-4 border card-lift reveal reveal-delay-1" style="background: var(--color-bg-card); border-color: var(--color-border);">
                             <div class="flex items-center justify-between mb-3">
                                 <span class="text-sm" style="color: var(--color-text-secondary);">今日订单</span>
                                 <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: var(--color-primary-light);">
@@ -299,7 +300,7 @@
                                 <span style="color: var(--color-text-muted);"> 较昨日</span>
                             </div>
                         </div>
-                        <div class="rounded-lg p-4 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
+                        <div class="rounded-lg p-4 border card-lift reveal reveal-delay-2" style="background: var(--color-bg-card); border-color: var(--color-border);">
                             <div class="flex items-center justify-between mb-3">
                                 <span class="text-sm" style="color: var(--color-text-secondary);">活跃暖伴</span>
                                 <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: var(--state-success-bg);">
@@ -312,7 +313,7 @@
                                 <span style="color: var(--color-text-muted);"> 较昨日</span>
                             </div>
                         </div>
-                        <div class="rounded-lg p-4 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
+                        <div class="rounded-lg p-4 border card-lift reveal reveal-delay-3" style="background: var(--color-bg-card); border-color: var(--color-border);">
                             <div class="flex items-center justify-between mb-3">
                                 <span class="text-sm" style="color: var(--color-text-secondary);">服务暖家</span>
                                 <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: var(--state-warning-bg);">
@@ -325,7 +326,7 @@
                                 <span style="color: var(--color-text-muted);"> 较上周</span>
                             </div>
                         </div>
-                        <div class="rounded-lg p-4 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
+                        <div class="rounded-lg p-4 border card-lift reveal reveal-delay-4" style="background: var(--color-bg-card); border-color: var(--color-border);">
                             <div class="flex items-center justify-between mb-3">
                                 <span class="text-sm" style="color: var(--color-text-secondary);">平均满意度</span>
                                 <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: var(--color-primary-light);">
@@ -1114,7 +1115,13 @@
             for (var i = 0; i < panels.length; i++) { panels[i].classList.add('hidden'); }
             // Show target
             var target = document.getElementById('tab-' + tabId);
-            if (target) target.classList.remove('hidden');
+            if (target) {
+                target.classList.remove('hidden');
+                // Trigger entrance animation
+                target.classList.remove('tab-content-animate');
+                void target.offsetWidth; // force reflow to restart animation
+                target.classList.add('tab-content-animate');
+            }
             // Update nav buttons
             var btns = document.querySelectorAll('.sidebar-btn');
             for (var j = 0; j < btns.length; j++) {
@@ -1465,7 +1472,7 @@
         };
         var c = palette[type] || palette.info;
         var toast = document.createElement('div');
-        toast.className = 'flex items-center gap-2 px-4 py-3 rounded-lg border shadow-lg';
+        toast.className = 'toast-animate flex items-center gap-2 px-4 py-3 rounded-lg border shadow-lg';
         toast.style.cssText = 'background:' + c.bg + ';border-color:' + c.color + ';min-width:200px;';
         toast.innerHTML = '<i data-lucide="' + c.icon + '" class="w-4 h-4" style="color:' + c.color + ';"></i><span class="text-sm" style="color:var(--color-text);">' + msg + '</span>';
         container.appendChild(toast);
@@ -1483,18 +1490,38 @@
      * ============================================================ */
     function openModal(id) {
         var m = document.getElementById(id);
-        if (m) { m.classList.remove('hidden'); if (window.lucide) lucide.createIcons(); }
+        if (m) {
+            m.classList.remove('hidden');
+            m.classList.add('modal-overlay-animate');
+            var content = m.querySelector(':scope > div');
+            if (content) {
+                content.classList.remove('modal-content-animate');
+                void content.offsetWidth; // force reflow to restart animation
+                content.classList.add('modal-content-animate');
+            }
+            if (window.lucide) lucide.createIcons();
+        }
     }
     function closeModal(id) {
         var m = document.getElementById(id);
-        if (m) m.classList.add('hidden');
+        if (m) {
+            m.classList.add('hidden');
+            m.classList.remove('modal-overlay-animate');
+            var content = m.querySelector(':scope > div');
+            if (content) content.classList.remove('modal-content-animate');
+        }
     }
     // ESC 键关闭所有弹窗
     document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') {
             ['modal-order-detail', 'modal-assign', 'modal-volunteer-detail', 'modal-contract', 'modal-auth-detail'].forEach(function (id) {
                 var m = document.getElementById(id);
-                if (m && !m.classList.contains('hidden')) m.classList.add('hidden');
+                if (m && !m.classList.contains('hidden')) {
+                    m.classList.add('hidden');
+                    m.classList.remove('modal-overlay-animate');
+                    var content = m.querySelector(':scope > div');
+                    if (content) content.classList.remove('modal-content-animate');
+                }
             });
         }
     });
@@ -1591,7 +1618,7 @@
             } else {
                 actionBtn = '<button onclick="showOrderDetail(\'' + o.id + '\')" class="text-xs" style="color:var(--color-primary);">详情</button>';
             }
-            html += '<tr class="border-t" style="border-color:var(--color-border-light);">' +
+            html += '<tr class="border-t fade-in-up" style="border-color:var(--color-border-light);">' +
                 '<td class="px-4 py-3 whitespace-nowrap truncate" style="color:var(--color-text);font-variant-numeric:tabular-nums;">#' + o.id + '</td>' +
                 '<td class="px-4 py-3 whitespace-nowrap"><div class="truncate" style="color:var(--color-text);">' + o.elderName + '</div><div class="text-xs truncate" style="color:var(--color-text-muted);">' + o.address + '</div></td>' +
                 '<td class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background:' + ts[0] + ';color:' + ts[1] + ';">' + o.type + '</span></td>' +
@@ -1735,7 +1762,7 @@
         volunteers.forEach(function (v, i) {
             var ac = avatarColors[i % avatarColors.length].split('|');
             var ss = volunteerStatusStyle(v.status).split('|');
-            html += '<div onclick="showVolunteerDetail(\'' + v.id + '\')" class="rounded-lg p-5 border cursor-pointer transition-shadow" style="background:var(--color-bg-card);border-color:var(--color-border);" onmouseover="this.style.boxShadow=\'var(--shadow-md)\'" onmouseout="this.style.boxShadow=\'none\'">' +
+            html += '<div onclick="showVolunteerDetail(\'' + v.id + '\')" class="rounded-lg p-5 border cursor-pointer transition-shadow fade-in-up" style="background:var(--color-bg-card);border-color:var(--color-border);" onmouseover="this.style.boxShadow=\'var(--shadow-md)\'" onmouseout="this.style.boxShadow=\'none\'">' +
                 '<div class="flex items-center gap-3 mb-4">' +
                     '<div class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold" style="background:' + ac[0] + ';color:' + ac[1] + ';">' + v.name.charAt(0) + '</div>' +
                     '<div class="flex-1 min-w-0">' +
@@ -1808,7 +1835,7 @@
             var actionBtn = processed
                 ? '<span class="text-xs" style="color:var(--color-text-muted);">已处理</span>'
                 : '<button onclick="processAlarm(\'' + a.id + '\')" class="text-xs px-2.5 py-1 rounded" style="background:var(--color-primary);color:var(--color-text-inverse);">处理</button>';
-            html += '<tr class="border-t" style="border-color:var(--color-border-light);">' +
+            html += '<tr class="border-t fade-in-up" style="border-color:var(--color-border-light);">' +
                 '<td class="px-4 py-2.5 whitespace-nowrap" style="color:var(--color-text-secondary);font-variant-numeric:tabular-nums;">' + a.time + '</td>' +
                 '<td class="px-4 py-2.5 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background:' + ts[0] + ';color:' + ts[1] + ';">' + a.type + '</span></td>' +
                 '<td class="px-4 py-2.5 truncate" style="color:var(--color-text);">' + (a.detail || a.location || '') + '</td>' +
@@ -1850,7 +1877,7 @@
             var ts = contractTypeStyle(c.type).split('|');
             var ss = contractStatusStyle(c.status).split('|');
             var amountStr = c.amount >= 10000 ? '¥' + (c.amount / 10000).toFixed(1) + '万/年' : '¥' + c.amount + '/年';
-            html += '<tr class="border-t" style="border-color:var(--color-border-light);">' +
+            html += '<tr class="border-t fade-in-up" style="border-color:var(--color-border-light);">' +
                 '<td class="px-4 py-3 whitespace-nowrap truncate" style="color:var(--color-text);font-variant-numeric:tabular-nums;">' + c.id + '</td>' +
                 '<td class="px-4 py-3 whitespace-nowrap truncate" style="color:var(--color-text);">' + c.client + '</td>' +
                 '<td class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background:' + ts[0] + ';color:' + ts[1] + ';">' + c.type + '</span></td>' +
@@ -1964,7 +1991,7 @@
             } else {
                 actionBtn = '<button onclick="showAuthDetail(\'' + r.id + '\')" class="text-xs" style="color:var(--color-primary);">详情</button>';
             }
-            html += '<tr class="border-t" style="border-color:var(--color-border-light);">' +
+            html += '<tr class="border-t fade-in-up" style="border-color:var(--color-border-light);">' +
                 '<td class="px-4 py-3 whitespace-nowrap truncate" style="color:var(--color-text);">' + r.name + '</td>' +
                 '<td class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background:' + rs[0] + ';color:' + rs[1] + ';">' + r.role + '</span></td>' +
                 '<td class="px-4 py-3 whitespace-nowrap truncate" style="color:var(--color-text-secondary);font-variant-numeric:tabular-nums;">' + r.idCard + '</td>' +
@@ -2346,11 +2373,25 @@
         var timeoutInput = document.getElementById('admin-timeout');
         if (timeoutInput) timeoutInput.value = s.timeoutThreshold || 120;
         var modal = document.getElementById('admin-settings-modal');
-        if (modal) modal.classList.remove('hidden');
+        if (modal) {
+            modal.classList.remove('hidden');
+            modal.classList.add('modal-overlay-animate');
+            var content = modal.querySelector(':scope > div');
+            if (content) {
+                content.classList.remove('modal-content-animate');
+                void content.offsetWidth;
+                content.classList.add('modal-content-animate');
+            }
+        }
     }
     function closeAdminSettings() {
         var modal = document.getElementById('admin-settings-modal');
-        if (modal) modal.classList.add('hidden');
+        if (modal) {
+            modal.classList.add('hidden');
+            modal.classList.remove('modal-overlay-animate');
+            var content = modal.querySelector(':scope > div');
+            if (content) content.classList.remove('modal-content-animate');
+        }
     }
     function toggleAdminSetting(el) {
         var key = el.getAttribute('data-key');
@@ -2509,5 +2550,6 @@
     .admin-toggle.active span { transform: translateX(16px); }
     </style>
     <script>lucide.createIcons();</script>
+    <script src="../../shared/js/common.js"></script>
 </body>
 </html>
