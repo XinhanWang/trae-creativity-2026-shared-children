@@ -182,7 +182,7 @@
         <section class="relative overflow-hidden" style="min-height:clamp(480px, 70vh, 720px);">
             <div class="absolute inset-0">
                 <img src="../assets/hero-warm-companion.jpg" alt="温暖陪伴" class="w-full h-full object-cover" style="filter:brightness(0.85) saturate(0.9);">
-                <div class="absolute inset-0" style="background:linear-gradient(180deg, rgba(61,46,36,0.25) 0%, rgba(61,46,36,0.55) 100%);"></div>
+                <div class="absolute inset-0 hero-gradient-animate" style="background:linear-gradient(180deg, rgba(61,46,36,0.25) 0%, rgba(61,46,36,0.55) 100%);"></div>
             </div>
             <div class="relative z-10 flex flex-col items-center justify-center text-center px-6" style="min-height:clamp(480px, 70vh, 720px); padding-top:80px; padding-bottom:80px;">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium mb-6 whitespace-nowrap" style="background:rgba(255,255,255,0.18); color:var(--color-text-inverse); backdrop-filter:blur(4px);">
@@ -196,7 +196,7 @@
                     让每一位长者身边，都有一个随时可以搭把手的"邻家孩子"
                 </p>
                 <div class="flex flex-wrap items-center justify-center gap-4">
-                    <a href="mini-program.html" id="cta-mini-program" class="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-semibold text-white no-underline transition-all duration-250" style="background:var(--color-primary); color:var(--color-text-inverse); transition-property:transform, box-shadow;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 16px rgba(212,101,74,0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                    <a href="mini-program.html" id="cta-mini-program" class="ripple-btn inline-flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-semibold text-white no-underline transition-all duration-250" style="background:var(--color-primary); color:var(--color-text-inverse); transition-property:transform, box-shadow;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 16px rgba(212,101,74,0.3)'" onmouseout="this.style.transform='translateY(-0)'; this.style.boxShadow='none'">
                         <i data-lucide="smartphone" style="width:16px; height:16px;"></i>
                         体验小程序
                     </a>
@@ -208,6 +208,13 @@
                         <i data-lucide="file-text" style="width:16px; height:16px;"></i>
                         创意方案
                     </a>
+                </div>
+            </div>
+            <!-- Scroll Down Indicator -->
+            <div class="absolute bottom-6 left-1/2 -translate-x-1/2 z-10" style="animation:float 2s ease-in-out infinite;">
+                <div class="flex flex-col items-center gap-1" style="opacity:0.7;">
+                    <span class="text-xs text-white" style="letter-spacing:var(--tracking-wider);">向下滚动</span>
+                    <i data-lucide="chevron-down" style="width:20px; height:20px; color:white;"></i>
                 </div>
             </div>
         </section>
