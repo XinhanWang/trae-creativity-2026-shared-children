@@ -1193,6 +1193,28 @@
             muted: '#A89888'
         };
 
+        // --- Helper: Generate dynamic date labels & mock data ---
+        function generateDateLabels(days) {
+            var labels = [];
+            var today = new Date();
+            for (var i = days - 1; i >= 0; i--) {
+                var d = new Date(today);
+                d.setDate(d.getDate() - i);
+                labels.push((d.getMonth() + 1) + '/' + d.getDate());
+            }
+            return labels;
+        }
+        function generateMockData(count) {
+            var data = [];
+            var base = 28 + Math.random() * 8;
+            for (var i = 0; i < count; i++) {
+                base += (Math.random() - 0.35) * 6;
+                base = Math.max(20, Math.min(55, base));
+                data.push(Math.round(base));
+            }
+            return data;
+        }
+
         // --- Overview Charts ---
         // Order Trend Line
         (function() {
@@ -1201,10 +1223,10 @@
             window.orderTrendChart = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: ['6/18', '6/19', '6/20', '6/21', '6/22', '6/23', '6/24'],
+                    labels: generateDateLabels(7),
                     datasets: [{
                         label: '订单数',
-                        data: [32, 38, 35, 42, 45, 40, 48],
+                        data: generateMockData(7),
                         borderColor: warmColors.primary,
                         backgroundColor: warmColors.primaryLight,
                         fill: true,
@@ -2153,11 +2175,11 @@
         });
         if (window.orderTrendChart) {
             if (days === 7) {
-                window.orderTrendChart.data.labels = ['6/18', '6/19', '6/20', '6/21', '6/22', '6/23', '6/24'];
-                window.orderTrendChart.data.datasets[0].data = [32, 38, 35, 42, 45, 40, 48];
+                window.orderTrendChart.data.labels = generateDateLabels(7);
+                window.orderTrendChart.data.datasets[0].data = generateMockData(7);
             } else {
-                window.orderTrendChart.data.labels = ['5/26', '5/28', '5/30', '6/1', '6/3', '6/5', '6/7', '6/9', '6/11', '6/13', '6/15', '6/17', '6/19', '6/21', '6/23'];
-                window.orderTrendChart.data.datasets[0].data = [28, 30, 33, 35, 31, 36, 38, 34, 40, 37, 42, 44, 41, 45, 48];
+                window.orderTrendChart.data.labels = generateDateLabels(30).filter(function(_, i) { return i % 2 === 0; });
+                window.orderTrendChart.data.datasets[0].data = generateMockData(15);
             }
             window.orderTrendChart.update();
         }
