@@ -1353,13 +1353,13 @@
 
     function initData() {
         // Force re-init when data version changes
-        if (localStorage.getItem('sc_admin_version') !== '5') {
+        if (localStorage.getItem('sc_admin_version') !== '6') {
             localStorage.removeItem(SC_KEYS.orders);
             localStorage.removeItem(SC_KEYS.volunteers);
             localStorage.removeItem(SC_KEYS.alarms);
             localStorage.removeItem(SC_KEYS.contracts);
             localStorage.removeItem(SC_KEYS.auth);
-            localStorage.setItem('sc_admin_version', '5');
+            localStorage.setItem('sc_admin_version', '6');
         }
         if (!scGet(SC_KEYS.orders)) {
             scSet(SC_KEYS.orders, [
