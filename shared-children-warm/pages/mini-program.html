@@ -1250,7 +1250,7 @@
           localStorage.setItem('sc_data_version', DATA_VERSION);
         }
         // === 数据版本管理：版本升级时强制重置示例数据 ===
-        var DATA_VERSION = '7';
+        var DATA_VERSION = '8';
         if (localStorage.getItem('sc_data_version') !== DATA_VERSION) {
           localStorage.removeItem(SK.orders);
           localStorage.removeItem(SK.profile);
@@ -1271,7 +1271,7 @@
         function fmtOrderId(offset, seq) {
           var d = new Date();
           d.setDate(d.getDate() + offset);
-          return 'ORD' + d.getFullYear() + ('0' + (d.getMonth() + 1)).slice(-2) + ('0' + d.getDate()).slice(-2) + seq;
+          return 'ORD' + d.getFullYear() + ('0' + (d.getMonth() + 1)).slice(-2) + ('0' + d.getDate()).slice(-2) + String(seq).padStart(4, '0');
         }
 
         if (!getData(SK.orders)) {

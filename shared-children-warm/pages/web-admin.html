@@ -1368,18 +1368,18 @@
     function fmtOrderId(offset, seq) {
       var d = new Date();
       d.setDate(d.getDate() + offset);
-      return 'ORD' + d.getFullYear() + ('0' + (d.getMonth() + 1)).slice(-2) + ('0' + d.getDate()).slice(-2) + seq;
+      return 'ORD' + d.getFullYear() + ('0' + (d.getMonth() + 1)).slice(-2) + ('0' + d.getDate()).slice(-2) + String(seq).padStart(4, '0');
     }
 
     function initData() {
         // Force re-init when data version changes
-        if (localStorage.getItem('sc_admin_version') !== '7') {
+        if (localStorage.getItem('sc_admin_version') !== '8') {
             localStorage.removeItem(SC_KEYS.orders);
             localStorage.removeItem(SC_KEYS.volunteers);
             localStorage.removeItem(SC_KEYS.alarms);
             localStorage.removeItem(SC_KEYS.contracts);
             localStorage.removeItem(SC_KEYS.auth);
-            localStorage.setItem('sc_admin_version', '7');
+            localStorage.setItem('sc_admin_version', '8');
         }
         if (!scGet(SC_KEYS.orders)) {
             scSet(SC_KEYS.orders, [
@@ -1398,7 +1398,11 @@
                 { id: 'V-003', name: '王志强', phone: '137xxxx9012', rating: 4.7, completedOrders: 156, status: '在线', skills: ['数字辅导', '跑腿代办'], area: '江岸区同安里', experience: '1年经验', praiseRate: 96 },
                 { id: 'V-004', name: '陈思雨', phone: '136xxxx3456', rating: 4.9, completedOrders: 89, status: '服务中', skills: ['陪同就医', '日常陪伴'], area: '汉阳区翠微街', experience: '1年经验', praiseRate: 99 },
                 { id: 'V-005', name: '刘文博', phone: '135xxxx7890', rating: 4.6, completedOrders: 67, status: '在线', skills: ['日常陪伴', '跑腿代办'], area: '江汉区锦绣家园', experience: '半年经验', praiseRate: 95 },
-                { id: 'V-006', name: '赵敏', phone: '133xxxx2345', rating: 4.8, completedOrders: 203, status: '待审核', skills: ['跑腿代办', '陪同就医'], area: '青山区金色港湾', experience: '2年经验', praiseRate: 97 }
+                { id: 'V-006', name: '赵敏', phone: '133xxxx2345', rating: 4.8, completedOrders: 203, status: '待审核', skills: ['跑腿代办', '陪同就医'], area: '青山区金色港湾', experience: '2年经验', praiseRate: 97 },
+                { id: 'V-007', name: '孙嘉懿', phone: '138xxxx6789', rating: 4.8, completedOrders: 45, status: '在线', skills: ['日常陪伴', '数字辅导'], area: '武昌区水果湖', experience: '1年经验', praiseRate: 96 },
+                { id: 'V-008', name: '杨思琪', phone: '139xxxx1357', rating: 4.7, completedOrders: 78, status: '在线', skills: ['日常陪伴', '陪同就医'], area: '洪山区街道口', experience: '1年经验', praiseRate: 95 },
+                { id: 'V-009', name: '马晓晨', phone: '136xxxx2468', rating: 4.9, completedOrders: 112, status: '服务中', skills: ['跑腿代办', '数字辅导'], area: '江岸区百步亭', experience: '2年经验', praiseRate: 98 },
+                { id: 'V-010', name: '郭明轩', phone: '135xxxx8642', rating: 4.6, completedOrders: 34, status: '待审核', skills: ['日常陪伴', '跑腿代办'], area: '汉阳区王家湾', experience: '半年经验', praiseRate: 94 }
             ]);
         }
         if (!scGet(SC_KEYS.alarms)) {
