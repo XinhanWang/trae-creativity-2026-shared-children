@@ -379,42 +379,8 @@
                                             <th class="px-4 py-2.5 text-left font-medium whitespace-nowrap" style="color: var(--color-text-secondary);">状态</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        <tr class="border-t" style="border-color: var(--color-border-light);">
-                                            <td class="px-4 py-2.5 whitespace-nowrap truncate" style="color: var(--color-text); font-variant-numeric: tabular-nums;">#ORD202606240001</td>
-                                            <td class="px-4 py-2.5 whitespace-nowrap truncate" style="color: var(--color-text);">王奶奶 · 武昌区梅苑小区</td>
-                                            <td class="px-4 py-2.5 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--color-primary-light); color: var(--color-primary);">日常陪伴</span></td>
-                                            <td class="px-4 py-2.5 whitespace-nowrap truncate" style="color: var(--color-text);">张小雨</td>
-                                            <td class="px-4 py-2.5 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--state-success-bg); color: var(--state-success);">进行中</span></td>
-                                        </tr>
-                                        <tr class="border-t" style="border-color: var(--color-border-light);">
-                                            <td class="px-4 py-2.5 whitespace-nowrap truncate" style="color: var(--color-text); font-variant-numeric: tabular-nums;">#ORD202606240002</td>
-                                            <td class="px-4 py-2.5 whitespace-nowrap truncate" style="color: var(--color-text);">李大爷 · 洪山区卓刀泉社区</td>
-                                            <td class="px-4 py-2.5 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--state-warning-bg); color: var(--state-warning);">跑腿代办</span></td>
-                                            <td class="px-4 py-2.5 whitespace-nowrap truncate" style="color: var(--color-text);">李芳姨</td>
-                                            <td class="px-4 py-2.5 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--state-info-bg); color: var(--state-info);">待接单</span></td>
-                                        </tr>
-                                        <tr class="border-t" style="border-color: var(--color-border-light);">
-                                            <td class="px-4 py-2.5 whitespace-nowrap truncate" style="color: var(--color-text); font-variant-numeric: tabular-nums;">#ORD202606240003</td>
-                                            <td class="px-4 py-2.5 whitespace-nowrap truncate" style="color: var(--color-text);">赵阿姨 · 江岸区同安里</td>
-                                            <td class="px-4 py-2.5 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--state-success-bg); color: var(--state-success);">数字辅导</span></td>
-                                            <td class="px-4 py-2.5 whitespace-nowrap truncate" style="color: var(--color-text);">王志强</td>
-                                            <td class="px-4 py-2.5 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--state-warning-bg); color: var(--state-warning);">已完成</span></td>
-                                        </tr>
-                                        <tr class="border-t" style="border-color: var(--color-border-light);">
-                                            <td class="px-4 py-2.5 whitespace-nowrap truncate" style="color: var(--color-text); font-variant-numeric: tabular-nums;">#ORD202606240004</td>
-                                            <td class="px-4 py-2.5 whitespace-nowrap truncate" style="color: var(--color-text);">孙爷爷 · 汉阳区翠微街</td>
-                                            <td class="px-4 py-2.5 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--color-primary-light); color: var(--color-primary);">陪同就医</span></td>
-                                            <td class="px-4 py-2.5 whitespace-nowrap truncate" style="color: var(--color-text);">陈思雨</td>
-                                            <td class="px-4 py-2.5 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--state-success-bg); color: var(--state-success);">进行中</span></td>
-                                        </tr>
-                                        <tr class="border-t" style="border-color: var(--color-border-light);">
-                                            <td class="px-4 py-2.5 whitespace-nowrap truncate" style="color: var(--color-text); font-variant-numeric: tabular-nums;">#ORD202606230001</td>
-                                            <td class="px-4 py-2.5 whitespace-nowrap truncate" style="color: var(--color-text);">周奶奶 · 江汉区锦绣家园</td>
-                                            <td class="px-4 py-2.5 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--color-primary-light); color: var(--color-primary);">日常陪伴</span></td>
-                                            <td class="px-4 py-2.5 whitespace-nowrap truncate" style="color: var(--color-text);">刘文博</td>
-                                            <td class="px-4 py-2.5 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--state-warning-bg); color: var(--state-warning);">已完成</span></td>
-                                        </tr>
+                                    <tbody id="overview-orders-tbody">
+                                        <!-- 动态渲染，由 renderOverviewOrders() 填充 -->
                                     </tbody>
                                 </table>
                             </div>
@@ -458,60 +424,7 @@
                                     </tr>
                                 </thead>
                                 <tbody id="orders-tbody">
-                                    <tr class="border-t" style="border-color: var(--color-border-light);">
-                                        <td class="px-4 py-3 whitespace-nowrap truncate" style="color: var(--color-text); font-variant-numeric: tabular-nums;">#ORD202606240001</td>
-                                        <td class="px-4 py-3 whitespace-nowrap"><div class="truncate" style="color: var(--color-text);">王奶奶</div><div class="text-xs truncate" style="color: var(--color-text-muted);">武昌区梅苑小区3栋</div></td>
-                                        <td class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--color-primary-light); color: var(--color-primary);">日常陪伴</span></td>
-                                        <td class="px-4 py-3 whitespace-nowrap truncate" style="color: var(--color-text);">张小雨</td>
-                                        <td class="px-4 py-3 whitespace-nowrap" style="color: var(--color-text-secondary); font-variant-numeric: tabular-nums;">2026-06-24 09:30</td>
-                                        <td class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--state-success-bg); color: var(--state-success);">进行中</span></td>
-                                        <td class="px-4 py-3 whitespace-nowrap"><button class="text-xs" style="color: var(--color-primary);">详情</button></td>
-                                    </tr>
-                                    <tr class="border-t" style="border-color: var(--color-border-light);">
-                                        <td class="px-4 py-3 whitespace-nowrap truncate" style="color: var(--color-text); font-variant-numeric: tabular-nums;">#ORD202606240002</td>
-                                        <td class="px-4 py-3 whitespace-nowrap"><div class="truncate" style="color: var(--color-text);">李大爷</div><div class="text-xs truncate" style="color: var(--color-text-muted);">洪山区卓刀泉社区12栋</div></td>
-                                        <td class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--state-warning-bg); color: var(--state-warning);">跑腿代办</span></td>
-                                        <td class="px-4 py-3 whitespace-nowrap truncate" style="color: var(--color-text);">李芳姨</td>
-                                        <td class="px-4 py-3 whitespace-nowrap" style="color: var(--color-text-secondary); font-variant-numeric: tabular-nums;">2026-06-24 10:15</td>
-                                        <td class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--state-info-bg); color: var(--state-info);">待接单</span></td>
-                                        <td class="px-4 py-3 whitespace-nowrap"><button class="text-xs" style="color: var(--color-primary);">指派</button></td>
-                                    </tr>
-                                    <tr class="border-t" style="border-color: var(--color-border-light);">
-                                        <td class="px-4 py-3 whitespace-nowrap truncate" style="color: var(--color-text); font-variant-numeric: tabular-nums;">#ORD202606240003</td>
-                                        <td class="px-4 py-3 whitespace-nowrap"><div class="truncate" style="color: var(--color-text);">赵阿姨</div><div class="text-xs truncate" style="color: var(--color-text-muted);">江岸区同安里7栋</div></td>
-                                        <td class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--state-success-bg); color: var(--state-success);">数字辅导</span></td>
-                                        <td class="px-4 py-3 whitespace-nowrap truncate" style="color: var(--color-text);">王志强</td>
-                                        <td class="px-4 py-3 whitespace-nowrap" style="color: var(--color-text-secondary); font-variant-numeric: tabular-nums;">2026-06-24 08:00</td>
-                                        <td class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--state-warning-bg); color: var(--state-warning);">已完成</span></td>
-                                        <td class="px-4 py-3 whitespace-nowrap"><button class="text-xs" style="color: var(--color-primary);">详情</button></td>
-                                    </tr>
-                                    <tr class="border-t" style="border-color: var(--color-border-light);">
-                                        <td class="px-4 py-3 whitespace-nowrap truncate" style="color: var(--color-text); font-variant-numeric: tabular-nums;">#ORD202606240004</td>
-                                        <td class="px-4 py-3 whitespace-nowrap"><div class="truncate" style="color: var(--color-text);">孙爷爷</div><div class="text-xs truncate" style="color: var(--color-text-muted);">汉阳区翠微街5栋</div></td>
-                                        <td class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--color-primary-light); color: var(--color-primary);">陪同就医</span></td>
-                                        <td class="px-4 py-3 whitespace-nowrap truncate" style="color: var(--color-text);">陈思雨</td>
-                                        <td class="px-4 py-3 whitespace-nowrap" style="color: var(--color-text-secondary); font-variant-numeric: tabular-nums;">2026-06-24 07:45</td>
-                                        <td class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--state-success-bg); color: var(--state-success);">进行中</span></td>
-                                        <td class="px-4 py-3 whitespace-nowrap"><button class="text-xs" style="color: var(--color-primary);">详情</button></td>
-                                    </tr>
-                                    <tr class="border-t" style="border-color: var(--color-border-light);">
-                                        <td class="px-4 py-3 whitespace-nowrap truncate" style="color: var(--color-text); font-variant-numeric: tabular-nums;">#ORD202606230001</td>
-                                        <td class="px-4 py-3 whitespace-nowrap"><div class="truncate" style="color: var(--color-text);">周奶奶</div><div class="text-xs truncate" style="color: var(--color-text-muted);">江汉区锦绣家园1栋</div></td>
-                                        <td class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--color-primary-light); color: var(--color-primary);">日常陪伴</span></td>
-                                        <td class="px-4 py-3 whitespace-nowrap truncate" style="color: var(--color-text);">刘文博</td>
-                                        <td class="px-4 py-3 whitespace-nowrap" style="color: var(--color-text-secondary); font-variant-numeric: tabular-nums;">2026-06-23 14:00</td>
-                                        <td class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--state-warning-bg); color: var(--state-warning);">已完成</span></td>
-                                        <td class="px-4 py-3 whitespace-nowrap"><button class="text-xs" style="color: var(--color-primary);">详情</button></td>
-                                    </tr>
-                                    <tr class="border-t" style="border-color: var(--color-border-light);">
-                                        <td class="px-4 py-3 whitespace-nowrap truncate" style="color: var(--color-text); font-variant-numeric: tabular-nums;">#ORD202606230002</td>
-                                        <td class="px-4 py-3 whitespace-nowrap"><div class="truncate" style="color: var(--color-text);">吴叔叔</div><div class="text-xs truncate" style="color: var(--color-text-muted);">金色港湾 8栋</div></td>
-                                        <td class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--state-warning-bg); color: var(--state-warning);">跑腿代办</span></td>
-                                        <td class="px-4 py-3 whitespace-nowrap truncate" style="color: var(--color-text);">赵敏</td>
-                                        <td class="px-4 py-3 whitespace-nowrap" style="color: var(--color-text-secondary); font-variant-numeric: tabular-nums;">2026-06-23 11:20</td>
-                                        <td class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: var(--state-error-bg); color: var(--state-error);">已取消</span></td>
-                                        <td class="px-4 py-3 whitespace-nowrap"><button class="text-xs" style="color: var(--color-primary);">详情</button></td>
-                                    </tr>
+                                    <tr><td colspan="7" class="px-4 py-10 text-center" style="color:var(--color-text-muted);">加载中...</td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -1426,24 +1339,36 @@
     }
 
     /* ===== 示例数据初始化（仅在 localStorage 为空时写入） ===== */
+    // === 动态日期生成 ===
+    function fmtDate(offset) {
+      var d = new Date();
+      d.setDate(d.getDate() + offset);
+      return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
+    }
+    function fmtOrderId(offset, seq) {
+      var d = new Date();
+      d.setDate(d.getDate() + offset);
+      return 'ORD' + d.getFullYear() + ('0' + (d.getMonth() + 1)).slice(-2) + ('0' + d.getDate()).slice(-2) + seq;
+    }
+
     function initData() {
         // Force re-init when data version changes
-        if (localStorage.getItem('sc_admin_version') !== '4') {
+        if (localStorage.getItem('sc_admin_version') !== '5') {
             localStorage.removeItem(SC_KEYS.orders);
             localStorage.removeItem(SC_KEYS.volunteers);
             localStorage.removeItem(SC_KEYS.alarms);
             localStorage.removeItem(SC_KEYS.contracts);
             localStorage.removeItem(SC_KEYS.auth);
-            localStorage.setItem('sc_admin_version', '4');
+            localStorage.setItem('sc_admin_version', '5');
         }
         if (!scGet(SC_KEYS.orders)) {
             scSet(SC_KEYS.orders, [
-                { id: 'ORD202606240001', type: '日常陪伴', status: '进行中', elderName: '王奶奶', address: '武昌区梅苑小区3栋', time: '2026-06-24 09:30', duration: '2小时', description: '陪老人散步聊天，读报纸，协助简单家务', volunteer: '张小雨', price: 80, createdAt: Date.now() },
-                { id: 'ORD202606240002', type: '跑腿代办', status: '待接单', elderName: '李大爷', address: '洪山区卓刀泉社区12栋', time: '2026-06-24 10:15', duration: '1小时', description: '代购生活用品和常用药品', volunteer: null, price: 60, createdAt: Date.now() },
-                { id: 'ORD202606240003', type: '数字辅导', status: '已完成', elderName: '赵阿姨', address: '江岸区同安里7栋', time: '2026-06-24 08:00', duration: '1.5小时', description: '教老人使用智能手机视频通话和微信', volunteer: '王志强', price: 70, createdAt: Date.now() },
-                { id: 'ORD202606240004', type: '陪同就医', status: '进行中', elderName: '孙爷爷', address: '汉阳区翠微街5栋', time: '2026-06-24 07:45', duration: '3小时', description: '陪同前往武汉大学中南医院复查并取药', volunteer: '陈思雨', price: 120, createdAt: Date.now() },
-                { id: 'ORD202606230001', type: '日常陪伴', status: '已完成', elderName: '周奶奶', address: '江汉区锦绣家园1栋', time: '2026-06-23 14:00', duration: '2小时', description: '陪伴聊天，协助整理家务', volunteer: '刘文博', price: 80, createdAt: Date.now() },
-                { id: 'ORD202606230002', type: '跑腿代办', status: '已取消', elderName: '吴叔叔', address: '青山区金色港湾8栋', time: '2026-06-23 11:20', duration: '1小时', description: '代缴水电燃气费', volunteer: '赵敏', price: 60, createdAt: Date.now() }
+                { id: fmtOrderId(0, '001'), type: '日常陪伴', status: '进行中', elderName: '李奶奶', address: '武昌区梅苑小区3栋', time: fmtDate(0) + ' 09:00', duration: '2小时', description: '陪老人散步聊天，读报纸，协助简单家务', volunteer: '张小雨', price: 80, createdAt: Date.now() },
+                { id: fmtOrderId(0, '002'), type: '跑腿代办', status: '待接单', elderName: '赵爷爷', address: '洪山区卓刀泉社区5栋', time: fmtDate(0) + ' 10:00', duration: '1小时', description: '代购生活用品和常用药品', volunteer: null, price: 50, createdAt: Date.now() },
+                { id: fmtOrderId(0, '003'), type: '数字辅导', status: '待接单', elderName: '孙奶奶', address: '江汉区武展社区2号', time: fmtDate(0) + ' 14:00', duration: '1小时', description: '教老人使用智能手机视频通话和微信', volunteer: null, price: 30, createdAt: Date.now() },
+                { id: fmtOrderId(0, '004'), type: '陪同就医', status: '进行中', elderName: '孙爷爷', address: '汉阳区翠微街5栋', time: fmtDate(0) + ' 07:45', duration: '3小时', description: '陪同前往武汉大学中南医院复查并取药', volunteer: '陈思雨', price: 120, createdAt: Date.now() },
+                { id: fmtOrderId(-1, '001'), type: '陪同就医', status: '已完成', elderName: '王奶奶', address: '武昌区梅苑小区3栋', time: fmtDate(-1) + ' 09:00', duration: '半天', description: '陪同去武汉大学中南医院复查', volunteer: '张小雨', price: 100, createdAt: Date.now() },
+                { id: fmtOrderId(-1, '002'), type: '跑腿代办', status: '已取消', elderName: '吴叔叔', address: '青山区金色港湾8栋', time: fmtDate(-1) + ' 11:20', duration: '1小时', description: '代缴水电燃气费', volunteer: '赵敏', price: 60, createdAt: Date.now() }
             ]);
         }
         if (!scGet(SC_KEYS.volunteers)) {
@@ -1458,7 +1383,7 @@
         }
         if (!scGet(SC_KEYS.alarms)) {
             scSet(SC_KEYS.alarms, [
-                { id: 'ALM-001', time: '14:32', type: '超时预警', status: '已确认', detail: '订单#ORD202606240004 服务时长超过2小时', location: '汉阳区翠微街' },
+                { id: 'ALM-001', time: '14:32', type: '超时预警', status: '已确认', detail: '订单#' + fmtOrderId(0, '004') + ' 服务时长超过2小时', location: '汉阳区翠微街' },
                 { id: 'ALM-002', time: '11:15', type: '位置偏离', status: '已处理', detail: '暖伴李芳姨偏离服务区域500米', location: '洪山区卓刀泉社区' },
                 { id: 'ALM-003', time: '09:40', type: '紧急呼叫', status: '已响应', detail: '暖家孙爷爷触发SOS按钮', location: '汉阳区翠微街5栋' }
             ]);
@@ -2160,6 +2085,37 @@
             volunteers.forEach(function (v) { total += v.rating; cnt++; });
             ratingEl.textContent = cnt > 0 ? (total / cnt).toFixed(1) : '0.0';
         }
+        renderOverviewOrders(orders);
+    }
+
+    function renderOverviewOrders(orders) {
+        var tbody = document.getElementById('overview-orders-tbody');
+        if (!tbody) return;
+        var typeColors = {
+            '日常陪伴': ['var(--color-primary-light)', 'var(--color-primary)'],
+            '跑腿代办': ['var(--state-warning-bg)', 'var(--state-warning)'],
+            '数字辅导': ['var(--state-success-bg)', 'var(--state-success)'],
+            '陪同就医': ['var(--color-primary-light)', 'var(--color-primary)']
+        };
+        var statusColors = {
+            '进行中': ['var(--state-success-bg)', 'var(--state-success)'],
+            '待接单': ['var(--state-info-bg)', 'var(--state-info)'],
+            '已完成': ['var(--color-bg-muted)', 'var(--color-text-muted)'],
+            '已取消': ['var(--state-error-bg)', 'var(--state-error)']
+        };
+        var html = '';
+        orders.slice(0, 5).forEach(function (o) {
+            var tc = typeColors[o.type] || ['var(--color-bg-muted)', 'var(--color-text-secondary)'];
+            var sc = statusColors[o.status] || ['var(--color-bg-muted)', 'var(--color-text-secondary)'];
+            html += '<tr class="border-t fade-in-up" style="border-color: var(--color-border-light);">';
+            html += '<td class="px-4 py-2.5 whitespace-nowrap truncate" style="color: var(--color-text); font-variant-numeric: tabular-nums;">#' + o.id + '</td>';
+            html += '<td class="px-4 py-2.5 whitespace-nowrap truncate" style="color: var(--color-text);">' + o.elderName + ' · ' + o.address + '</td>';
+            html += '<td class="px-4 py-2.5 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: ' + tc[0] + '; color: ' + tc[1] + ';">' + o.type + '</span></td>';
+            html += '<td class="px-4 py-2.5 whitespace-nowrap truncate" style="color: var(--color-text);">' + (o.volunteer || '-') + '</td>';
+            html += '<td class="px-4 py-2.5 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: ' + sc[0] + '; color: ' + sc[1] + ';">' + o.status + '</span></td>';
+            html += '</tr>';
+        });
+        tbody.innerHTML = html;
     }
 
     function switchTimeRange(days) {

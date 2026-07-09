@@ -1238,41 +1238,66 @@
           localStorage.removeItem('sc_settings');
           localStorage.setItem('sc_data_version', DATA_VERSION);
         }
+        // === 数据版本管理：版本升级时强制重置示例数据 ===
+        var DATA_VERSION = '5';
+        if (localStorage.getItem('sc_data_version') !== DATA_VERSION) {
+          localStorage.removeItem(SK.orders);
+          localStorage.removeItem(SK.profile);
+          localStorage.removeItem(SK.health);
+          localStorage.removeItem(SK.alarms);
+          localStorage.removeItem(SK.volunteer);
+          localStorage.removeItem(SK.authNuanjia);
+          localStorage.removeItem(SK.authNuanban);
+          localStorage.setItem('sc_data_version', DATA_VERSION);
+        }
+
+        // === 动态日期生成 ===
+        function fmtDate(offset) {
+          var d = new Date();
+          d.setDate(d.getDate() + offset);
+          return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
+        }
+        function fmtOrderId(offset, seq) {
+          var d = new Date();
+          d.setDate(d.getDate() + offset);
+          return 'ORD' + d.getFullYear() + ('0' + (d.getMonth() + 1)).slice(-2) + ('0' + d.getDate()).slice(-2) + seq;
+        }
+
         if (!getData(SK.orders)) {
           var now = Date.now();
           saveData(SK.orders, [
             {
-              id: 'ORD202606250001', type: '日常陪伴', status: '待接单',
+              id: fmtOrderId(0, '001'), type: '日常陪伴', status: '待接单',
               elderName: '李奶奶', address: '武汉市武昌区中南路街梅苑小区3栋',
-              time: '2026-06-25 09:00', duration: '2小时',
+              time: fmtDate(0) + ' 09:00', duration: '2小时',
               description: '陪老人散步聊天', volunteer: null,
               price: 80, createdAt: now - 86400000, ownerId: null
             },
             {
-              id: 'ORD202606250002', type: '跑腿代办', status: '待接单',
+              id: fmtOrderId(0, '002'), type: '跑腿代办', status: '待接单',
               elderName: '赵爷爷', address: '武汉市洪山区珞南街卓刀泉社区5栋',
-              time: '2026-06-25 10:00', duration: '1小时',
+              time: fmtDate(0) + ' 10:00', duration: '1小时',
               description: '帮忙去超市买菜', volunteer: null,
               price: 50, createdAt: now - 43200000, ownerId: null
             },
             {
-              id: 'ORD202606250003', type: '数字辅导', status: '待接单',
+              id: fmtOrderId(0, '003'), type: '数字辅导', status: '待接单',
               elderName: '孙奶奶', address: '武汉市江汉区万松街武展社区2号',
-              time: '2026-06-24 14:00', duration: '1小时',
+              time: fmtDate(0) + ' 14:00', duration: '1小时',
               description: '教老人使用微信视频通话', volunteer: null,
               price: 30, createdAt: now - 3600000, ownerId: null
             },
             {
-              id: 'ORD202606230001', type: '陪同就医', status: '已完成',
+              id: fmtOrderId(-1, '001'), type: '陪同就医', status: '已完成',
               elderName: '王奶奶', address: '武汉市武昌区中南路街梅苑小区3栋',
-              time: '2026-06-23 09:00', duration: '半天',
+              time: fmtDate(-1) + ' 09:00', duration: '半天',
               description: '陪同去武汉大学中南医院复查', volunteer: VOLUNTEER_NAME,
               price: 100, createdAt: now - 172800000, completedAt: now - 86400000, ownerId: 'U001'
             },
             {
-              id: 'ORD202606220001', type: '日常陪伴', status: '已完成',
+              id: fmtOrderId(-2, '001'), type: '日常陪伴', status: '已完成',
               elderName: '刘大爷', address: '武汉市江岸区大智街同安里1号',
-              time: '2026-06-22 14:00', duration: '2小时',
+              time: fmtDate(-2) + ' 14:00', duration: '2小时',
               description: '陪老人聊天解闷', volunteer: VOLUNTEER_NAME,
               price: 80, createdAt: now - 259200000, completedAt: now - 172800000, ownerId: null
             }
@@ -1722,9 +1747,9 @@
           curMarker.setLabel(label);
           // 附近暖伴标记点（基于当前位置的相对偏移）
           var companions = [
-            { dLng: 0.003, dLat: 0.002, name: '李阿姨' },
-            { dLng: -0.003, dLat: -0.002, name: '张同学' },
-            { dLng: 0.005, dLat: -0.003, name: '王师傅' }
+            { dLng: 0.008, dLat: 0.005, name: '李阿姨' },
+            { dLng: -0.006, dLat: -0.004, name: '张同学' },
+            { dLng: 0.010, dLat: -0.006, name: '王师傅' }
           ];
           companions.forEach(function (c) {
             var pt = new BMap.Point(lng + c.dLng, lat + c.dLat);
