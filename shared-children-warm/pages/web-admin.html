@@ -1117,15 +1117,25 @@
             }
             return labels;
         }
+        // 生成基于种子的确定性数据，保证7天和30天数据一致
         function generateMockData(count) {
             var data = [];
-            var base = 28 + Math.random() * 8;
+            var base = 28;
             for (var i = 0; i < count; i++) {
-                base += (Math.random() - 0.35) * 6;
+                base += (((i * 13 + 7) % 10) - 3.5) * 0.8;
                 base = Math.max(20, Math.min(55, base));
                 data.push(Math.round(base));
             }
             return data;
+        }
+        // 生成30天完整数据，最后7天与7天视图一致
+        function generate30DayData() {
+            var full30 = generateMockData(30);
+            var last7 = generateMockData(7);
+            for (var i = 0; i < 7; i++) {
+                full30[23 + i] = last7[i];
+            }
+            return full30;
         }
 
         // --- Overview Charts ---
@@ -1226,10 +1236,17 @@
             // Monthly Trend
             var ctx1 = document.getElementById('chart-monthly-trend');
             if (ctx1) {
+                // 动态生成最近6个月份标签
+                var monthLabels = [];
+                var nowMonth = new Date();
+                for (var mi = 5; mi >= 0; mi--) {
+                    var md = new Date(nowMonth.getFullYear(), nowMonth.getMonth() - mi, 1);
+                    monthLabels.push((md.getMonth() + 1) + '月');
+                }
                 new Chart(ctx1, {
                     type: 'line',
                     data: {
-                        labels: ['1月', '2月', '3月', '4月', '5月', '6月'],
+                        labels: monthLabels,
                         datasets: [
                             { label: '订单数', data: [280, 310, 350, 420, 480, 520], borderColor: warmColors.primary, backgroundColor: warmColors.primaryLight, fill: true, tension: 0.4, borderWidth: 2, pointRadius: 3 },
                             { label: '服务家庭', data: [180, 210, 250, 300, 340, 380], borderColor: warmColors.secondary, backgroundColor: warmColors.secondaryLight, fill: true, tension: 0.4, borderWidth: 2, pointRadius: 3 }
@@ -1398,10 +1415,10 @@
         }
         if (!scGet(SC_KEYS.auth)) {
             scSet(SC_KEYS.auth, [
-                { id: 'AUTH-001', name: '王奶奶', role: '暖家', idCard: '4201**********1234', phone: '138****8888', submitTime: '2026-06-24 10:30', status: '待审核', realName: '王秀兰', area: '武昌区梅苑小区' },
-                { id: 'AUTH-002', name: '张同学', role: '暖伴', idCard: '4201**********5678', phone: '137****7777', submitTime: '2026-06-23 15:20', status: '已通过', realName: '张小雨', area: '武昌区梅苑小区' },
-                { id: 'AUTH-003', name: '李大爷', role: '暖家', idCard: '4201**********9012', phone: '139****0000', submitTime: '2026-06-22 09:15', status: '已拒绝', realName: '李建国', area: '洪山区卓刀泉社区', rejectReason: '身份证照片模糊' },
-                { id: 'AUTH-004', name: '陈思雨', role: '暖伴', idCard: '4201**********3456', phone: '136****3456', submitTime: '2026-06-24 08:45', status: '待审核', realName: '陈思雨', area: '汉阳区翠微街' }
+                { id: 'AUTH-001', name: '王奶奶', role: '暖家', idCard: '4201**********1234', phone: '138****8888', submitTime: fmtDate(0) + ' 10:30', status: '待审核', realName: '王秀兰', area: '武昌区梅苑小区' },
+                { id: 'AUTH-002', name: '张小雨', role: '暖伴', idCard: '4201**********5678', phone: '137****7777', submitTime: fmtDate(-1) + ' 15:20', status: '已通过', realName: '张小雨', area: '武昌区梅苑小区' },
+                { id: 'AUTH-003', name: '李大爷', role: '暖家', idCard: '4201**********9012', phone: '139****0000', submitTime: fmtDate(-2) + ' 09:15', status: '已拒绝', realName: '李建国', area: '洪山区卓刀泉社区', rejectReason: '身份证照片模糊' },
+                { id: 'AUTH-004', name: '陈思雨', role: '暖伴', idCard: '4201**********3456', phone: '136****3456', submitTime: fmtDate(0) + ' 08:45', status: '待审核', realName: '陈思雨', area: '汉阳区翠微街' }
             ]);
         }
     }
@@ -2134,8 +2151,8 @@
                 window.orderTrendChart.data.labels = generateDateLabels(7);
                 window.orderTrendChart.data.datasets[0].data = generateMockData(7);
             } else {
-                window.orderTrendChart.data.labels = generateDateLabels(30).filter(function(_, i) { return i % 2 === 0; });
-                window.orderTrendChart.data.datasets[0].data = generateMockData(15);
+                window.orderTrendChart.data.labels = generateDateLabels(30);
+                window.orderTrendChart.data.datasets[0].data = generate30DayData();
             }
             window.orderTrendChart.update();
         }
