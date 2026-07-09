@@ -437,11 +437,11 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
                         <div class="rounded-lg p-4 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
                             <div class="text-sm mb-2" style="color: var(--color-text-secondary);">注册暖伴</div>
-                            <div class="text-2xl font-bold" style="color: var(--color-text); font-variant-numeric: tabular-nums;">186</div>
+                            <div id="stat-vol-total" class="text-2xl font-bold" style="color: var(--color-text); font-variant-numeric: tabular-nums;">186</div>
                         </div>
                         <div class="rounded-lg p-4 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
                             <div class="text-sm mb-2" style="color: var(--color-text-secondary);">在线暖伴</div>
-                            <div class="text-2xl font-bold" style="color: var(--state-success); font-variant-numeric: tabular-nums;">126</div>
+                            <div id="stat-vol-online" class="text-2xl font-bold" style="color: var(--state-success); font-variant-numeric: tabular-nums;">126</div>
                         </div>
                         <div class="rounded-lg p-4 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
                             <div class="text-sm mb-2" style="color: var(--color-text-secondary);">本月新增</div>
@@ -449,7 +449,7 @@
                         </div>
                         <div class="rounded-lg p-4 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
                             <div class="text-sm mb-2" style="color: var(--color-text-secondary);">待审核</div>
-                            <div class="text-2xl font-bold" style="color: var(--state-warning); font-variant-numeric: tabular-nums;">5</div>
+                            <div id="stat-vol-pending" class="text-2xl font-bold" style="color: var(--state-warning); font-variant-numeric: tabular-nums;">6</div>
                         </div>
                     </div>
                     <!-- Volunteer Cards -->
@@ -1117,14 +1117,17 @@
             }
             return labels;
         }
-        // 生成基于种子的确定性数据，保证7天和30天数据一致
+        // 生成波动上涨的确定性数据，保证7天和30天数据一致
         function generateMockData(count) {
             var data = [];
-            var base = 28;
+            var base = 22;
             for (var i = 0; i < count; i++) {
-                base += (((i * 13 + 7) % 10) - 3.5) * 0.8;
-                base = Math.max(20, Math.min(55, base));
-                data.push(Math.round(base));
+                // 整体上升趋势 + 波动
+                var trend = i * 1.2;
+                var wave = Math.sin(i * 0.9) * 4 + Math.cos(i * 1.7) * 3;
+                var val = base + trend + wave;
+                val = Math.max(20, Math.min(60, val));
+                data.push(Math.round(val));
             }
             return data;
         }
@@ -1370,13 +1373,13 @@
 
     function initData() {
         // Force re-init when data version changes
-        if (localStorage.getItem('sc_admin_version') !== '6') {
+        if (localStorage.getItem('sc_admin_version') !== '7') {
             localStorage.removeItem(SC_KEYS.orders);
             localStorage.removeItem(SC_KEYS.volunteers);
             localStorage.removeItem(SC_KEYS.alarms);
             localStorage.removeItem(SC_KEYS.contracts);
             localStorage.removeItem(SC_KEYS.auth);
-            localStorage.setItem('sc_admin_version', '6');
+            localStorage.setItem('sc_admin_version', '7');
         }
         if (!scGet(SC_KEYS.orders)) {
             scSet(SC_KEYS.orders, [
@@ -1414,12 +1417,55 @@
             ]);
         }
         if (!scGet(SC_KEYS.auth)) {
-            scSet(SC_KEYS.auth, [
-                { id: 'AUTH-001', name: '王奶奶', role: '暖家', idCard: '4201**********1234', phone: '138****8888', submitTime: fmtDate(0) + ' 10:30', status: '待审核', realName: '王秀兰', area: '武昌区梅苑小区' },
-                { id: 'AUTH-002', name: '张小雨', role: '暖伴', idCard: '4201**********5678', phone: '137****7777', submitTime: fmtDate(-1) + ' 15:20', status: '已通过', realName: '张小雨', area: '武昌区梅苑小区' },
-                { id: 'AUTH-003', name: '李大爷', role: '暖家', idCard: '4201**********9012', phone: '139****0000', submitTime: fmtDate(-2) + ' 09:15', status: '已拒绝', realName: '李建国', area: '洪山区卓刀泉社区', rejectReason: '身份证照片模糊' },
-                { id: 'AUTH-004', name: '陈思雨', role: '暖伴', idCard: '4201**********3456', phone: '136****3456', submitTime: fmtDate(0) + ' 08:45', status: '待审核', realName: '陈思雨', area: '汉阳区翠微街' }
-            ]);
+            // 动态生成认证记录：暖家10条 + 暖伴10条
+            var authNames = [
+                // 暖家
+                { name: '王秀兰', display: '王奶奶', role: '暖家', area: '武昌区梅苑小区', phone: '138****8888' },
+                { name: '李建国', display: '李大爷', role: '暖家', area: '洪山区卓刀泉社区', phone: '139****0000' },
+                { name: '赵淑芬', display: '赵奶奶', role: '暖家', area: '江岸区同安里', phone: '137****2233' },
+                { name: '孙明德', display: '孙爷爷', role: '暖家', area: '汉阳区翠微街', phone: '135****4455' },
+                { name: '周桂英', display: '周奶奶', role: '暖家', area: '江汉区锦绣家园', phone: '136****6677' },
+                { name: '吴国强', display: '吴叔叔', role: '暖家', area: '青山区金色港湾', phone: '133****8899' },
+                { name: '郑美玲', display: '郑阿姨', role: '暖家', area: '武昌区中南路', phone: '138****1122' },
+                { name: '冯德海', display: '冯爷爷', role: '暖家', area: '洪山区光谷步行街', phone: '139****3344' },
+                { name: '陈玉兰', display: '陈奶奶', role: '暖家', area: '江汉区万松街', phone: '137****5566' },
+                { name: '黄志远', display: '黄大爷', role: '暖家', area: '汉阳区建桥街', phone: '135****7788' },
+                // 暖伴
+                { name: '张小雨', display: '张小雨', role: '暖伴', area: '武昌区梅苑小区', phone: '137****7777' },
+                { name: '陈思雨', display: '陈思雨', role: '暖伴', area: '汉阳区翠微街', phone: '136****3456' },
+                { name: '李芳姨', display: '李芳姨', role: '暖伴', area: '洪山区卓刀泉社区', phone: '139****5678' },
+                { name: '王志强', display: '王志强', role: '暖伴', area: '江岸区同安里', phone: '137****9012' },
+                { name: '刘文博', display: '刘文博', role: '暖伴', area: '江汉区锦绣家园', phone: '135****7890' },
+                { name: '赵敏', display: '赵敏', role: '暖伴', area: '青山区金色港湾', phone: '133****2345' },
+                { name: '孙嘉懿', display: '孙嘉懿', role: '暖伴', area: '武昌区水果湖', phone: '138****6789' },
+                { name: '杨思琪', display: '杨思琪', role: '暖伴', area: '洪山区街道口', phone: '139****1357' },
+                { name: '马晓晨', display: '马晓晨', role: '暖伴', area: '江岸区百步亭', phone: '136****2468' },
+                { name: '郭明轩', display: '郭明轩', role: '暖伴', area: '汉阳区王家湾', phone: '135****8642' }
+            ];
+            var authStatuses = ['已通过', '已通过', '已通过', '待审核', '待审核', '已通过', '已拒绝', '待审核', '已通过', '已通过', '已通过', '待审核', '已通过', '已通过', '已通过', '已拒绝', '待审核', '已通过', '待审核', '已通过'];
+            var authRecords = [];
+            for (var ai = 0; ai < authNames.length; ai++) {
+                var a = authNames[ai];
+                var dayOffset = -(ai % 10);
+                var hour = 8 + (ai % 10);
+                var minute = (ai * 7) % 60;
+                var rec = {
+                    id: 'AUTH-' + String(ai + 1).padStart(3, '0'),
+                    name: a.display,
+                    role: a.role,
+                    idCard: '4201**********' + String(1000 + ai * 37).slice(-4),
+                    phone: a.phone,
+                    submitTime: fmtDate(dayOffset) + ' ' + String(hour).padStart(2, '0') + ':' + String(minute).padStart(2, '0'),
+                    status: authStatuses[ai],
+                    realName: a.name,
+                    area: a.area
+                };
+                if (rec.status === '已拒绝') {
+                    rec.rejectReason = ai % 2 === 0 ? '身份证照片模糊' : '人脸识别不匹配';
+                }
+                authRecords.push(rec);
+            }
+            scSet(SC_KEYS.auth, authRecords);
         }
     }
 
@@ -1712,6 +1758,13 @@
         var grid = document.getElementById('volunteers-grid');
         if (!grid) return;
         var volunteers = getVolunteers();
+        // Update volunteer stats
+        var volTotal = document.getElementById('stat-vol-total');
+        var volOnline = document.getElementById('stat-vol-online');
+        var volPending = document.getElementById('stat-vol-pending');
+        if (volTotal) volTotal.textContent = volunteers.length;
+        if (volOnline) volOnline.textContent = volunteers.filter(function(v) { return v.status === '在线' || v.status === '服务中'; }).length;
+        if (volPending) volPending.textContent = volunteers.filter(function(v) { return v.status === '待审核'; }).length;
         var avatarColors = [
             'var(--color-primary-light)|var(--color-primary)',
             'var(--state-success-bg)|var(--state-success)',
