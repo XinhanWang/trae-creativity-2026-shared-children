@@ -169,11 +169,11 @@
             <div class="space-y-4">
                 <div>
                     <label class="text-sm block mb-1.5" style="color: var(--color-text-secondary);">账号</label>
-                    <input id="login-username" type="text" placeholder="请输入账号" value="admin" class="w-full px-4 py-2.5 rounded-lg border text-sm outline-none transition-colors" style="background: var(--color-bg); border-color: var(--color-border); color: var(--color-text);" onfocus="this.style.borderColor='var(--color-primary)'" onblur="this.style.borderColor='var(--color-border)'">
+                    <input id="login-username" type="text" placeholder="请输入账号" value="admin" aria-label="用户名" class="w-full px-4 py-2.5 rounded-lg border text-sm outline-none transition-colors" style="background: var(--color-bg); border-color: var(--color-border); color: var(--color-text);" onfocus="this.style.borderColor='var(--color-primary)'" onblur="this.style.borderColor='var(--color-border)'">
                 </div>
                 <div>
                     <label class="text-sm block mb-1.5" style="color: var(--color-text-secondary);">密码</label>
-                    <input id="login-password" type="password" placeholder="请输入密码" class="w-full px-4 py-2.5 rounded-lg border text-sm outline-none transition-colors" style="background: var(--color-bg); border-color: var(--color-border); color: var(--color-text);" onfocus="this.style.borderColor='var(--color-primary)'" onblur="this.style.borderColor='var(--color-border)'" onkeydown="if(event.key==='Enter')doLogin()">
+                    <input id="login-password" type="password" placeholder="请输入密码" aria-label="密码" class="w-full px-4 py-2.5 rounded-lg border text-sm outline-none transition-colors" style="background: var(--color-bg); border-color: var(--color-border); color: var(--color-text);" onfocus="this.style.borderColor='var(--color-primary)'" onblur="this.style.borderColor='var(--color-border)'" onkeydown="if(event.key==='Enter')doLogin()">
                 </div>
                 <div id="login-error" class="hidden text-xs px-3 py-2 rounded-lg" style="background: var(--state-error-bg); color: var(--state-error);">账号或密码错误，请重试</div>
                 <button onclick="doLogin()" class="ripple-btn w-full py-2.5 rounded-lg text-sm font-semibold transition-colors duration-200" style="background: var(--color-primary); color: var(--color-text-inverse);">登 录</button>
@@ -206,12 +206,12 @@
                 <button onclick="switchTab('orders')" data-nav="orders" class="sidebar-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors duration-200" style="color: rgba(240,232,223,0.6);">
                     <i data-lucide="clipboard-list" class="w-[18px] h-[18px] shrink-0"></i>
                     <span class="flex-1 text-left">订单管理</span>
-                    <span class="text-xs px-1.5 py-0.5 rounded" style="color: var(--color-text-inverse);">12</span>
+                    <span id="orders-count-badge" class="text-xs px-1.5 py-0.5 rounded" style="color: var(--color-text-inverse);">0</span>
                 </button>
                 <button onclick="switchTab('volunteers')" data-nav="volunteers" class="sidebar-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors duration-200" style="color: rgba(240,232,223,0.6);">
                     <i data-lucide="users" class="w-[18px] h-[18px] shrink-0"></i>
                     <span class="flex-1 text-left">暖伴管理</span>
-                    <span class="text-xs px-1.5 py-0.5 rounded" style="background: var(--state-success); color: var(--color-text-inverse);">5</span>
+                    <span id="volunteers-count-badge" class="text-xs px-1.5 py-0.5 rounded" style="background: var(--state-success); color: var(--color-text-inverse);">0</span>
                 </button>
                 <button onclick="switchTab('safety')" data-nav="safety" class="sidebar-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors duration-200" style="color: rgba(240,232,223,0.6);">
                     <i data-lucide="shield-check" class="w-[18px] h-[18px] shrink-0"></i>
@@ -878,11 +878,11 @@
 
     <!-- ===== Modals ===== -->
     <!-- Order Detail Modal -->
-    <div id="modal-order-detail" class="hidden fixed inset-0 flex items-center justify-center p-4" style="background: rgba(61,46,36,0.45); z-index: var(--z-modal);" onclick="closeModal('modal-order-detail')">
+    <div id="modal-order-detail" class="hidden fixed inset-0 flex items-center justify-center p-4" style="background: rgba(61,46,36,0.45); z-index: var(--z-modal);" role="dialog" aria-modal="true" onclick="closeModal('modal-order-detail')">
         <div class="rounded-lg border w-full max-w-lg shadow-xl" style="background: var(--color-bg-card); border-color: var(--color-border);" onclick="event.stopPropagation()">
             <div class="px-5 py-4 border-b flex items-center justify-between" style="border-color: var(--color-border);">
                 <h3 class="text-base font-semibold" style="color: var(--color-text); font-family: var(--font-serif);">订单详情</h3>
-                <button onclick="closeModal('modal-order-detail')" class="p-1 rounded-lg transition-colors hover:bg-[var(--color-bg-muted)]">
+                <button onclick="closeModal('modal-order-detail')" aria-label="关闭" class="p-1 rounded-lg transition-colors hover:bg-[var(--color-bg-muted)]">
                     <i data-lucide="x" class="w-5 h-5" style="color: var(--color-text-secondary);"></i>
                 </button>
             </div>
@@ -891,14 +891,14 @@
     </div>
 
     <!-- Assign Volunteer Modal -->
-    <div id="modal-assign" class="hidden fixed inset-0 flex items-center justify-center p-4" style="background: rgba(61,46,36,0.45); z-index: var(--z-modal);" onclick="closeModal('modal-assign')">
+    <div id="modal-assign" class="hidden fixed inset-0 flex items-center justify-center p-4" style="background: rgba(61,46,36,0.45); z-index: var(--z-modal);" role="dialog" aria-modal="true" onclick="closeModal('modal-assign')">
         <div class="rounded-lg border w-full max-w-md shadow-xl" style="background: var(--color-bg-card); border-color: var(--color-border);" onclick="event.stopPropagation()">
             <div class="px-5 py-4 border-b flex items-center justify-between" style="border-color: var(--color-border);">
                 <div>
                     <h3 class="text-base font-semibold" style="color: var(--color-text); font-family: var(--font-serif);">指派暖伴</h3>
-                    <div class="text-xs mt-0.5" style="color: var(--color-text-muted);">订单号：<span id="assign-order-id"></span></div>
+                    <div class="text-xs mt-0.5" style="color: var(--color-text-muted);">订单号：<span id="assign-order-id"></span> · 服务类型：<span id="assign-order-type"></span></div>
                 </div>
-                <button onclick="closeModal('modal-assign')" class="p-1 rounded-lg transition-colors hover:bg-[var(--color-bg-muted)]">
+                <button onclick="closeModal('modal-assign')" aria-label="关闭" class="p-1 rounded-lg transition-colors hover:bg-[var(--color-bg-muted)]">
                     <i data-lucide="x" class="w-5 h-5" style="color: var(--color-text-secondary);"></i>
                 </button>
             </div>
@@ -907,11 +907,11 @@
     </div>
 
     <!-- Volunteer Detail Modal -->
-    <div id="modal-volunteer-detail" class="hidden fixed inset-0 flex items-center justify-center p-4" style="background: rgba(61,46,36,0.45); z-index: var(--z-modal);" onclick="closeModal('modal-volunteer-detail')">
+    <div id="modal-volunteer-detail" class="hidden fixed inset-0 flex items-center justify-center p-4" style="background: rgba(61,46,36,0.45); z-index: var(--z-modal);" role="dialog" aria-modal="true" onclick="closeModal('modal-volunteer-detail')">
         <div class="rounded-lg border w-full max-w-lg shadow-xl" style="background: var(--color-bg-card); border-color: var(--color-border);" onclick="event.stopPropagation()">
             <div class="px-5 py-4 border-b flex items-center justify-between" style="border-color: var(--color-border);">
                 <h3 class="text-base font-semibold" style="color: var(--color-text); font-family: var(--font-serif);">暖伴详情</h3>
-                <button onclick="closeModal('modal-volunteer-detail')" class="p-1 rounded-lg transition-colors hover:bg-[var(--color-bg-muted)]">
+                <button onclick="closeModal('modal-volunteer-detail')" aria-label="关闭" class="p-1 rounded-lg transition-colors hover:bg-[var(--color-bg-muted)]">
                     <i data-lucide="x" class="w-5 h-5" style="color: var(--color-text-secondary);"></i>
                 </button>
             </div>
@@ -920,11 +920,11 @@
     </div>
 
     <!-- Contract Create Modal -->
-    <div id="modal-contract" class="hidden fixed inset-0 flex items-center justify-center p-4" style="background: rgba(61,46,36,0.45); z-index: var(--z-modal);" onclick="closeModal('modal-contract')">
+    <div id="modal-contract" class="hidden fixed inset-0 flex items-center justify-center p-4" style="background: rgba(61,46,36,0.45); z-index: var(--z-modal);" role="dialog" aria-modal="true" onclick="closeModal('modal-contract')">
         <div class="rounded-lg border w-full max-w-lg shadow-xl" style="background: var(--color-bg-card); border-color: var(--color-border);" onclick="event.stopPropagation()">
             <div class="px-5 py-4 border-b flex items-center justify-between" style="border-color: var(--color-border);">
                 <h3 class="text-base font-semibold" style="color: var(--color-text); font-family: var(--font-serif);">新建合同</h3>
-                <button onclick="closeModal('modal-contract')" class="p-1 rounded-lg transition-colors hover:bg-[var(--color-bg-muted)]">
+                <button onclick="closeModal('modal-contract')" aria-label="关闭" class="p-1 rounded-lg transition-colors hover:bg-[var(--color-bg-muted)]">
                     <i data-lucide="x" class="w-5 h-5" style="color: var(--color-text-secondary);"></i>
                 </button>
             </div>
@@ -974,11 +974,11 @@
     </div>
 
     <!-- Auth Detail Modal -->
-    <div id="modal-auth-detail" class="hidden fixed inset-0 flex items-center justify-center p-4" style="background: rgba(61,46,36,0.45); z-index: var(--z-modal);" onclick="closeModal('modal-auth-detail')">
+    <div id="modal-auth-detail" class="hidden fixed inset-0 flex items-center justify-center p-4" style="background: rgba(61,46,36,0.45); z-index: var(--z-modal);" role="dialog" aria-modal="true" onclick="closeModal('modal-auth-detail')">
         <div class="rounded-lg border w-full max-w-lg shadow-xl" style="background: var(--color-bg-card); border-color: var(--color-border);" onclick="event.stopPropagation()">
             <div class="px-5 py-4 border-b flex items-center justify-between" style="border-color: var(--color-border);">
                 <h3 class="text-base font-semibold" style="color: var(--color-text); font-family: var(--font-serif);">认证详情</h3>
-                <button onclick="closeModal('modal-auth-detail')" class="p-1 rounded-lg transition-colors hover:bg-[var(--color-bg-muted)]">
+                <button onclick="closeModal('modal-auth-detail')" aria-label="关闭" class="p-1 rounded-lg transition-colors hover:bg-[var(--color-bg-muted)]">
                     <i data-lucide="x" class="w-5 h-5" style="color: var(--color-text-secondary);"></i>
                 </button>
             </div>
@@ -1373,22 +1373,26 @@
 
     function initData() {
         // Force re-init when data version changes
-        if (localStorage.getItem('sc_admin_version') !== '8') {
+        if (localStorage.getItem('sc_admin_version') !== '9') {
             localStorage.removeItem(SC_KEYS.orders);
             localStorage.removeItem(SC_KEYS.volunteers);
             localStorage.removeItem(SC_KEYS.alarms);
             localStorage.removeItem(SC_KEYS.contracts);
             localStorage.removeItem(SC_KEYS.auth);
-            localStorage.setItem('sc_admin_version', '8');
+            localStorage.setItem('sc_admin_version', '9');
         }
         if (!scGet(SC_KEYS.orders)) {
+            var _now = Date.now(), _D = 86400000;
+            function _p2(n) { return String(n).padStart(2, '0'); }
+            function _ymd(ms) { var d = new Date(ms); return d.getFullYear() + '-' + _p2(d.getMonth() + 1) + '-' + _p2(d.getDate()); }
+            var _T = _ymd(_now), _Y = _ymd(_now - _D), _Y2 = _ymd(_now - 2 * _D), _Y3 = _ymd(_now - 3 * _D), _Y4 = _ymd(_now - 4 * _D);
             scSet(SC_KEYS.orders, [
-                { id: fmtOrderId(0, '001'), type: '日常陪伴', status: '进行中', elderName: '李奶奶', address: '武昌区梅苑小区3栋', time: fmtDate(0) + ' 09:00', duration: '2小时', description: '陪老人散步聊天，读报纸，协助简单家务', volunteer: '张小雨', price: 80, createdAt: Date.now() },
-                { id: fmtOrderId(0, '002'), type: '跑腿代办', status: '待接单', elderName: '赵爷爷', address: '洪山区卓刀泉社区5栋', time: fmtDate(0) + ' 10:00', duration: '1小时', description: '代购生活用品和常用药品', volunteer: null, price: 50, createdAt: Date.now() },
-                { id: fmtOrderId(0, '003'), type: '数字辅导', status: '待接单', elderName: '孙奶奶', address: '江汉区武展社区2号', time: fmtDate(0) + ' 14:00', duration: '1小时', description: '教老人使用智能手机视频通话和微信', volunteer: null, price: 30, createdAt: Date.now() },
-                { id: fmtOrderId(0, '004'), type: '陪同就医', status: '进行中', elderName: '孙爷爷', address: '汉阳区翠微街5栋', time: fmtDate(0) + ' 07:45', duration: '3小时', description: '陪同前往武汉大学中南医院复查并取药', volunteer: '陈思雨', price: 120, createdAt: Date.now() },
-                { id: fmtOrderId(-1, '001'), type: '陪同就医', status: '已完成', elderName: '王奶奶', address: '武昌区梅苑小区3栋', time: fmtDate(-1) + ' 09:00', duration: '半天', description: '陪同去武汉大学中南医院复查', volunteer: '张小雨', price: 100, createdAt: Date.now() },
-                { id: fmtOrderId(-1, '002'), type: '跑腿代办', status: '已取消', elderName: '吴叔叔', address: '青山区金色港湾8栋', time: fmtDate(-1) + ' 11:20', duration: '1小时', description: '代缴水电燃气费', volunteer: '赵敏', price: 60, createdAt: Date.now() }
+                { id: 'ORD' + _T.replace(/-/g, '') + '0001', type: '日常陪伴', status: '待接单', elderName: '王奶奶', address: '武汉市武昌区中南路街梅苑小区3栋', time: _T + ' 09:00', duration: '2小时', description: '陪老人散步聊天，读报纸', volunteer: null, price: 80, createdAt: _now - 3600000, ownerId: 'U001' },
+                { id: 'ORD' + _T.replace(/-/g, '') + '0002', type: '跑腿代办', status: '待接单', elderName: '李大爷', address: '武汉市洪山区珞南街卓刀泉社区12栋', time: _T + ' 10:15', duration: '1小时', description: '代购生活用品和常用药品', volunteer: null, price: 60, createdAt: _now - 7200000, ownerId: null },
+                { id: 'ORD' + _Y.replace(/-/g, '') + '0001', type: '陪同就医', status: '进行中', elderName: '王奶奶', address: '武汉市武昌区中南路街梅苑小区3栋', time: _Y + ' 07:45', duration: '3小时', description: '陪同前往武汉大学中南医院复查并取药', volunteer: '陈思雨', price: 120, createdAt: _now - _D, ownerId: 'U001' },
+                { id: 'ORD' + _Y2.replace(/-/g, '') + '0001', type: '数字辅导', status: '已完成', elderName: '赵阿姨', address: '武汉市江岸区大智街同安里7栋', time: _Y2 + ' 08:00', duration: '1.5小时', description: '教老人使用智能手机视频通话和微信', volunteer: '王志强', price: 70, createdAt: _now - 2 * _D, completedAt: _now - _D, ownerId: null },
+                { id: 'ORD' + _Y3.replace(/-/g, '') + '0001', type: '日常陪伴', status: '已完成', elderName: '王奶奶', address: '武汉市武昌区中南路街梅苑小区3栋', time: _Y3 + ' 14:00', duration: '2小时', description: '陪伴聊天，协助整理家务', volunteer: '张小雨', price: 80, createdAt: _now - 3 * _D, completedAt: _now - 2 * _D, ownerId: 'U001' },
+                { id: 'ORD' + _Y4.replace(/-/g, '') + '0001', type: '跑腿代办', status: '已取消', elderName: '吴叔叔', address: '武汉市青山区红钢城街金色港湾8栋', time: _Y4 + ' 11:20', duration: '1小时', description: '代缴水电燃气费', volunteer: null, price: 60, createdAt: _now - 4 * _D, ownerId: null }
             ]);
         }
         if (!scGet(SC_KEYS.volunteers)) {
@@ -1708,24 +1712,62 @@
 
     function showAssignModal(id) {
         var volunteers = getVolunteers();
+        var orders = getOrders();
+        var order = null;
+        for (var i = 0; i < orders.length; i++) { if (orders[i].id === id) { order = orders[i]; break; } }
+        var orderType = order ? order.type : '';
         var list = document.getElementById('assign-volunteer-list');
         var orderIdEl = document.getElementById('assign-order-id');
+        var orderTypeEl = document.getElementById('assign-order-type');
         if (orderIdEl) orderIdEl.textContent = '#' + id;
+        if (orderTypeEl) orderTypeEl.textContent = orderType;
         if (volunteers.length === 0) {
             list.innerHTML = '<div class="px-4 py-8 text-center text-sm" style="color:var(--color-text-muted);">暂无可指派的暖伴</div>';
         } else {
-            var html = '';
+            // 分类：可指派 vs 不可指派
+            var assignable = [];
+            var unavailable = [];
             volunteers.forEach(function (v) {
+                var skills = v.skills || [];
+                var skillMatch = skills.indexOf(orderType) >= 0;
+                var isOnline = v.status === '在线';
+                if (isOnline && skillMatch) {
+                    assignable.push(v);
+                } else {
+                    var reason = '';
+                    if (!skillMatch) reason = '技能不匹配';
+                    else if (v.status === '服务中') reason = '服务中，暂不可指派';
+                    else if (v.status === '待审核') reason = '待审核，不可指派';
+                    else reason = '当前状态不可指派';
+                    v._unavailReason = reason;
+                    unavailable.push(v);
+                }
+            });
+            // 可指派的按评分降序排列
+            assignable.sort(function (a, b) { return (b.rating || 0) - (a.rating || 0); });
+
+            var html = '';
+            if (assignable.length === 0) {
+                html += '<div class="px-4 py-3 mb-2 rounded-lg text-xs text-center" style="background:var(--state-warning-bg);color:var(--state-warning);">暂无技能匹配且在线的暖伴可指派</div>';
+            }
+            assignable.forEach(function (v) {
                 var ss = volunteerStatusStyle(v.status).split('|');
-                var disabled = (v.status === '待审核');
-                var cursor = disabled ? 'not-allowed' : 'pointer';
-                var opacity = disabled ? '0.5' : '1';
-                var clickAttr = disabled ? '' : 'onclick="assignVolunteer(\'' + id + '\',\'' + v.id + '\')"';
-                html += '<div ' + clickAttr + ' class="flex items-center gap-3 p-3 rounded-lg transition-colors" style="background:var(--color-bg-muted);cursor:' + cursor + ';opacity:' + opacity + ';" ' + (disabled ? '' : 'onmouseover="this.style.background=\'var(--color-primary-light)\'" onmouseout="this.style.background=\'var(--color-bg-muted)\'"') + '>' +
+                html += '<div onclick="assignVolunteer(\'' + id + '\',\'' + v.id + '\')" class="flex items-center gap-3 p-3 rounded-lg transition-colors" style="background:var(--color-bg-muted);cursor:pointer;" onmouseover="this.style.background=\'var(--color-primary-light)\'" onmouseout="this.style.background=\'var(--color-bg-muted)\'">' +
                     '<div class="w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold" style="background:var(--color-primary-light);color:var(--color-primary);">' + v.name.charAt(0) + '</div>' +
                     '<div class="flex-1 min-w-0">' +
-                        '<div class="text-sm font-medium truncate" style="color:var(--color-text);">' + v.name + (disabled ? '（待审核）' : '') + '</div>' +
+                        '<div class="text-sm font-medium truncate" style="color:var(--color-text);">' + v.name + '</div>' +
                         '<div class="text-xs truncate" style="color:var(--color-text-muted);">评分 ' + v.rating + ' · 完成 ' + v.completedOrders + ' 单 · ' + (v.skills ? v.skills.join('、') : '') + '</div>' +
+                    '</div>' +
+                    '<span class="px-2 py-0.5 rounded text-xs whitespace-nowrap" style="background:' + ss[0] + ';color:' + ss[1] + ';">' + v.status + '</span>' +
+                    '</div>';
+            });
+            unavailable.forEach(function (v) {
+                var ss = volunteerStatusStyle(v.status).split('|');
+                html += '<div class="flex items-center gap-3 p-3 rounded-lg" style="background:var(--color-bg-muted);cursor:not-allowed;opacity:0.55;">' +
+                    '<div class="w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold" style="background:var(--color-bg-muted);color:var(--color-text-muted);">' + v.name.charAt(0) + '</div>' +
+                    '<div class="flex-1 min-w-0">' +
+                        '<div class="text-sm font-medium truncate" style="color:var(--color-text-secondary);">' + v.name + ' <span class="text-xs" style="color:var(--state-warning);">(' + v._unavailReason + ')</span></div>' +
+                        '<div class="text-xs truncate" style="color:var(--color-text-muted);">评分 ' + v.rating + ' · ' + (v.skills ? v.skills.join('、') : '') + '</div>' +
                     '</div>' +
                     '<span class="px-2 py-0.5 rounded text-xs whitespace-nowrap" style="background:' + ss[0] + ';color:' + ss[1] + ';">' + v.status + '</span>' +
                     '</div>';
@@ -1745,8 +1787,18 @@
             orders[idx].volunteer = v.name;
             if (orders[idx].status === '待接单') orders[idx].status = '进行中';
             saveOrders(orders);
+            // 更新暖伴状态为服务中
+            for (var k = 0; k < volunteers.length; k++) {
+                if (volunteers[k].id === volunteerId) {
+                    volunteers[k].status = '服务中';
+                    break;
+                }
+            }
+            saveVolunteers(volunteers);
             renderOrders();
+            renderVolunteers();
             updateOverviewStats();
+            updateSidebarBadges();
             closeModal('modal-assign');
             showToast('已成功指派暖伴 ' + v.name, 'success');
         }
@@ -2192,6 +2244,15 @@
         tbody.innerHTML = html;
     }
 
+    function updateSidebarBadges() {
+        var orders = getOrders();
+        var volunteers = getVolunteers();
+        var ordersBadge = document.getElementById('orders-count-badge');
+        var volunteersBadge = document.getElementById('volunteers-count-badge');
+        if (ordersBadge) ordersBadge.textContent = orders.length;
+        if (volunteersBadge) volunteersBadge.textContent = volunteers.length;
+    }
+
     function switchTimeRange(days) {
         var btns = document.querySelectorAll('.time-range-btn');
         btns.forEach(function (b) {
@@ -2391,6 +2452,7 @@
     renderContracts();
     renderAuth();
     updateOverviewStats();
+    updateSidebarBadges();
     if (window.lucide) lucide.createIcons();
 
     /* ============================================================

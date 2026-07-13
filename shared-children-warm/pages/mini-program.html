@@ -272,19 +272,19 @@
 
                     <!-- Service Categories -->
                     <div class="grid grid-cols-3 gap-3">
-                      <div class="flex flex-col items-center gap-2 p-3 rounded-xl cursor-pointer transition-transform" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" onclick="openOrderModal('日常陪伴')">
+                      <div class="flex flex-col items-center gap-2 p-3 rounded-xl cursor-pointer transition-transform" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" role="button" tabindex="0" aria-label="预约日常陪伴" onclick="openOrderModal('日常陪伴')" onkeydown="handleCardKey(event,'日常陪伴')">
                         <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: var(--color-primary-light);">
                           <i data-lucide="coffee" style="width: 20px; height: 20px; color: var(--color-primary);"></i>
                         </div>
                         <span class="text-xs font-medium" style="color: var(--color-text);">日常陪伴</span>
                       </div>
-                      <div class="flex flex-col items-center gap-2 p-3 rounded-xl cursor-pointer transition-transform" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" onclick="openOrderModal('跑腿代办')">
+                      <div class="flex flex-col items-center gap-2 p-3 rounded-xl cursor-pointer transition-transform" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" role="button" tabindex="0" aria-label="预约跑腿代办" onclick="openOrderModal('跑腿代办')" onkeydown="handleCardKey(event,'跑腿代办')">
                         <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: var(--state-success-bg);">
                           <i data-lucide="shopping-bag" style="width: 20px; height: 20px; color: var(--state-success);"></i>
                         </div>
                         <span class="text-xs font-medium" style="color: var(--color-text);">跑腿代办</span>
                       </div>
-                      <div class="flex flex-col items-center gap-2 p-3 rounded-xl cursor-pointer transition-transform" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" onclick="openOrderModal('数字辅导')">
+                      <div class="flex flex-col items-center gap-2 p-3 rounded-xl cursor-pointer transition-transform" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" role="button" tabindex="0" aria-label="预约数字辅导" onclick="openOrderModal('数字辅导')" onkeydown="handleCardKey(event,'数字辅导')">
                         <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: var(--state-warning-bg);">
                           <i data-lucide="smartphone" style="width: 20px; height: 20px; color: var(--state-warning);"></i>
                         </div>
@@ -293,7 +293,7 @@
                     </div>
 
                     <!-- Health Archive Entry -->
-                    <div class="flex items-center gap-3 p-3 rounded-xl cursor-pointer" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" onclick="openHealthModal()">
+                    <div class="flex items-center gap-3 p-3 rounded-xl cursor-pointer" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" role="button" tabindex="0" aria-label="健康档案" onclick="openHealthModal()" onkeydown="handleCardKey(event,'health')">
                       <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style="background: var(--state-success-bg);">
                         <i data-lucide="heart-pulse" style="width: 20px; height: 20px; color: var(--state-success);"></i>
                       </div>
@@ -360,7 +360,7 @@
                     <div>
                       <div class="flex items-center justify-between mb-3">
                         <p class="text-sm font-semibold" style="color: var(--color-text);">最近服务</p>
-                        <span class="text-xs cursor-pointer" style="color: var(--color-primary);" onclick="switchTab('orders')">全部</span>
+                        <span class="text-xs cursor-pointer" style="color: var(--color-primary);" role="button" tabindex="0" onclick="switchTab('orders')" onkeydown="handleTabKey(event,'orders')">全部</span>
                       </div>
                       <div id="recent-orders"></div>
                     </div>
@@ -617,15 +617,15 @@
 
               <!-- Bottom Tab Bar -->
               <div class="absolute bottom-0 left-0 right-0 flex items-center justify-around" style="height: 60px; background: var(--color-bg-card); border-top: 1px solid var(--color-border-light);">
-                <div id="tabbar-home" class="flex flex-col items-center gap-0.5 cursor-pointer" onclick="switchTab('home')" style="flex:1;">
+                <div id="tabbar-home" class="flex flex-col items-center gap-0.5 cursor-pointer" role="button" tabindex="0" aria-label="首页" onclick="switchTab('home')" onkeydown="handleTabKey(event,'home')" style="flex:1;">
                   <i data-lucide="home" style="width: 20px; height: 20px; color: var(--color-primary);"></i>
                   <span class="text-xs" style="color: var(--color-primary); font-weight: 500;">首页</span>
                 </div>
-                <div id="tabbar-orders" class="flex flex-col items-center gap-0.5 cursor-pointer" onclick="switchTab('orders')" style="flex:1;">
+                <div id="tabbar-orders" class="flex flex-col items-center gap-0.5 cursor-pointer" role="button" tabindex="0" aria-label="订单" onclick="switchTab('orders')" onkeydown="handleTabKey(event,'orders')" style="flex:1;">
                   <i data-lucide="clipboard-list" style="width: 20px; height: 20px; color: var(--color-text-muted);"></i>
                   <span class="text-xs" style="color: var(--color-text-muted);">订单</span>
                 </div>
-                <div id="tabbar-me" class="flex flex-col items-center gap-0.5 cursor-pointer" onclick="switchTab('me')" style="flex:1;">
+                <div id="tabbar-me" class="flex flex-col items-center gap-0.5 cursor-pointer" role="button" tabindex="0" aria-label="我的" onclick="switchTab('me')" onkeydown="handleTabKey(event,'me')" style="flex:1;">
                   <i data-lucide="user" style="width: 20px; height: 20px; color: var(--color-text-muted);"></i>
                   <span class="text-xs" style="color: var(--color-text-muted);">我的</span>
                 </div>
@@ -634,25 +634,25 @@
               <!-- ============ Modals ============ -->
 
               <!-- Order Create Modal -->
-              <div id="modal-order" class="modal-overlay" style="display:none">
+              <div id="modal-order" class="modal-overlay" role="dialog" aria-modal="true" style="display:none">
                 <div class="modal-content">
                   <div class="modal-header">
                     <h3 class="text-base font-semibold" style="color: var(--color-text);" id="order-modal-title">创建订单</h3>
-                    <button onclick="closeModal('modal-order')" class="modal-close-btn"><i data-lucide="x" style="width:20px;height:20px;"></i></button>
+                    <button onclick="closeModal('modal-order')" class="modal-close-btn" aria-label="关闭"><i data-lucide="x" style="width:20px;height:20px;"></i></button>
                   </div>
                   <div class="modal-body">
                     <div class="form-group">
-                      <label>服务类型</label>
-                      <select id="order-type">
-                        <option>日常陪伴</option>
-                        <option>跑腿代办</option>
-                        <option>数字辅导</option>
-                        <option>陪同就医</option>
-                        <option>其他</option>
+                      <label for="order-type">服务类型</label>
+                      <select id="order-type" onchange="autoFillPrice()">
+                        <option value="日常陪伴">日常陪伴</option>
+                        <option value="跑腿代办">跑腿代办</option>
+                        <option value="数字辅导">数字辅导</option>
+                        <option value="陪同就医">陪同就医</option>
+                        <option value="其他">其他</option>
                       </select>
                     </div>
                     <div class="form-group">
-                      <label>服务时间<span class="text-xs" style="color: var(--color-text-muted); font-weight: 400;">（按10分钟刻度）</span></label>
+                      <label for="order-date">服务时间<span class="text-xs" style="color: var(--color-text-muted); font-weight: 400;">（按10分钟刻度）</span></label>
                       <div class="flex gap-2 items-center">
                         <input type="date" id="order-date" style="flex:1; min-width:0;">
                         <select id="order-hour" style="width:64px;"></select>
@@ -661,7 +661,7 @@
                       </div>
                     </div>
                     <div class="form-group">
-                      <label>服务时长</label>
+                      <label for="order-duration">服务时长</label>
                       <select id="order-duration">
                         <option>1小时</option>
                         <option>2小时</option>
@@ -671,12 +671,13 @@
                       </select>
                     </div>
                     <div class="form-group">
-                      <label>服务金额（元）</label>
-                      <input type="number" id="order-price" min="0" step="10" placeholder="请输入愿意支付的金额">
+                      <label for="order-price">服务金额（元）</label>
+                      <input type="number" id="order-price" min="1" step="10" placeholder="已自动填入参考价，可调整">
                       <p class="text-xs mt-1" style="color: var(--color-text-muted);">参考价格：日常陪伴80元/次, 跑腿代办50元/次, 数字辅导30元/次, 陪同就医100元/次</p>
+                      <p id="order-price-hint" class="text-xs mt-1" style="color: var(--color-primary); display: none;">已填入参考价 ¥<span id="order-price-ref">80</span>，可根据实际情况调整</p>
                     </div>
                     <div class="form-group">
-                      <label>服务地址</label>
+                      <label for="order-address">服务地址</label>
                       <div style="position:relative;">
                         <input type="text" id="order-address" placeholder="输入地址关键词搜索，如：梅苑小区" autocomplete="off" oninput="searchAddress(this.value)" onfocus="showAddressSuggestions()" onblur="setTimeout(function(){hideAddressSuggestions();},200)">
                         <div id="address-suggestions" style="display:none;position:absolute;top:100%;left:0;right:0;max-height:200px;overflow-y:auto;background:var(--color-bg-card);border:1px solid var(--color-border);border-radius:0 0 8px 8px;box-shadow:0 4px 12px rgba(0,0,0,0.08);z-index:100;"></div>
@@ -691,7 +692,7 @@
                       </div>
                     </div>
                     <div class="form-group">
-                      <label>备注说明</label>
+                      <label for="order-desc">备注说明</label>
                       <textarea id="order-desc" rows="3" placeholder="请描述具体需求..." style="resize:none;"></textarea>
                     </div>
                     <button onclick="submitOrder()" class="submit-btn">提交订单</button>
@@ -700,11 +701,11 @@
               </div>
 
               <!-- Alarm Modal -->
-              <div id="modal-alarm" class="modal-overlay" style="display:none">
+              <div id="modal-alarm" class="modal-overlay" role="dialog" aria-modal="true" style="display:none">
                 <div class="modal-content">
                   <div class="modal-header">
                     <h3 class="text-base font-semibold" style="color: var(--state-error);">紧急报警</h3>
-                    <button onclick="closeModal('modal-alarm')" class="modal-close-btn"><i data-lucide="x" style="width:20px;height:20px;"></i></button>
+                    <button onclick="closeModal('modal-alarm')" class="modal-close-btn" aria-label="关闭"><i data-lucide="x" style="width:20px;height:20px;"></i></button>
                   </div>
                   <div class="modal-body">
                     <div class="text-center py-4">
@@ -727,11 +728,11 @@
               </div>
 
               <!-- Health Modal -->
-              <div id="modal-health" class="modal-overlay" style="display:none">
+              <div id="modal-health" class="modal-overlay" role="dialog" aria-modal="true" style="display:none">
                 <div class="modal-content">
                   <div class="modal-header">
                     <h3 class="text-base font-semibold" style="color: var(--color-text);">健康档案</h3>
-                    <button onclick="closeModal('modal-health')" class="modal-close-btn"><i data-lucide="x" style="width:20px;height:20px;"></i></button>
+                    <button onclick="closeModal('modal-health')" class="modal-close-btn" aria-label="关闭"><i data-lucide="x" style="width:20px;height:20px;"></i></button>
                   </div>
                   <div class="modal-body">
                     <div class="form-group">
@@ -760,11 +761,11 @@
               </div>
 
               <!-- Profile Modal -->
-              <div id="modal-profile" class="modal-overlay" style="display:none">
+              <div id="modal-profile" class="modal-overlay" role="dialog" aria-modal="true" style="display:none">
                 <div class="modal-content">
                   <div class="modal-header">
                     <h3 class="text-base font-semibold" style="color: var(--color-text);">编辑个人信息</h3>
-                    <button onclick="closeModal('modal-profile')" class="modal-close-btn"><i data-lucide="x" style="width:20px;height:20px;"></i></button>
+                    <button onclick="closeModal('modal-profile')" class="modal-close-btn" aria-label="关闭"><i data-lucide="x" style="width:20px;height:20px;"></i></button>
                   </div>
                   <div class="modal-body">
                     <div class="form-group">
@@ -789,11 +790,11 @@
               </div>
 
               <!-- Volunteer Profile Modal -->
-              <div id="modal-volunteer-profile" class="modal-overlay" style="display:none">
+              <div id="modal-volunteer-profile" class="modal-overlay" role="dialog" aria-modal="true" style="display:none">
                 <div class="modal-content">
                   <div class="modal-header">
                     <h3 class="text-base font-semibold" style="color: var(--color-text);">编辑暖伴信息</h3>
-                    <button onclick="closeModal('modal-volunteer-profile')" class="modal-close-btn"><i data-lucide="x" style="width:20px;height:20px;"></i></button>
+                    <button onclick="closeModal('modal-volunteer-profile')" class="modal-close-btn" aria-label="关闭"><i data-lucide="x" style="width:20px;height:20px;"></i></button>
                   </div>
                   <div class="modal-body">
                     <div class="form-group">
@@ -818,11 +819,11 @@
               </div>
 
               <!-- Auth Modal -->
-              <div id="modal-auth" class="modal-overlay" style="display:none">
+              <div id="modal-auth" class="modal-overlay" role="dialog" aria-modal="true" style="display:none">
                 <div class="modal-content">
                   <div class="modal-header">
                     <h3 class="text-base font-semibold" style="color: var(--color-text);">实名认证</h3>
-                    <button onclick="closeModal('modal-auth')" class="modal-close-btn"><i data-lucide="x" style="width:20px;height:20px;"></i></button>
+                    <button onclick="closeModal('modal-auth')" class="modal-close-btn" aria-label="关闭"><i data-lucide="x" style="width:20px;height:20px;"></i></button>
                   </div>
                   <div class="modal-body">
                     <div class="form-group">
@@ -850,44 +851,44 @@
               </div>
 
               <!-- Order Detail Modal -->
-              <div id="modal-order-detail" class="modal-overlay" style="display:none">
+              <div id="modal-order-detail" class="modal-overlay" role="dialog" aria-modal="true" style="display:none">
                 <div class="modal-content">
                   <div class="modal-header">
                     <h3 class="text-base font-semibold" style="color: var(--color-text);">订单详情</h3>
-                    <button onclick="closeModal('modal-order-detail')" class="modal-close-btn"><i data-lucide="x" style="width:20px;height:20px;"></i></button>
+                    <button onclick="closeModal('modal-order-detail')" class="modal-close-btn" aria-label="关闭"><i data-lucide="x" style="width:20px;height:20px;"></i></button>
                   </div>
                   <div class="modal-body" id="order-detail-body"></div>
                 </div>
               </div>
 
               <!-- Training Modal -->
-              <div id="modal-training" class="modal-overlay" style="display:none">
+              <div id="modal-training" class="modal-overlay" role="dialog" aria-modal="true" style="display:none">
                 <div class="modal-content">
                   <div class="modal-header">
                     <h3 class="text-base font-semibold" style="color: var(--color-text);">培训中心</h3>
-                    <button onclick="closeModal('modal-training')" class="modal-close-btn"><i data-lucide="x" style="width:20px;height:20px;"></i></button>
+                    <button onclick="closeModal('modal-training')" class="modal-close-btn" aria-label="关闭"><i data-lucide="x" style="width:20px;height:20px;"></i></button>
                   </div>
                   <div class="modal-body" id="training-body"></div>
                 </div>
               </div>
 
               <!-- Alarms List Modal -->
-              <div id="modal-alarms" class="modal-overlay" style="display:none">
+              <div id="modal-alarms" class="modal-overlay" role="dialog" aria-modal="true" style="display:none">
                 <div class="modal-content">
                   <div class="modal-header">
                     <h3 class="text-base font-semibold" style="color: var(--color-text);">报警记录</h3>
-                    <button onclick="closeModal('modal-alarms')" class="modal-close-btn"><i data-lucide="x" style="width:20px;height:20px;"></i></button>
+                    <button onclick="closeModal('modal-alarms')" class="modal-close-btn" aria-label="关闭"><i data-lucide="x" style="width:20px;height:20px;"></i></button>
                   </div>
                   <div class="modal-body" id="alarms-list-body"></div>
                 </div>
               </div>
 
               <!-- Settings Modal -->
-              <div id="modal-settings" class="modal-overlay" style="display:none">
+              <div id="modal-settings" class="modal-overlay" role="dialog" aria-modal="true" style="display:none">
                 <div class="modal-content">
                   <div class="modal-header">
                     <h3 class="text-base font-semibold" style="color: var(--color-text);">设置</h3>
-                    <button onclick="closeModal('modal-settings')" class="modal-close-btn"><i data-lucide="x" style="width:20px;height:20px;"></i></button>
+                    <button onclick="closeModal('modal-settings')" class="modal-close-btn" aria-label="关闭"><i data-lucide="x" style="width:20px;height:20px;"></i></button>
                   </div>
                   <div class="modal-body">
                     <!-- Notification Settings -->
@@ -1078,6 +1079,18 @@
         outline: none;
         border-color: var(--color-border-focus);
       }
+      .form-group input:focus-visible,
+      .form-group select:focus-visible,
+      .form-group textarea:focus-visible {
+        outline: 2px solid var(--color-primary);
+        outline-offset: 1px;
+      }
+      .modal-close-btn:focus-visible,
+      .submit-btn:focus-visible,
+      [role="button"]:focus-visible {
+        outline: 2px solid var(--color-primary);
+        outline-offset: 2px;
+      }
       .submit-btn {
         width: 100%;
         padding: 10px;
@@ -1235,7 +1248,8 @@
       }
 
       /* ===== Initialize Sample Data ===== */
-      var DATA_VERSION = '4';
+      function _ymd(ms) { var d = new Date(ms); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+      var DATA_VERSION = '9';
       function initData() {
         // Force re-init when data version changes
         if (localStorage.getItem('sc_data_version') !== DATA_VERSION) {
@@ -1247,18 +1261,6 @@
           localStorage.removeItem(SK.authNuanjia);
           localStorage.removeItem(SK.authNuanban);
           localStorage.removeItem('sc_settings');
-          localStorage.setItem('sc_data_version', DATA_VERSION);
-        }
-        // === 数据版本管理：版本升级时强制重置示例数据 ===
-        var DATA_VERSION = '8';
-        if (localStorage.getItem('sc_data_version') !== DATA_VERSION) {
-          localStorage.removeItem(SK.orders);
-          localStorage.removeItem(SK.profile);
-          localStorage.removeItem(SK.health);
-          localStorage.removeItem(SK.alarms);
-          localStorage.removeItem(SK.volunteer);
-          localStorage.removeItem(SK.authNuanjia);
-          localStorage.removeItem(SK.authNuanban);
           localStorage.setItem('sc_data_version', DATA_VERSION);
         }
 
@@ -1275,49 +1277,50 @@
         }
 
         if (!getData(SK.orders)) {
-          var now = Date.now();
+          var _now = Date.now(), _D = 86400000;
+          var _T = _ymd(_now), _Y = _ymd(_now - _D), _Y2 = _ymd(_now - 2 * _D), _Y3 = _ymd(_now - 3 * _D), _Y4 = _ymd(_now - 4 * _D);
           saveData(SK.orders, [
             {
-              id: fmtOrderId(0, '001'), type: '日常陪伴', status: '进行中',
-              elderName: '李奶奶', address: '武汉市武昌区中南路街梅苑小区3栋',
-              time: fmtDate(0) + ' 09:00', duration: '2小时',
-              description: '陪老人散步聊天，读报纸，协助简单家务', volunteer: VOLUNTEER_NAME,
-              price: 80, createdAt: now - 86400000, ownerId: null
-            },
-            {
-              id: fmtOrderId(0, '002'), type: '跑腿代办', status: '待接单',
-              elderName: '赵爷爷', address: '武汉市洪山区珞南街卓刀泉社区5栋',
-              time: fmtDate(0) + ' 10:00', duration: '1小时',
-              description: '代购生活用品和常用药品', volunteer: null,
-              price: 50, createdAt: now - 43200000, ownerId: null
-            },
-            {
-              id: fmtOrderId(0, '003'), type: '数字辅导', status: '待接单',
-              elderName: '孙奶奶', address: '武汉市江汉区万松街武展社区2号',
-              time: fmtDate(0) + ' 14:00', duration: '1小时',
-              description: '教老人使用微信视频通话', volunteer: null,
-              price: 30, createdAt: now - 3600000, ownerId: null
-            },
-            {
-              id: fmtOrderId(0, '004'), type: '陪同就医', status: '进行中',
-              elderName: '孙爷爷', address: '武汉市汉阳区翠微街5栋',
-              time: fmtDate(0) + ' 07:45', duration: '3小时',
-              description: '陪同前往武汉大学中南医院复查并取药', volunteer: '陈思雨',
-              price: 120, createdAt: now - 7200000, ownerId: null
-            },
-            {
-              id: fmtOrderId(-1, '001'), type: '陪同就医', status: '已完成',
+              id: 'ORD' + _T.replace(/-/g, '') + '0001', type: '日常陪伴', status: '待接单',
               elderName: '王奶奶', address: '武汉市武昌区中南路街梅苑小区3栋',
-              time: fmtDate(-1) + ' 09:00', duration: '半天',
-              description: '陪同去武汉大学中南医院复查', volunteer: VOLUNTEER_NAME,
-              price: 100, createdAt: now - 172800000, completedAt: now - 86400000, ownerId: 'U001'
+              time: _T + ' 09:00', duration: '2小时',
+              description: '陪老人散步聊天，读报纸', volunteer: null,
+              price: 80, createdAt: _now - 3600000, ownerId: 'U001'
             },
             {
-              id: fmtOrderId(-1, '002'), type: '跑腿代办', status: '已取消',
-              elderName: '吴叔叔', address: '武汉市青山区金色港湾8栋',
-              time: fmtDate(-1) + ' 11:20', duration: '1小时',
-              description: '代缴水电燃气费', volunteer: '赵敏',
-              price: 60, createdAt: now - 259200000, ownerId: null
+              id: 'ORD' + _T.replace(/-/g, '') + '0002', type: '跑腿代办', status: '待接单',
+              elderName: '李大爷', address: '武汉市洪山区珞南街卓刀泉社区12栋',
+              time: _T + ' 10:15', duration: '1小时',
+              description: '代购生活用品和常用药品', volunteer: null,
+              price: 60, createdAt: _now - 7200000, ownerId: null
+            },
+            {
+              id: 'ORD' + _Y.replace(/-/g, '') + '0001', type: '陪同就医', status: '进行中',
+              elderName: '王奶奶', address: '武汉市武昌区中南路街梅苑小区3栋',
+              time: _Y + ' 07:45', duration: '3小时',
+              description: '陪同前往武汉大学中南医院复查并取药', volunteer: '陈思雨',
+              price: 120, createdAt: _now - _D, ownerId: 'U001'
+            },
+            {
+              id: 'ORD' + _Y2.replace(/-/g, '') + '0001', type: '数字辅导', status: '已完成',
+              elderName: '赵阿姨', address: '武汉市江岸区大智街同安里7栋',
+              time: _Y2 + ' 08:00', duration: '1.5小时',
+              description: '教老人使用智能手机视频通话和微信', volunteer: '王志强',
+              price: 70, createdAt: _now - 2 * _D, completedAt: _now - _D, ownerId: null
+            },
+            {
+              id: 'ORD' + _Y3.replace(/-/g, '') + '0001', type: '日常陪伴', status: '已完成',
+              elderName: '王奶奶', address: '武汉市武昌区中南路街梅苑小区3栋',
+              time: _Y3 + ' 14:00', duration: '2小时',
+              description: '陪伴聊天，协助整理家务', volunteer: '张小雨',
+              price: 80, createdAt: _now - 3 * _D, completedAt: _now - 2 * _D, ownerId: 'U001'
+            },
+            {
+              id: 'ORD' + _Y4.replace(/-/g, '') + '0001', type: '跑腿代办', status: '已取消',
+              elderName: '吴叔叔', address: '武汉市青山区红钢城街金色港湾8栋',
+              time: _Y4 + ' 11:20', duration: '1小时',
+              description: '代缴水电燃气费', volunteer: null,
+              price: 60, createdAt: _now - 4 * _D, ownerId: null
             }
           ]);
         }
@@ -1388,6 +1391,13 @@
         document.getElementById(id).style.display = 'none';
       }
 
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+          var modals = document.querySelectorAll('.modal-overlay');
+          modals.forEach(function (m) { m.style.display = 'none'; });
+        }
+      });
+
       /* ===== Role Switch ===== */
       function switchRole(role) {
         currentRole = role;
@@ -1420,6 +1430,20 @@
           mpTitle.textContent = '暖伴工作台';
         }
         switchTab('home');
+      }
+
+      function handleCardKey(e, type) {
+        if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+          e.preventDefault();
+          if (type === 'health') openHealthModal();
+          else openOrderModal(type);
+        }
+      }
+      function handleTabKey(e, tab) {
+        if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+          e.preventDefault();
+          switchTab(tab);
+        }
       }
 
       /* ===== Tab Switch ===== */
@@ -1468,6 +1492,18 @@
         lucide.createIcons();
       }
 
+      var PRICE_MAP = { '日常陪伴': 80, '跑腿代办': 50, '数字辅导': 30, '陪同就医': 100, '其他': 60 };
+      function autoFillPrice() {
+        var type = document.getElementById('order-type').value;
+        var priceInput = document.getElementById('order-price');
+        var hintEl = document.getElementById('order-price-hint');
+        var refEl = document.getElementById('order-price-ref');
+        var refPrice = PRICE_MAP[type] || 60;
+        priceInput.value = refPrice;
+        if (hintEl) { hintEl.style.display = 'block'; }
+        if (refEl) { refEl.textContent = refPrice; }
+      }
+
       /* ===== Order Create ===== */
       function openOrderModal(type) {
         var select = document.getElementById('order-type');
@@ -1484,7 +1520,7 @@
         var profile = getData(SK.profile) || {};
         document.getElementById('order-address').value = profile.address || '';
         // Reset price and map
-        document.getElementById('order-price').value = '';
+        autoFillPrice();
         var mapWrap = document.getElementById('order-map-wrap');
         if (mapWrap) { mapWrap.style.display = 'none'; }
         var mapContainer = document.getElementById('order-map-container');
@@ -1512,7 +1548,11 @@
         var dateEl = document.getElementById('order-date');
         var hourEl = document.getElementById('order-hour');
         var minEl = document.getElementById('order-minute');
-        if (dateEl) dateEl.value = d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
+        if (dateEl) {
+          var todayStr = d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
+          dateEl.value = todayStr;
+          dateEl.min = todayStr;
+        }
         if (hourEl) hourEl.value = pad2(d.getHours());
         if (minEl) minEl.value = pad2(Math.floor(d.getMinutes() / 10) * 10);
       }
@@ -1535,6 +1575,10 @@
       }
 
       function submitOrder() {
+        // 清除之前的内联错误
+        var prevErrors = document.querySelectorAll('.inline-error');
+        prevErrors.forEach(function (el) { el.remove(); });
+
         var type = document.getElementById('order-type').value;
         var dateVal = document.getElementById('order-date').value;
         var hourVal = document.getElementById('order-hour').value;
@@ -1543,25 +1587,54 @@
         var address = document.getElementById('order-address').value.trim();
         var desc = document.getElementById('order-desc').value.trim();
         var priceInput = document.getElementById('order-price').value;
+        var hasError = false;
 
+        function showInlineError(inputId, msg) {
+          var input = document.getElementById(inputId);
+          if (!input) return;
+          var err = document.createElement('p');
+          err.className = 'inline-error';
+          err.style.cssText = 'color:var(--state-error);font-size:12px;margin-top:4px;';
+          err.textContent = msg;
+          input.parentNode.appendChild(err);
+          input.style.borderColor = 'var(--state-error)';
+          hasError = true;
+        }
+
+        // 地址校验
         if (!address) {
-          showToast('请填写服务地址');
+          showInlineError('order-address', '请填写服务地址');
+        } else {
+          document.getElementById('order-address').style.borderColor = '';
+        }
+
+        // 日期时间校验
+        if (dateVal) {
+          var selectedTime = new Date(dateVal + ' ' + (hourVal || '00') + ':' + (minVal || '00'));
+          if (selectedTime.getTime() < Date.now() - 600000) {
+            showInlineError('order-date', '服务时间不能为过去，请重新选择');
+          }
+        } else {
+          showInlineError('order-date', '请选择服务日期');
+        }
+
+        // 金额校验
+        var price = priceInput ? parseFloat(priceInput) : 0;
+        if (!price || price <= 0 || isNaN(price)) {
+          showInlineError('order-price', '请输入有效的服务金额（大于0）');
+        } else {
+          document.getElementById('order-price').style.borderColor = '';
+        }
+
+        if (hasError) {
+          showToast('请修正表单中的错误后再提交');
           return;
         }
 
         var orders = getData(SK.orders) || [];
         var profile = getData(SK.profile) || {};
-        var priceMap = { '日常陪伴': 80, '跑腿代办': 50, '数字辅导': 30, '陪同就医': 100, '其他': 60 };
-        var price = priceInput ? parseFloat(priceInput) : (priceMap[type] || 60);
-        if (!price || price <= 0) {
-          showToast('服务金额不能为0或负数');
-          return;
-        }
 
-        var timeStr = '';
-        if (dateVal) {
-          timeStr = dateVal + ' ' + (hourVal || '00') + ':' + (minVal || '00');
-        }
+        var timeStr = dateVal + ' ' + (hourVal || '00') + ':' + (minVal || '00');
 
         var newOrder = {
           id: generateOrderId(),
@@ -1584,7 +1657,7 @@
         // Reset form
         document.getElementById('order-address').value = '';
         document.getElementById('order-desc').value = '';
-        document.getElementById('order-price').value = '';
+        autoFillPrice();
         var mapWrap = document.getElementById('order-map-wrap');
         if (mapWrap) { mapWrap.style.display = 'none'; }
         var mapContainer = document.getElementById('order-map-container');
@@ -2266,7 +2339,7 @@
         if (order.volunteer) {
           html += '<div class="flex"><span style="color:var(--color-text-muted); width:72px; flex-shrink:0;">服务暖伴</span><span>' + escapeHtml(order.volunteer) + '</span></div>';
         }
-        html += '<div class="flex"><span style="color:var(--color-text-muted); width:72px; flex-shrink:0;">服务费用</span><span style="color:var(--color-primary); font-weight:600;">' + order.price + ' 元</span></div>';
+        html += '<div class="flex"><span style="color:var(--color-text-muted); width:72px; flex-shrink:0;">服务费用</span><span style="color: var(--color-primary); font-weight:600;">¥' + order.price + '</span></div>';
         html += '</div>';
 
         // Detail map
