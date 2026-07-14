@@ -654,7 +654,7 @@
                     <div class="form-group">
                       <label for="order-date">服务时间<span class="text-xs" style="color: var(--color-text-muted); font-weight: 400;">（按10分钟刻度）</span></label>
                       <div class="flex gap-2 items-center">
-                        <input type="date" id="order-date" style="flex:1; min-width:0;">
+                        <input type="date" id="order-date" style="flex:1; min-width:0;" onchange="onOrderDateChange()">
                         <select id="order-hour" style="width:64px;"></select>
                         <span style="color: var(--color-text-muted);">:</span>
                         <select id="order-minute" style="width:72px;"></select>
@@ -1229,6 +1229,8 @@
       var currentRole = 'nuanjia';
       var currentTab = 'home';
       var VOLUNTEER_NAME = '张小雨';
+      // 当前演示暖伴使用稳定 ID，业务关联只使用 volunteerId，姓名仅用于展示
+      var VOLUNTEER_ID = 'V-001';
 
       /* ===== Data Helpers ===== */
       function getData(key) {
@@ -1251,18 +1253,11 @@
       function _ymd(ms) { var d = new Date(ms); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
       var DATA_VERSION = '9';
       function initData() {
-        // Force re-init when data version changes
-        if (localStorage.getItem('sc_data_version') !== DATA_VERSION) {
-          localStorage.removeItem(SK.orders);
-          localStorage.removeItem(SK.profile);
-          localStorage.removeItem(SK.health);
-          localStorage.removeItem(SK.alarms);
-          localStorage.removeItem(SK.volunteer);
-          localStorage.removeItem(SK.authNuanjia);
-          localStorage.removeItem(SK.authNuanban);
-          localStorage.removeItem('sc_settings');
-          localStorage.setItem('sc_data_version', DATA_VERSION);
-        }
+        // === 统一 schema 版本迁移（保留数据，幂等，绝不删除既有业务数据） ===
+        // 旧实现按版本号差异 removeItem 会清空用户创建的订单/认证/健康档案/设置，现已废弃。
+        // 种子写入仍由下方各 if(!getData(...)) 守卫保证仅在对应 key 为空时执行。
+        // 既有 v9 数据进入下方幂等补字段流程，迁移多次结果一致。
+        // （此处不再做任何 localStorage.removeItem 业务数据操作）
 
         // === 动态日期生成 ===
         function fmtDate(offset) {
@@ -1284,42 +1279,42 @@
               id: 'ORD' + _T.replace(/-/g, '') + '0001', type: '日常陪伴', status: '待接单',
               elderName: '王奶奶', address: '武汉市武昌区中南路街梅苑小区3栋',
               time: _T + ' 09:00', duration: '2小时',
-              description: '陪老人散步聊天，读报纸', volunteer: null,
+              description: '陪老人散步聊天，读报纸', volunteer: null, volunteerId: null,
               price: 80, createdAt: _now - 3600000, ownerId: 'U001'
             },
             {
               id: 'ORD' + _T.replace(/-/g, '') + '0002', type: '跑腿代办', status: '待接单',
               elderName: '李大爷', address: '武汉市洪山区珞南街卓刀泉社区12栋',
               time: _T + ' 10:15', duration: '1小时',
-              description: '代购生活用品和常用药品', volunteer: null,
+              description: '代购生活用品和常用药品', volunteer: null, volunteerId: null,
               price: 60, createdAt: _now - 7200000, ownerId: null
             },
             {
               id: 'ORD' + _Y.replace(/-/g, '') + '0001', type: '陪同就医', status: '进行中',
               elderName: '王奶奶', address: '武汉市武昌区中南路街梅苑小区3栋',
               time: _Y + ' 07:45', duration: '3小时',
-              description: '陪同前往武汉大学中南医院复查并取药', volunteer: '陈思雨',
+              description: '陪同前往武汉大学中南医院复查并取药', volunteer: '陈思雨', volunteerId: 'V-004',
               price: 120, createdAt: _now - _D, ownerId: 'U001'
             },
             {
               id: 'ORD' + _Y2.replace(/-/g, '') + '0001', type: '数字辅导', status: '已完成',
               elderName: '赵阿姨', address: '武汉市江岸区大智街同安里7栋',
               time: _Y2 + ' 08:00', duration: '1.5小时',
-              description: '教老人使用智能手机视频通话和微信', volunteer: '王志强',
+              description: '教老人使用智能手机视频通话和微信', volunteer: '王志强', volunteerId: 'V-003',
               price: 70, createdAt: _now - 2 * _D, completedAt: _now - _D, ownerId: null
             },
             {
               id: 'ORD' + _Y3.replace(/-/g, '') + '0001', type: '日常陪伴', status: '已完成',
               elderName: '王奶奶', address: '武汉市武昌区中南路街梅苑小区3栋',
               time: _Y3 + ' 14:00', duration: '2小时',
-              description: '陪伴聊天，协助整理家务', volunteer: '张小雨',
+              description: '陪伴聊天，协助整理家务', volunteer: '张小雨', volunteerId: 'V-001',
               price: 80, createdAt: _now - 3 * _D, completedAt: _now - 2 * _D, ownerId: 'U001'
             },
             {
               id: 'ORD' + _Y4.replace(/-/g, '') + '0001', type: '跑腿代办', status: '已取消',
               elderName: '吴叔叔', address: '武汉市青山区红钢城街金色港湾8栋',
               time: _Y4 + ' 11:20', duration: '1小时',
-              description: '代缴水电燃气费', volunteer: null,
+              description: '代缴水电燃气费', volunteer: null, volunteerId: null,
               price: 60, createdAt: _now - 4 * _D, ownerId: null
             }
           ]);
@@ -1344,16 +1339,128 @@
         if (!getData(SK.volunteer)) {
           saveData(SK.volunteer, {
             name: VOLUNTEER_NAME, phone: '13777777777', rating: 4.8,
-            totalService: 23, certified: true,
+            totalService: 23, certified: true, volunteerId: VOLUNTEER_ID,
             area: '武汉市武昌区', bio: '热心公益，擅长陪伴老人和数字辅导'
           });
         }
         if (!getData(SK.authNuanjia)) {
-          saveData(SK.authNuanjia, { status: '未认证', realname: '', idcard: '', idfront: '', idback: '', submitAt: null });
+          saveData(SK.authNuanjia, { status: '未认证', realname: '', idcard: '', idfront: '', idback: '', submitAt: null, subjectId: 'U001' });
         }
         if (!getData(SK.authNuanban)) {
-          saveData(SK.authNuanban, { status: '已认证', realname: '张明', idcard: '420106********1234', idfront: '', idback: '', submitAt: Date.now() - 86400000 * 30 });
+          saveData(SK.authNuanban, { status: '已认证', realname: '张明', idcard: '420106********1234', idfront: '', idback: '', submitAt: Date.now() - 86400000 * 30, subjectId: VOLUNTEER_ID });
         }
+
+        // === 幂等迁移：为缺失字段补值（对全新种子与既有 v9 数据都安全，多次执行结果一致） ===
+        scPatchOrders();
+        scPatchAuth();
+        scPatchAlarms();
+        // 统一 schema 版本回写，清理旧版本键（仅删键，不动业务数据）
+        localStorage.setItem('sc_schema_version', '10');
+        localStorage.removeItem('sc_data_version');
+        localStorage.removeItem('sc_admin_version');
+      }
+
+      // 订单补字段：volunteerId（按共享暖伴列表反查姓名→ID，一次性迁移，非业务匹配）、createdAt
+      function scPatchOrders() {
+        var orders = getData(SK.orders);
+        if (!orders || !orders.length) return;
+        var vols = getData('sc_volunteers') || [];
+        var nameToId = {};
+        vols.forEach(function (v) { if (v && v.name) nameToId[v.name] = v.id; });
+        var changed = false;
+        orders.forEach(function (o) {
+          if (o.volunteerId === undefined) {
+            o.volunteerId = (o.volunteer && nameToId[o.volunteer]) ? nameToId[o.volunteer] : null;
+            changed = true;
+          }
+          if (o.createdAt === undefined) { o.createdAt = Date.now(); changed = true; }
+        });
+        if (changed) saveData(SK.orders, orders);
+      }
+      // 认证补字段：subjectId；统一状态枚举（旧“已通过”→“已认证”）
+      function scPatchAuth() {
+        var jia = getData(SK.authNuanjia);
+        if (jia) {
+          var c1 = false;
+          if (jia.subjectId === undefined) { jia.subjectId = 'U001'; c1 = true; }
+          if (jia.status === '已通过') { jia.status = '已认证'; c1 = true; }
+          if (c1) saveData(SK.authNuanjia, jia);
+        }
+        var ban = getData(SK.authNuanban);
+        if (ban) {
+          var c2 = false;
+          if (ban.subjectId === undefined) { ban.subjectId = VOLUNTEER_ID; c2 = true; }
+          if (ban.status === '已通过') { ban.status = '已认证'; c2 = true; }
+          if (c2) saveData(SK.authNuanban, ban);
+        }
+        // 后台认证记录补 subjectId / 统一状态（与 web-admin 同源）
+        var recs = getData('sc_auth_records');
+        if (recs && recs.length) {
+          var changed = false, _ji = 0, _bi = 0;
+          recs.forEach(function (r) {
+            if (r.subjectId === undefined) {
+              if (r.role === '暖家') r.subjectId = 'U' + String(++_ji).padStart(3, '0');
+              else if (r.role === '暖伴') r.subjectId = 'V-' + String(++_bi).padStart(3, '0');
+              else r.subjectId = 'SUB-' + r.id;
+              changed = true;
+            }
+            if (r.status === '已通过') { r.status = '已认证'; changed = true; }
+          });
+          if (changed) saveData('sc_auth_records', recs);
+        }
+      }
+      // 报警补字段：createdAt（兼容旧字符串/数字记录，不丢失）
+      function scPatchAlarms() {
+        var alarms = getData(SK.alarms);
+        if (!alarms || !alarms.length) return;
+        var changed = false;
+        alarms.forEach(function (a) {
+          if (a.createdAt === undefined) {
+            if (typeof a.time === 'number') { a.createdAt = a.time; changed = true; }
+            else if (typeof a.time === 'string' && a.time) {
+              var m = a.time.match(/^(\d{1,2}):(\d{2})$/);
+              if (m) { var d = new Date(); d.setHours(+m[1], +m[2], 0, 0); a.createdAt = d.getTime(); changed = true; }
+              else { var dd = new Date(a.time.replace(/-/g, '/')); if (!isNaN(dd.getTime())) { a.createdAt = dd.getTime(); changed = true; } }
+            } else { a.createdAt = Date.now(); changed = true; }
+          }
+        });
+        if (changed) saveData(SK.alarms, alarms);
+      }
+
+      // 报警时间统一格式化（兼容旧字符串/数字记录）
+      function fmtAlarmTime(a, full) {
+        if (!a) return '-';
+        var ts = (a.createdAt != null ? a.createdAt : a.time);
+        if (ts === null || ts === undefined || ts === '') return '-';
+        var n = Number(ts), d;
+        if (!isNaN(n) && n > 0) d = new Date(n);
+        else if (typeof ts === 'string' && /^\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}/.test(ts)) d = new Date(ts.replace(/-/g, '/'));
+        else if (typeof ts === 'string' && /^\d{1,2}:\d{2}$/.test(ts)) return ts;
+        else return String(ts);
+        if (!d || isNaN(d.getTime())) return String(ts);
+        function p(n) { return ('0' + n).slice(-2); }
+        if (full) return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes());
+        return p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes());
+      }
+
+      // 共享暖伴列表（sc_volunteers）读写：用于暖伴状态/完成数同步
+      function getSharedVolunteers() { return getData('sc_volunteers') || []; }
+      function setSharedVolunteerStatus(volunteerId, status) {
+        var vols = getSharedVolunteers();
+        var changed = false;
+        for (var i = 0; i < vols.length; i++) {
+          if (vols[i].id === volunteerId) { vols[i].status = status; changed = true; break; }
+        }
+        if (changed) saveData('sc_volunteers', vols);
+      }
+      // 暖伴完成数 +1（仅当订单由待确认流转到已完成时调用一次，幂等防重复）
+      function incrementSharedVolunteerCompletedOrders(volunteerId) {
+        var vols = getSharedVolunteers();
+        var changed = false;
+        for (var i = 0; i < vols.length; i++) {
+          if (vols[i].id === volunteerId) { vols[i].completedOrders = (vols[i].completedOrders || 0) + 1; changed = true; break; }
+        }
+        if (changed) saveData('sc_volunteers', vols);
       }
 
       /* ===== Toast ===== */
@@ -1543,18 +1650,56 @@
         hourSel.innerHTML = h;
         minSel.innerHTML = m;
       }
+      // 计算从 now 向上取整到的下一个 10 分钟时间点（严格未来）
+      function nextTenMark(now) {
+        var t = new Date(now);
+        t.setSeconds(0, 0); // 丢弃秒/毫秒
+        var min = t.getMinutes();
+        var rem = min % 10;
+        if (rem !== 0) {
+          // 例如 10:01 → 10:10，10:50 → 11:00，23:56 → 次日 00:00
+          t.setMinutes(min + (10 - rem));
+        } else {
+          // 已在整点刻度上，取下一个刻度，确保默认值在未来
+          t = new Date(t.getTime() + 600000);
+        }
+        if (t.getTime() <= now.getTime()) t = new Date(t.getTime() + 600000); // 兜底
+        return t;
+      }
       function setOrderTimeDefault() {
-        var d = new Date();
+        var now = new Date();
+        var target = nextTenMark(now);
         var dateEl = document.getElementById('order-date');
         var hourEl = document.getElementById('order-hour');
         var minEl = document.getElementById('order-minute');
         if (dateEl) {
-          var todayStr = d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
+          var todayStr = now.getFullYear() + '-' + pad2(now.getMonth() + 1) + '-' + pad2(now.getDate());
           dateEl.value = todayStr;
           dateEl.min = todayStr;
         }
-        if (hourEl) hourEl.value = pad2(d.getHours());
-        if (minEl) minEl.value = pad2(Math.floor(d.getMinutes() / 10) * 10);
+        if (hourEl) hourEl.value = pad2(target.getHours());
+        if (minEl) minEl.value = pad2(target.getMinutes());
+      }
+      // 日期变化时重新计算 min 和默认值（若为今天则取下一个刻度，未来日期取 09:00）
+      function onOrderDateChange() {
+        var dateEl = document.getElementById('order-date');
+        var hourEl = document.getElementById('order-hour');
+        var minEl = document.getElementById('order-minute');
+        if (!dateEl) return;
+        var now = new Date();
+        var todayStr = now.getFullYear() + '-' + pad2(now.getMonth() + 1) + '-' + pad2(now.getDate());
+        dateEl.min = todayStr;
+        var val = dateEl.value;
+        if (!val) { setOrderTimeDefault(); return; }
+        var target;
+        if (val === todayStr) {
+          target = nextTenMark(now); // 今天：确保默认值在未来
+        } else {
+          target = new Date(now);
+          target.setHours(9, 0, 0, 0); // 未来日期默认 09:00
+        }
+        if (hourEl) hourEl.value = pad2(target.getHours());
+        if (minEl) minEl.value = pad2(target.getMinutes());
       }
 
       function generateOrderId() {
@@ -1608,11 +1753,18 @@
           document.getElementById('order-address').style.borderColor = '';
         }
 
-        // 日期时间校验
+        // 日期时间校验：用显式年月日时分构造，避免 'YYYY-MM-DD HH:mm' 解析兼容性问题
         if (dateVal) {
-          var selectedTime = new Date(dateVal + ' ' + (hourVal || '00') + ':' + (minVal || '00'));
-          if (selectedTime.getTime() < Date.now() - 600000) {
-            showInlineError('order-date', '服务时间不能为过去，请重新选择');
+          var dp = dateVal.split('-');
+          var selectedTime = null;
+          if (dp.length === 3) {
+            var sy = parseInt(dp[0], 10), sm = parseInt(dp[1], 10) - 1, sd = parseInt(dp[2], 10);
+            var sh = parseInt(hourVal || '0', 10), si = parseInt(minVal || '0', 10);
+            selectedTime = new Date(sy, sm, sd, sh, si, 0, 0);
+          }
+          // 严格拦截无效时间与过去时间（删除 10 分钟宽限逻辑）
+          if (!selectedTime || isNaN(selectedTime.getTime()) || selectedTime.getTime() <= Date.now()) {
+            showInlineError('order-date', '服务时间必须晚于当前时刻，请重新选择');
           }
         } else {
           showInlineError('order-date', '请选择服务日期');
@@ -1646,6 +1798,7 @@
           duration: duration,
           description: desc || '无特殊说明',
           volunteer: null,
+          volunteerId: null,
           price: price,
           createdAt: Date.now(),
           ownerId: profile.userId || 'U001'
@@ -2014,7 +2167,7 @@
 
         var alarm = {
           id: 'ALM-' + String(alarms.length + 1).padStart(3, '0'),
-          time: Date.now(),
+          createdAt: Date.now(),
           type: '紧急求助',
           status: '已通知',
           location: location
@@ -2138,11 +2291,18 @@
           rating: old.rating || 4.8,
           totalService: old.totalService || 0,
           certified: old.certified !== undefined ? old.certified : true,
+          volunteerId: old.volunteerId || VOLUNTEER_ID,
           area: document.getElementById('volunteer-profile-area').value.trim(),
           bio: document.getElementById('volunteer-profile-bio').value.trim()
         };
         saveData(SK.volunteer, volunteer);
         VOLUNTEER_NAME = name;
+        // 同步更新共享暖伴列表中 V-001 的展示姓名（关联主键仍是 volunteerId，改名不丢关联）
+        var vols = getSharedVolunteers();
+        for (var i = 0; i < vols.length; i++) {
+          if (vols[i].id === VOLUNTEER_ID) { vols[i].name = name; break; }
+        }
+        saveData('sc_volunteers', vols);
         closeModal('modal-volunteer-profile');
         showToast('暖伴信息已保存');
         updateVolunteerDisplay();
@@ -2226,14 +2386,18 @@
         if (backInput) { backInput.value = ''; backInput.dataset.dataurl = auth.idback || ''; }
         setAuthPreview('auth-idfront-preview', auth.idfront);
         setAuthPreview('auth-idback-preview', auth.idback);
-        // Show current status
+        // Show current status（含拒绝原因回显）
         var statusDisplay = document.getElementById('auth-status-display');
         if (auth.status && auth.status !== '未认证') {
           var st = getAuthStatusStyle(auth.status);
           statusDisplay.style.display = 'block';
           statusDisplay.style.background = st.bg;
           statusDisplay.style.color = st.color;
-          statusDisplay.textContent = '当前状态：' + auth.status + (auth.status === '已拒绝' ? '，请修改后重新提交' : '');
+          var tip = '';
+          if (auth.status === '已拒绝') {
+            tip = '，' + (auth.rejectReason ? '拒绝原因：' + auth.rejectReason + '。' : '') + '请修改后重新提交';
+          }
+          statusDisplay.textContent = '当前状态：' + auth.status + tip;
         } else {
           statusDisplay.style.display = 'none';
         }
@@ -2257,18 +2421,19 @@
           return;
         }
 
+        var profile = getData(SK.profile) || {};
         var auth = {
           status: '待审核',
           realname: realname,
           idcard: idcard,
           idfront: idfront,
           idback: idback,
-          submitAt: Date.now()
+          submitAt: Date.now(),
+          subjectId: currentRole === 'nuanjia' ? (profile.userId || 'U001') : VOLUNTEER_ID
         };
         saveData(getAuthKey(), auth);
 
         /* 同步写入后台实名认证记录（sc_auth_records），打通前后端数据 */
-        var profile = getData(SK.profile) || {};
         var maskedId = idcard.length >= 18
           ? idcard.substring(0, 4) + '**********' + idcard.substring(14)
           : idcard.substring(0, 4) + '*****' + idcard.substring(idcard.length - 4);
@@ -2283,27 +2448,54 @@
           String(now.getMinutes()).padStart(2, '0');
         var role = currentRole === 'nuanjia' ? '暖家' : '暖伴';
         var backendRecords = getData('sc_auth_records') || [];
-        var authId = 'AUTH-' + String(backendRecords.length + 1).padStart(3, '0');
-        while (backendRecords.some(function (r) { return r.id === authId; })) {
-          var num = parseInt(authId.split('-')[1], 10) + 1;
-          authId = 'AUTH-' + String(num).padStart(3, '0');
+        // 同一 subjectId + role 重复提交：更新原记录，不再追加重复申请
+        var existingIdx = -1;
+        for (var bi = 0; bi < backendRecords.length; bi++) {
+          if (backendRecords[bi].subjectId === auth.subjectId && backendRecords[bi].role === role) { existingIdx = bi; break; }
         }
-        backendRecords.push({
-          id: authId,
-          name: profile.name || '匿名用户',
-          role: role,
-          idCard: maskedId,
-          phone: maskedPhone,
-          submitTime: submitTime,
-          status: '待审核',
-          realName: realname,
-          area: (profile.address || '').replace(/^武汉市?/, '').split('区')[0] + '区' || '-'
-        });
+        if (existingIdx >= 0) {
+          var er = backendRecords[existingIdx];
+          er.name = profile.name || er.name || '匿名用户';
+          er.idCard = maskedId;
+          er.phone = maskedPhone;
+          er.submitTime = submitTime;
+          er.status = '待审核';
+          er.realName = realname;
+          er.area = extractArea(profile.address);
+          delete er.rejectReason;
+        } else {
+          var authId = 'AUTH-' + String(backendRecords.length + 1).padStart(3, '0');
+          while (backendRecords.some(function (r) { return r.id === authId; })) {
+            var num = parseInt(authId.split('-')[1], 10) + 1;
+            authId = 'AUTH-' + String(num).padStart(3, '0');
+          }
+          backendRecords.push({
+            id: authId,
+            name: profile.name || '匿名用户',
+            role: role,
+            subjectId: auth.subjectId,
+            idCard: maskedId,
+            phone: maskedPhone,
+            submitTime: submitTime,
+            status: '待审核',
+            realName: realname,
+            area: extractArea(profile.address)
+          });
+        }
         saveData('sc_auth_records', backendRecords);
 
         closeModal('modal-auth');
         showToast('实名认证已提交，等待审核');
         updateAuthDisplay();
+      }
+
+      // 解析地址中的“区”，没有区域时返回“-”，修复空地址被解析成“区”的问题
+      function extractArea(address) {
+        if (!address) return '-';
+        var s = String(address).replace(/^武汉市?/, '');
+        var idx = s.indexOf('区');
+        if (idx < 0) return s ? s : '-';
+        return s.substring(0, idx + 1);
       }
 
       /* ===== Order Detail ===== */
@@ -2347,11 +2539,12 @@
 
         // Action buttons
         if (currentRole === 'nuanban' && order.status === '待接单') {
-          html += '<button onclick="acceptOrder(\'' + order.id + '\')" class="submit-btn">接单</button>';
-        } else if (currentRole === 'nuanban' && order.status === '进行中') {
-          html += '<button onclick="completeOrder(\'' + order.id + '\')" class="submit-btn" style="background: var(--state-success);">完成服务</button>';
+          html += '<button onclick="acceptOrder(\'' + escapeHtml(order.id) + '\')" class="submit-btn">接单</button>';
+        } else if (currentRole === 'nuanban' && order.status === '进行中' && order.volunteerId === VOLUNTEER_ID) {
+          // 仅当前暖伴可操作属于自己的进行中订单
+          html += '<button onclick="completeOrder(\'' + escapeHtml(order.id) + '\')" class="submit-btn" style="background: var(--state-success);">完成服务</button>';
         } else if (currentRole === 'nuanjia' && order.status === '待确认') {
-          html += '<button onclick="confirmCompleteOrder(\'' + order.id + '\')" class="submit-btn" style="background: var(--state-success);">确认完成</button>';
+          html += '<button onclick="confirmCompleteOrder(\'' + escapeHtml(order.id) + '\')" class="submit-btn" style="background: var(--state-success);">确认完成</button>';
         }
         html += '</div>';
 
@@ -2363,16 +2556,30 @@
         }, 300);
       }
 
-      /* ===== Volunteer Accept / Complete ===== */
+      /* ===== Volunteer Accept / Complete（状态机与暖伴关系严格联动） ===== */
       function acceptOrder(id) {
         var orders = getData(SK.orders) || [];
-        orders.forEach(function (o) {
-          if (o.id === id) {
-            o.status = '进行中';
-            o.volunteer = VOLUNTEER_NAME;
-          }
-        });
+        var target = null;
+        for (var i = 0; i < orders.length; i++) { if (orders[i].id === id) { target = orders[i]; break; } }
+        if (!target) { showToast('订单不存在'); return; }
+        // 内部再次校验：订单仍为待接单、未被他人接单
+        if (target.status !== '待接单') { showToast('该订单已被处理，无法接单'); closeModal('modal-order-detail'); switchTab(currentTab); return; }
+        if (target.volunteerId) { showToast('该订单已指派暖伴，禁止重复接单'); closeModal('modal-order-detail'); return; }
+        // 校验暖伴状态：在线、已认证、技能匹配
+        var vols = getSharedVolunteers();
+        var me = null;
+        for (var vi = 0; vi < vols.length; vi++) { if (vols[vi].id === VOLUNTEER_ID) { me = vols[vi]; break; } }
+        if (!me) { showToast('暖伴信息不存在'); return; }
+        if (me.status !== '在线') { showToast('当前状态为' + me.status + '，无法接单'); return; }
+        var banAuth = getData(SK.authNuanban);
+        if (!banAuth || banAuth.status !== '已认证') { showToast('尚未通过实名认证，无法接单'); return; }
+        if (!me.skills || me.skills.indexOf(target.type) < 0) { showToast('技能不匹配，无法接单此' + target.type + '订单'); return; }
+        // 接单：订单 → 进行中（保存 volunteerId + 姓名），暖伴 → 服务中
+        target.status = '进行中';
+        target.volunteerId = VOLUNTEER_ID;
+        target.volunteer = VOLUNTEER_NAME;
         saveData(SK.orders, orders);
+        setSharedVolunteerStatus(VOLUNTEER_ID, '服务中');
         closeModal('modal-order-detail');
         showToast('接单成功');
         switchTab(currentTab);
@@ -2380,13 +2587,17 @@
 
       function completeOrder(id) {
         var orders = getData(SK.orders) || [];
-        orders.forEach(function (o) {
-          if (o.id === id) {
-            o.status = '待确认';
-            o.completedAt = Date.now();
-          }
-        });
+        var target = null;
+        for (var i = 0; i < orders.length; i++) { if (orders[i].id === id) { target = orders[i]; break; } }
+        if (!target) { showToast('订单不存在'); return; }
+        // 仅当前暖伴可完成属于自己的进行中订单
+        if (target.volunteerId !== VOLUNTEER_ID) { showToast('无权操作他人订单'); return; }
+        if (target.status !== '进行中') { showToast('该订单不在进行中，无法完成'); closeModal('modal-order-detail'); switchTab(currentTab); return; }
+        // 暖伴提交完成：订单 → 待确认，暖伴 → 在线
+        target.status = '待确认';
+        target.completedAt = Date.now();
         saveData(SK.orders, orders);
+        setSharedVolunteerStatus(VOLUNTEER_ID, '在线');
         closeModal('modal-order-detail');
         showToast('服务已完成，等待暖家确认');
         switchTab(currentTab);
@@ -2394,13 +2605,15 @@
 
       function confirmCompleteOrder(id) {
         var orders = getData(SK.orders) || [];
-        orders.forEach(function (o) {
-          if (o.id === id) {
-            o.status = '已完成';
-            o.completedAt = Date.now();
-          }
-        });
+        var target = null;
+        for (var i = 0; i < orders.length; i++) { if (orders[i].id === id) { target = orders[i]; break; } }
+        if (!target) { showToast('订单不存在'); return; }
+        if (target.status !== '待确认') { showToast('该订单不在待确认状态'); closeModal('modal-order-detail'); switchTab(currentTab); return; }
+        // 暖家确认：订单 → 已完成，暖伴 completedOrders 仅增加一次（幂等防重复）
+        target.status = '已完成';
+        target.completedAt = Date.now();
         saveData(SK.orders, orders);
+        if (target.volunteerId) incrementSharedVolunteerCompletedOrders(target.volunteerId);
         closeModal('modal-order-detail');
         showToast('服务已确认完成');
         switchTab(currentTab);
@@ -2451,18 +2664,13 @@
         } else {
           html = '<div class="space-y-2">';
           alarms.forEach(function (a) {
-            var d = new Date(a.time);
-            var timeStr = d.getFullYear() + '-' +
-              String(d.getMonth() + 1).padStart(2, '0') + '-' +
-              String(d.getDate()).padStart(2, '0') + ' ' +
-              String(d.getHours()).padStart(2, '0') + ':' +
-              String(d.getMinutes()).padStart(2, '0');
+            var timeStr = fmtAlarmTime(a, true);
             html += '<div class="p-3 rounded-xl" style="background: var(--state-error-bg); border: 1px solid var(--state-error-bg);">';
             html += '<div class="flex items-center justify-between mb-1">';
             html += '<span class="text-sm font-medium" style="color: var(--state-error);">' + escapeHtml(a.type) + '</span>';
             html += '<span class="text-xs px-2 py-0.5 rounded" style="background: var(--state-error); color: #fff;">' + escapeHtml(a.status) + '</span>';
             html += '</div>';
-            html += '<p class="text-xs" style="color: var(--color-text-secondary);">' + timeStr + '</p>';
+            html += '<p class="text-xs" style="color: var(--color-text-secondary);">' + escapeHtml(timeStr) + '</p>';
             html += '<p class="text-xs mt-1" style="color: var(--color-text-secondary);">位置：' + escapeHtml(a.location) + '</p>';
             html += '</div>';
           });
@@ -2572,7 +2780,7 @@
       function renderNuanbanHome() {
         var orders = getData(SK.orders) || [];
         var available = orders.filter(function (o) { return o.status === '待接单'; });
-        var completed = orders.filter(function (o) { return o.status === '已完成' && o.volunteer === VOLUNTEER_NAME; });
+        var completed = orders.filter(function (o) { return o.status === '已完成' && o.volunteerId === VOLUNTEER_ID; });
 
         // Update volunteer greeting
         updateVolunteerDisplay();
@@ -2620,8 +2828,8 @@
       /* ===== Render: Nuanban Orders ===== */
       function renderNuanbanOrders() {
         var orders = getData(SK.orders) || [];
-        var ongoing = orders.filter(function (o) { return o.status === '进行中' && o.volunteer === VOLUNTEER_NAME; });
-        var completed = orders.filter(function (o) { return o.status === '已完成' && o.volunteer === VOLUNTEER_NAME; });
+        var ongoing = orders.filter(function (o) { return o.status === '进行中' && o.volunteerId === VOLUNTEER_ID; });
+        var completed = orders.filter(function (o) { return o.status === '已完成' && o.volunteerId === VOLUNTEER_ID; });
 
         // Ongoing
         var ongoingEl = document.getElementById('ongoing-orders');
@@ -2681,7 +2889,7 @@
       /* ===== Render: Nuanban Me ===== */
       function renderNuanbanMe() {
         var orders = getData(SK.orders) || [];
-        var completed = orders.filter(function (o) { return o.status === '已完成' && o.volunteer === VOLUNTEER_NAME; });
+        var completed = orders.filter(function (o) { return o.status === '已完成' && o.volunteerId === VOLUNTEER_ID; });
         var income = completed.reduce(function (sum, o) { return sum + (o.price || 0); }, 0);
 
         var meIncome = document.getElementById('me-income');
