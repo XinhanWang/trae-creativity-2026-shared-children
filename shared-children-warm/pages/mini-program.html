@@ -155,6 +155,7 @@
     </script>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
     <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <script src="../../shared/js/baidu-map-loader.js"></script>
     <style type="text/tailwindcss">
   @theme inline {
     --color-primary: #D4654A;
@@ -192,15 +193,32 @@
       #phone-screen .text-xl { font-size: calc(1.25rem * var(--font-scale, 1)); }
       #phone-screen .text-2xl { font-size: calc(1.5rem * var(--font-scale, 1)); }
       #phone-screen .text-3xl { font-size: calc(1.875rem * var(--font-scale, 1)); }
+
+      /* Mobile responsive: no page-level horizontal scroll */
+      .sc-main-padded { padding: 1rem; }
+      .sc-intro-panel { padding-top: 0; }
+      .sc-intro-panel h1 { font-size: 1.75rem; margin-bottom: 0.5rem; }
+      .sc-intro-panel p.text-lg { font-size: 0.95rem; margin-bottom: 1rem; }
+      .sc-intro-panel .flex.gap-3.mb-8 { margin-bottom: 1rem; }
+      @media (min-width: 768px) {
+        .sc-main-padded { padding: 2rem; }
+        .sc-intro-panel { padding-top: 3rem; }
+        .sc-intro-panel h1 { font-size: 2.5rem; margin-bottom: 1rem; }
+        .sc-intro-panel p.text-lg { font-size: 1.125rem; margin-bottom: 2rem; }
+        .sc-intro-panel .flex.gap-3.mb-8 { margin-bottom: 2rem; }
+      }
+      @media (max-width: 390px) {
+        .sc-main-padded { padding: 0.5rem; }
+      }
     </style>
     <link rel="stylesheet" href="../../shared/css/animations.css">
 </head>
 <body class="min-h-screen font-sans antialiased">
-    <main class="min-h-screen flex items-center justify-center" style="background: var(--color-bg); padding: var(--space-8);">
-      <div class="flex flex-col lg:flex-row items-center lg:items-start gap-8 lg:gap-16 max-w-7xl mx-auto w-full">
+    <main class="min-h-screen flex items-center justify-center sc-main-padded" style="background: var(--color-bg);">
+      <div class="flex flex-col lg:flex-row items-center lg:items-start gap-6 lg:gap-16 max-w-7xl mx-auto w-full">
 
         <!-- Left Info Panel -->
-        <div class="flex-1 max-w-md text-center lg:text-left lg:pt-12">
+        <div class="flex-1 max-w-md text-center lg:text-left lg:pt-12 sc-intro-panel">
           <p class="text-sm font-medium tracking-wider uppercase mb-3" style="color: var(--color-primary); letter-spacing: var(--tracking-wider);">WeChat Mini Program</p>
           <h1 class="text-4xl lg:text-5xl font-semibold leading-tight mb-4" style="color: var(--color-text); font-family: var(--font-serif); text-wrap: balance; word-break: keep-all;">小程序体验</h1>
           <p class="text-lg leading-relaxed mb-8" style="color: var(--color-text-secondary);">为老人家庭与志愿者打造的双角色小程序，温暖设计让每一位用户都能轻松上手。点击下方按钮切换不同角色视角。</p>
@@ -246,8 +264,8 @@
         </div>
 
         <!-- Phone Mockup -->
-        <div class="shrink-0">
-          <div class="relative" style="width: 390px; height: 800px;">
+        <div class="shrink-0 w-full lg:w-auto flex justify-center">
+          <div class="relative" style="width: min(390px, 100%); aspect-ratio: 390 / 800; max-height: calc(100vh - 48px);">
             <!-- Phone Frame -->
             <div class="absolute inset-0 rounded-[48px]" style="background: var(--color-phone-frame); box-shadow: 0 24px 80px var(--color-phone-frame-shadow), 0 0 0 2px var(--color-phone-frame-border), inset 0 0 0 2px var(--color-phone-frame-inner);"></div>
 
@@ -955,10 +973,10 @@
                         </div>
                         <span class="text-xs" style="color: var(--color-text-muted);">v1.0.0</span>
                       </div>
-                      <div class="flex items-center justify-between p-3 rounded-xl cursor-pointer" style="background: var(--color-bg); border: 1px solid var(--color-border-light);" onclick="clearCache()">
+                      <div class="flex items-center justify-between p-3 rounded-xl cursor-pointer" style="background: var(--color-bg); border: 1px solid var(--color-border-light);" onclick="clearCache()" role="button" tabindex="0" aria-label="清除报警记录">
                         <div class="flex items-center gap-2">
                           <i data-lucide="trash-2" style="width:18px;height:18px;color:var(--state-error);"></i>
-                          <span class="text-sm" style="color: var(--color-text);">清除缓存</span>
+                          <span class="text-sm" style="color: var(--color-text);">清除报警记录</span>
                         </div>
                         <i data-lucide="chevron-right" style="width:16px;height:16px;color:var(--color-text-muted);"></i>
                       </div>
@@ -1310,6 +1328,29 @@
               description: '代缴水电燃气费', volunteer: null, volunteerId: null,
               price: 60, createdAt: _now - 4 * _D, ownerId: null
             }
+          ]);
+        }
+        // 共享暖伴列表（sc_volunteers）：与后台同源种子，保证首次访问小程序即有附近暖伴
+        if (!getData('sc_volunteers')) {
+          saveData('sc_volunteers', [
+            { id: 'V-001', name: '张小雨', phone: '138xxxx1234', rating: 4.9, completedOrders: 328, status: '在线', skills: ['日常陪伴', '数字辅导'], area: '武昌区梅苑小区', experience: '2年经验', praiseRate: 98 },
+            { id: 'V-002', name: '李芳姨', phone: '139xxxx5678', rating: 4.8, completedOrders: 512, status: '在线', skills: ['日常陪伴', '跑腿代办', '陪同就医'], area: '洪山区卓刀泉社区', experience: '3年经验', praiseRate: 97 },
+            { id: 'V-003', name: '王志强', phone: '137xxxx9012', rating: 4.7, completedOrders: 156, status: '在线', skills: ['数字辅导', '跑腿代办'], area: '江岸区同安里', experience: '1年经验', praiseRate: 96 },
+            { id: 'V-004', name: '陈思雨', phone: '136xxxx3456', rating: 4.9, completedOrders: 89, status: '服务中', skills: ['陪同就医', '日常陪伴'], area: '汉阳区翠微街', experience: '1年经验', praiseRate: 99 },
+            { id: 'V-005', name: '刘文博', phone: '135xxxx7890', rating: 4.6, completedOrders: 67, status: '在线', skills: ['日常陪伴', '跑腿代办'], area: '江汉区锦绣家园', experience: '半年经验', praiseRate: 95 },
+            { id: 'V-006', name: '赵敏', phone: '133xxxx2345', rating: 4.8, completedOrders: 203, status: '待审核', skills: ['跑腿代办', '陪同就医'], area: '青山区金色港湾', experience: '2年经验', praiseRate: 97 },
+            { id: 'V-007', name: '孙嘉懿', phone: '138xxxx6789', rating: 4.8, completedOrders: 45, status: '在线', skills: ['日常陪伴', '数字辅导'], area: '武昌区水果湖', experience: '1年经验', praiseRate: 96 },
+            { id: 'V-008', name: '杨思琪', phone: '139xxxx1357', rating: 4.7, completedOrders: 78, status: '在线', skills: ['日常陪伴', '陪同就医'], area: '洪山区街道口', experience: '1年经验', praiseRate: 95 },
+            { id: 'V-009', name: '马晓晨', phone: '136xxxx2468', rating: 4.9, completedOrders: 112, status: '服务中', skills: ['跑腿代办', '数字辅导'], area: '江岸区百步亭', experience: '2年经验', praiseRate: 98 },
+            { id: 'V-010', name: '郭明轩', phone: '135xxxx8642', rating: 4.6, completedOrders: 34, status: '待审核', skills: ['日常陪伴', '跑腿代办'], area: '汉阳区王家湾', experience: '半年经验', praiseRate: 94 }
+          ]);
+        }
+        // 共享认证记录（sc_auth_records）：首次访问小程序时补种子，保证后台审核闭环
+        if (!getData('sc_auth_records')) {
+          var _nowAuth = Date.now();
+          saveData('sc_auth_records', [
+            { id: 'AUTH-001', name: '王奶奶', role: '暖家', subjectId: 'U001', idCard: '4201**********1000', phone: '138****8888', submitTime: fmtDate(-2) + ' 09:00', status: '已认证', realName: '王秀兰', area: '武昌区梅苑小区' },
+            { id: 'AUTH-002', name: '张小雨', role: '暖伴', subjectId: 'V-001', idCard: '4201**********1037', phone: '137****7777', submitTime: fmtDate(-30) + ' 08:00', status: '已认证', realName: '张明', area: '武昌区梅苑小区' }
           ]);
         }
         if (!getData(SK.profile)) {
@@ -1666,8 +1707,10 @@
         var hourEl = document.getElementById('order-hour');
         var minEl = document.getElementById('order-minute');
         if (dateEl) {
+          // 使用 target 的真实日期（23:56 → 次日 00:00 时日期必须跨天）
+          var targetStr = target.getFullYear() + '-' + pad2(target.getMonth() + 1) + '-' + pad2(target.getDate());
           var todayStr = now.getFullYear() + '-' + pad2(now.getMonth() + 1) + '-' + pad2(now.getDate());
-          dateEl.value = todayStr;
+          dateEl.value = targetStr;
           dateEl.min = todayStr;
         }
         if (hourEl) hourEl.value = pad2(target.getHours());
@@ -1819,39 +1862,17 @@
       var orderMapInstance = null;
       var detailMapInstance = null;
       var homeMapInstance = null;
-      var scMiniMapState = 'idle'; // idle | loading | loaded | failed
-      var scMiniMapScriptEl = null;
-      var scMiniMapTimeout = null;
+      /* 详情地图实例版本号：每次 openOrderDetail 递增，防止旧异步回调污染新容器 */
+      var detailMapGen = 0;
 
       function checkBaiduMapReady() {
         return typeof BMap !== 'undefined' && typeof BMap === 'object' && typeof BMap.Map === 'function';
       }
 
-      /* 动态加载百度地图脚本 */
+      /* 通过共享加载器加载百度地图（单例 Promise，多处同时请求都能收到结果） */
       function loadBaiduMapMini(onReady, onFail) {
-        if (scMiniMapState === 'loaded' && checkBaiduMapReady()) { onReady(); return; }
-        if (scMiniMapState === 'loading') return;
-        scMiniMapState = 'loading';
-        scMiniMapScriptEl = document.createElement('script');
-        scMiniMapScriptEl.type = 'text/javascript';
-        scMiniMapScriptEl.src = 'https://api.map.baidu.com/api?v=3.0&ak=VeydduHr00O5f7G5GOzxlkZ6jOIaSFsH';
-        scMiniMapScriptEl.onload = function () {
-          var tries = 0;
-          function checkReady() {
-            if (checkBaiduMapReady()) {
-              scMiniMapState = 'loaded';
-              if (scMiniMapTimeout) { clearTimeout(scMiniMapTimeout); scMiniMapTimeout = null; }
-              onReady();
-            } else if (tries < 10) { tries++; setTimeout(checkReady, 100); }
-            else { scMiniMapState = 'failed'; onFail(); }
-          }
-          checkReady();
-        };
-        scMiniMapScriptEl.onerror = function () { scMiniMapState = 'failed'; onFail(); };
-        scMiniMapTimeout = setTimeout(function () {
-          if (scMiniMapState === 'loading') { scMiniMapState = 'failed'; onFail(); }
-        }, 8000);
-        document.head.appendChild(scMiniMapScriptEl);
+        if (checkBaiduMapReady()) { onReady(); return; }
+        ScBaiduMapLoader.load().then(onReady).catch(function () { onFail(); });
       }
 
       /* 离线降级地图（内联 SVG） */
@@ -1998,13 +2019,18 @@
       function initDetailMap(address) {
         var container = document.getElementById('detail-map-container');
         if (!container) return;
-        if (detailMapInstance) { try { detailMapInstance.reset(); } catch(e){} return; }
+        // 每次打开详情：销毁旧实例，重新创建（旧实例绑定已移除的 DOM）
+        if (detailMapInstance) { try { detailMapInstance.clearOverlays(); } catch(e){} detailMapInstance = null; }
+        var gen = ++detailMapGen; // 本次初始化的版本号，防止旧异步回调污染新容器
         container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;background:var(--color-bg-muted);color:var(--color-text-muted);font-size:12px;">地图加载中…</div>';
         loadBaiduMapMini(
           function () {
-            container.innerHTML = '';
+            if (gen !== detailMapGen) return; // 旧回调，容器已被替换
+            var c = document.getElementById('detail-map-container');
+            if (!c) return;
+            c.innerHTML = '';
             try {
-              detailMapInstance = new BMap.Map(container);
+              detailMapInstance = new BMap.Map(c);
               var point = new BMap.Point(MAP_CENTER.lng, MAP_CENTER.lat);
               detailMapInstance.centerAndZoom(point, 14);
               detailMapInstance.disableScrollWheelZoom();
@@ -2012,6 +2038,7 @@
               detailMapInstance.addOverlay(marker);
               if (address) {
                 geocodeAddress(address, function (pt) {
+                  if (gen !== detailMapGen) return; // 旧回调
                   if (pt && detailMapInstance) {
                     detailMapInstance.clearOverlays();
                     var mk = new BMap.Marker(pt);
@@ -2022,7 +2049,10 @@
               }
             } catch(e) { showMapFallback('detail-map-container', 'detail'); }
           },
-          function () { showMapFallback('detail-map-container', 'detail'); }
+          function () {
+            if (gen !== detailMapGen) return; // 旧回调
+            showMapFallback('detail-map-container', 'detail');
+          }
         );
       }
 
@@ -2414,11 +2444,42 @@
           if (preview) { preview.innerHTML = '点击下方按钮上传照片'; preview.classList.remove('has-img'); }
           return;
         }
+        // 文件类型校验
+        if (!file.type.startsWith('image/')) {
+          showToast('请上传图片格式文件', 'error');
+          input.value = '';
+          return;
+        }
+        // 文件大小校验（原始文件最大 5MB）
+        if (file.size > 5 * 1024 * 1024) {
+          showToast('图片不能超过 5MB，请压缩后上传', 'error');
+          input.value = '';
+          return;
+        }
         var reader = new FileReader();
         reader.onload = function (e) {
-          var dataUrl = e.target.result;
-          input.dataset.dataurl = dataUrl;
-          if (preview) { preview.innerHTML = '<img src="' + dataUrl + '" alt="证件照">'; preview.classList.add('has-img'); }
+          // 通过 canvas 压缩图片，避免大图撑爆 localStorage
+          var img = new Image();
+          img.onload = function () {
+            var maxW = 800, maxH = 600;
+            var w = img.width, h = img.height;
+            if (w > maxW) { h = h * (maxW / w); w = maxW; }
+            if (h > maxH) { w = w * (maxH / h); h = maxH; }
+            var canvas = document.createElement('canvas');
+            canvas.width = w; canvas.height = h;
+            var ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, w, h);
+            var dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+            input.dataset.dataurl = dataUrl;
+            if (preview) { preview.innerHTML = '<img src="' + dataUrl + '" alt="证件照">'; preview.classList.add('has-img'); }
+          };
+          img.onerror = function () {
+            // 压缩失败时降级使用原图
+            var dataUrl = e.target.result;
+            input.dataset.dataurl = dataUrl;
+            if (preview) { preview.innerHTML = '<img src="' + dataUrl + '" alt="证件照">'; preview.classList.add('has-img'); }
+          };
+          img.src = e.target.result;
         };
         reader.readAsDataURL(file);
       }
@@ -2468,7 +2529,13 @@
           return;
         }
 
-        var profile = getData(SK.profile) || {};
+        // 根据当前角色读取对应 profile，禁止暖伴认证使用暖家 profile
+        var isNuanjia = currentRole === 'nuanjia';
+        var profile = isNuanjia ? (getData(SK.profile) || {}) : (getData(SK.volunteer) || {});
+        var displayName = profile.name || '匿名用户';
+        var profilePhone = profile.phone || '';
+        var profileAddress = isNuanjia ? (profile.address || '') : (profile.area || '');
+        var subjectId = isNuanjia ? (profile.userId || 'U001') : (profile.volunteerId || VOLUNTEER_ID);
         var auth = {
           status: '待审核',
           realname: realname,
@@ -2476,7 +2543,7 @@
           idfront: idfront,
           idback: idback,
           submitAt: Date.now(),
-          subjectId: currentRole === 'nuanjia' ? (profile.userId || 'U001') : VOLUNTEER_ID
+          subjectId: subjectId
         };
         saveData(getAuthKey(), auth);
 
@@ -2484,8 +2551,8 @@
         var maskedId = idcard.length >= 18
           ? idcard.substring(0, 4) + '**********' + idcard.substring(14)
           : idcard.substring(0, 4) + '*****' + idcard.substring(idcard.length - 4);
-        var maskedPhone = profile.phone
-          ? profile.phone.substring(0, 3) + '****' + profile.phone.substring(7)
+        var maskedPhone = profilePhone
+          ? profilePhone.substring(0, 3) + '****' + profilePhone.substring(7)
           : '-';
         var now = new Date();
         var submitTime = now.getFullYear() + '-' +
@@ -2493,22 +2560,24 @@
           String(now.getDate()).padStart(2, '0') + ' ' +
           String(now.getHours()).padStart(2, '0') + ':' +
           String(now.getMinutes()).padStart(2, '0');
-        var role = currentRole === 'nuanjia' ? '暖家' : '暖伴';
+        var role = isNuanjia ? '暖家' : '暖伴';
         var backendRecords = getData('sc_auth_records') || [];
         // 同一 subjectId + role 重复提交：更新原记录，不再追加重复申请
         var existingIdx = -1;
         for (var bi = 0; bi < backendRecords.length; bi++) {
-          if (backendRecords[bi].subjectId === auth.subjectId && backendRecords[bi].role === role) { existingIdx = bi; break; }
+          if (backendRecords[bi].subjectId === subjectId && backendRecords[bi].role === role) { existingIdx = bi; break; }
         }
         if (existingIdx >= 0) {
           var er = backendRecords[existingIdx];
-          er.name = profile.name || er.name || '匿名用户';
+          er.name = displayName;
           er.idCard = maskedId;
           er.phone = maskedPhone;
           er.submitTime = submitTime;
           er.status = '待审核';
           er.realName = realname;
-          er.area = extractArea(profile.address);
+          er.area = extractArea(profileAddress);
+          er.idfront = idfront || '';
+          er.idback = idback || '';
           delete er.rejectReason;
         } else {
           var authId = 'AUTH-' + String(backendRecords.length + 1).padStart(3, '0');
@@ -2518,15 +2587,17 @@
           }
           backendRecords.push({
             id: authId,
-            name: profile.name || '匿名用户',
+            name: displayName,
             role: role,
-            subjectId: auth.subjectId,
+            subjectId: subjectId,
             idCard: maskedId,
             phone: maskedPhone,
             submitTime: submitTime,
             status: '待审核',
             realName: realname,
-            area: extractArea(profile.address)
+            area: extractArea(profileAddress),
+            idfront: idfront || '',
+            idback: idback || ''
           });
         }
         saveData('sc_auth_records', backendRecords);
@@ -2760,7 +2831,7 @@
 
       function escapeHtml(str) {
         if (!str) return '';
-        return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
       }
 
       /* ===== Render: Nearby Volunteers (dynamic from sc_volunteers) ===== */
@@ -3078,7 +3149,8 @@
       function clearCache() {
         localStorage.removeItem('sc_alarms');
         saveData(SK.alarms, []);
-        showToast('缓存已清除');
+        renderAlarms();
+        showToast('报警记录已清除');
       }
 
       /* ===== Init ===== */

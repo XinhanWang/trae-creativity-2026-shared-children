@@ -150,6 +150,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
     <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
+    <script src="../../shared/js/baidu-map-loader.js"></script>
     <style type="text/tailwindcss">
   @theme inline {
     --color-primary: #D4654A;
@@ -266,7 +267,7 @@
                     <div class="text-sm truncate" style="color: var(--color-sidebar-text);">管理员</div>
                     <div class="text-xs truncate" style="color: rgba(240,232,223,0.4);">admin@nuanban.com</div>
                 </div>
-                <i data-lucide="log-out" class="w-4 h-4 shrink-0 cursor-pointer transition-colors duration-200" style="color: rgba(240,232,223,0.4);" onclick="doLogout()" title="退出登录"></i>
+                <i data-lucide="log-out" class="w-4 h-4 shrink-0 cursor-pointer transition-colors duration-200" style="color: rgba(240,232,223,0.4);" onclick="doLogout()" title="退出登录" role="button" tabindex="0" aria-label="退出登录"></i>
             </div>
         </aside>
 
@@ -290,7 +291,7 @@
                         <i data-lucide="clock" class="w-4 h-4"></i>
                         <span id="current-time">--:--:--</span>
                     </div>
-                    <button id="bell-btn" onclick="toggleNotifications(event)" class="relative p-2 rounded-lg transition-colors duration-200 hover:bg-[var(--color-bg-muted)]">
+                    <button id="bell-btn" onclick="toggleNotifications(event)" aria-label="通知中心" title="通知" class="relative p-2 rounded-lg transition-colors duration-200 hover:bg-[var(--color-bg-muted)]">
                         <i data-lucide="bell" class="w-[18px] h-[18px]" style="color: var(--color-text-secondary);"></i>
                         <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full" style="background: var(--color-primary);"></span>
                     </button>
@@ -301,7 +302,7 @@
                         </div>
                         <div id="notification-list" class="max-h-80 overflow-y-auto"></div>
                     </div>
-                    <button class="p-2 rounded-lg transition-colors duration-200 hover:bg-[var(--color-bg-muted)]" onclick="openAdminSettings()">
+                    <button class="p-2 rounded-lg transition-colors duration-200 hover:bg-[var(--color-bg-muted)]" onclick="openAdminSettings()" aria-label="后台设置" title="设置">
                         <i data-lucide="settings" class="w-[18px] h-[18px]" style="color: var(--color-text-secondary);"></i>
                     </button>
                 </div>
@@ -374,8 +375,8 @@
                             <div class="flex items-center justify-between mb-4">
                                 <h3 class="text-sm font-semibold" style="color: var(--color-text);">订单趋势</h3>
                                 <div class="flex gap-1" id="time-range-btns">
-                                    <button onclick="switchTimeRange(7)" data-range="7" class="px-2.5 py-1 text-xs rounded time-range-btn" style="background: var(--color-primary); color: var(--color-text-inverse);">近7天</button>
-                                    <button onclick="switchTimeRange(30)" data-range="30" class="px-2.5 py-1 text-xs rounded time-range-btn" style="color: var(--color-text-muted);">近30天</button>
+                                    <button onclick="switchTimeRange(7)" data-range="7" aria-pressed="true" class="px-2.5 py-1 text-xs rounded time-range-btn" style="background: var(--color-primary); color: var(--color-text-inverse);">近7天</button>
+                                    <button onclick="switchTimeRange(30)" data-range="30" aria-pressed="false" class="px-2.5 py-1 text-xs rounded time-range-btn" style="color: var(--color-text-muted);">近30天</button>
                                 </div>
                             </div>
                             <div style="height: 220px;"><canvas id="chart-order-trend"></canvas></div>
@@ -729,19 +730,19 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
                         <div class="rounded-lg p-4 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
                             <div class="text-sm mb-2" style="color: var(--color-text-secondary);">合作企业</div>
-                            <div class="text-2xl font-bold" style="color: var(--color-text); font-variant-numeric: tabular-nums;">28</div>
+                            <div id="stat-partners" class="text-2xl font-bold" style="color: var(--color-text); font-variant-numeric: tabular-nums;">-</div>
                         </div>
                         <div class="rounded-lg p-4 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
                             <div class="text-sm mb-2" style="color: var(--color-text-secondary);">月采购额</div>
-                            <div class="text-2xl font-bold" style="color: var(--color-primary); font-variant-numeric: tabular-nums;">¥86万</div>
+                            <div id="stat-monthly" class="text-2xl font-bold" style="color: var(--color-primary); font-variant-numeric: tabular-nums;">-</div>
                         </div>
                         <div class="rounded-lg p-4 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
                             <div class="text-sm mb-2" style="color: var(--color-text-secondary);">覆盖家庭</div>
-                            <div class="text-2xl font-bold" style="color: var(--state-success); font-variant-numeric: tabular-nums;">1,256</div>
+                            <div id="stat-families" class="text-2xl font-bold" style="color: var(--state-success); font-variant-numeric: tabular-nums;">-</div>
                         </div>
                         <div class="rounded-lg p-4 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
                             <div class="text-sm mb-2" style="color: var(--color-text-secondary);">待签合同</div>
-                            <div class="text-2xl font-bold" style="color: var(--state-warning); font-variant-numeric: tabular-nums;">3</div>
+                            <div id="stat-pending" class="text-2xl font-bold" style="color: var(--state-warning); font-variant-numeric: tabular-nums;">-</div>
                         </div>
                     </div>
 
@@ -1016,6 +1017,26 @@
         </div>
     </div>
 
+    <!-- Reject Auth Modal -->
+    <div id="modal-reject-auth" class="hidden fixed inset-0 flex items-center justify-center p-4" style="background: rgba(61,46,36,0.45); z-index: var(--z-modal);" role="dialog" aria-modal="true" onclick="closeModal('modal-reject-auth')">
+        <div class="rounded-lg border w-full max-w-md shadow-xl" style="background: var(--color-bg-card); border-color: var(--color-border);" onclick="event.stopPropagation()">
+            <div class="px-5 py-4 border-b flex items-center justify-between" style="border-color: var(--color-border);">
+                <h3 class="text-base font-semibold" style="color: var(--color-text); font-family: var(--font-serif);">拒绝认证</h3>
+                <button onclick="closeModal('modal-reject-auth')" aria-label="关闭" class="p-1 rounded-lg transition-colors hover:bg-[var(--color-bg-muted)]">
+                    <i data-lucide="x" class="w-5 h-5" style="color: var(--color-text-secondary);"></i>
+                </button>
+            </div>
+            <div class="p-5">
+                <label class="block text-sm mb-2" style="color: var(--color-text-secondary);">请填写拒绝原因（必填）</label>
+                <textarea id="reject-reason-input" rows="3" class="w-full rounded-lg border p-3 text-sm" style="background: var(--color-bg-muted); border-color: var(--color-border); color: var(--color-text);" placeholder="例如：身份证照片模糊、人脸识别不匹配…"></textarea>
+                <div class="flex justify-end gap-3 mt-4">
+                    <button onclick="closeModal('modal-reject-auth')" class="px-4 py-2 text-sm rounded-lg" style="background: var(--color-bg-muted); color: var(--color-text-secondary);">取消</button>
+                    <button onclick="confirmRejectAuth()" class="px-4 py-2 text-sm rounded-lg" style="background: var(--state-error); color: var(--color-text-inverse);">确认拒绝</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast Container -->
     <div id="toast-container" class="fixed top-6 right-6 space-y-2" style="z-index: var(--z-toast);"></div>
 
@@ -1226,19 +1247,34 @@
                 var s30 = buildTrendSeries();
                 var s7 = getTrendData(7);
                 var pass = true, log = [];
+                // 1. 长度校验
+                if (s30.length !== 30) { pass = false; log.push('30天长度=' + s30.length + ' != 30'); }
+                if (s7.length !== 7) { pass = false; log.push('7天长度=' + s7.length + ' != 7'); }
+                // 2. 尾部一致性：7天必须严格等于30天.slice(-7)
                 var tail = s30.slice(-7);
                 var same = s7.length === tail.length;
                 for (var i = 0; same && i < s7.length; i++) {
                     if (s7[i].date !== tail[i].date || s7[i].count !== tail[i].count) same = false;
                 }
                 if (!same) { pass = false; log.push('7天 != 30天.slice(-7)'); }
+                // 3. 日期连续性校验
+                for (var i = 1; i < s30.length; i++) {
+                    var d1 = new Date(s30[i-1].date), d2 = new Date(s30[i].date);
+                    var diff = (d2 - d1) / 86400000;
+                    if (Math.abs(diff - 1) > 0.01) { pass = false; log.push('30天日期不连续: ' + s30[i-1].date + ' -> ' + s30[i].date); break; }
+                }
+                var c7 = s7.map(function (p) { return p.count; });
+                var c30 = s30.map(function (p) { return p.count; });
+                // 4. 数值有限性校验
+                for (var i = 0; i < c30.length; i++) {
+                    if (!isFinite(c30[i]) || c30[i] < 0) { pass = false; log.push('第' + i + '天数值无效: ' + c30[i]); break; }
+                }
+                // 5. 趋势波动校验
                 function slope(arr) {
                     var n = arr.length, sx = 0, sy = 0, sxy = 0, sxx = 0;
                     for (var i = 0; i < n; i++) { sx += i; sy += arr[i]; sxy += i * arr[i]; sxx += i * i; }
                     return (n * sxy - sx * sy) / (n * sxx - sx * sx);
                 }
-                var c7 = s7.map(function (p) { return p.count; });
-                var c30 = s30.map(function (p) { return p.count; });
                 if (!(c7[0] < c7[c7.length - 1])) { pass = false; log.push('7天首尾未上升'); }
                 if (!(slope(c7) > 0)) { pass = false; log.push('7天斜率非正'); }
                 if (!(c30[0] < c30[c30.length - 1])) { pass = false; log.push('30天首尾未上升'); }
@@ -1248,6 +1284,18 @@
                 if (falls(c30) < 2) { pass = false; log.push('30天回落不足2次'); }
                 for (var i = 1; i < c30.length; i++) {
                     if (Math.abs(c30[i] - c30[i - 1]) > 12) { pass = false; log.push('30天第' + i + '天断崖跳水'); break; }
+                }
+                // 6. Chart dataset 与预期数据一致性校验
+                var chart = scCharts['chart-order-trend'];
+                if (chart) {
+                    var expected7 = trendCounts(getTrendData(7));
+                    var actual = chart.data.datasets[0].data;
+                    if (actual.length !== expected7.length) { pass = false; log.push('Chart dataset 长度=' + actual.length + ' != 预期' + expected7.length); }
+                    else {
+                        for (var i = 0; i < expected7.length; i++) {
+                            if (actual[i] !== expected7[i]) { pass = false; log.push('Chart dataset[' + i + ']=' + actual[i] + ' != 预期' + expected7[i]); break; }
+                        }
+                    }
                 }
                 if (!pass) console.warn('[SC趋势自测] 失败:', log.join('; '));
                 else console.log('[SC趋势自测] 通过');
@@ -1763,7 +1811,7 @@
     // ESC 键关闭所有弹窗
     document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') {
-            ['modal-order-detail', 'modal-assign', 'modal-volunteer-detail', 'modal-contract', 'modal-auth-detail'].forEach(function (id) {
+            ['modal-order-detail', 'modal-assign', 'modal-volunteer-detail', 'modal-contract', 'modal-auth-detail', 'modal-reject-auth', 'admin-settings-modal'].forEach(function (id) {
                 var m = document.getElementById(id);
                 if (m && !m.classList.contains('hidden')) {
                     m.classList.add('hidden');
@@ -2196,6 +2244,7 @@
         var contracts = getContracts();
         if (contracts.length === 0) {
             tbody.innerHTML = '<tr><td colspan="6" class="px-4 py-10 text-center" style="color:var(--color-text-muted);">暂无合同记录</td></tr>';
+            renderProcurementStats();
             return;
         }
         var html = '';
@@ -2213,6 +2262,36 @@
                 '</tr>';
         });
         tbody.innerHTML = html;
+        renderProcurementStats();
+    }
+
+    /* 由合同数据动态计算采购统计卡片 */
+    function renderProcurementStats() {
+        var contracts = getContracts();
+        // 合作企业：去重 client 数 + 基础合作方
+        var uniqueClients = {};
+        contracts.forEach(function (c) { uniqueClients[c.client] = true; });
+        var partnerCount = Object.keys(uniqueClients).length + 24; // 基础历史合作方
+        // 月采购额：执行中合同年总额 / 12
+        var activeTotal = 0;
+        contracts.forEach(function (c) {
+            if (c.status === '执行中' && c.amount > 0) activeTotal += c.amount;
+        });
+        var monthly = activeTotal / 12;
+        var monthlyStr = monthly >= 10000 ? '¥' + (monthly / 10000).toFixed(1) + '万' : '¥' + Math.round(monthly);
+        // 覆盖家庭：由合同总金额估算（每500元/年覆盖约1户）
+        var totalAmount = 0;
+        contracts.forEach(function (c) { if (c.amount > 0) totalAmount += c.amount; });
+        var families = Math.round(totalAmount / 500) + 800;
+        // 待签合同：status 为 '待签署' 的数量
+        var pending = 0;
+        contracts.forEach(function (c) { if (c.status === '待签署') pending++; });
+
+        var el;
+        if ((el = document.getElementById('stat-partners'))) el.textContent = partnerCount;
+        if ((el = document.getElementById('stat-monthly'))) el.textContent = monthlyStr;
+        if ((el = document.getElementById('stat-families'))) el.textContent = families.toLocaleString();
+        if ((el = document.getElementById('stat-pending'))) el.textContent = pending;
     }
 
     function showContractModal() {
@@ -2230,11 +2309,13 @@
         var period = document.getElementById('contract-period').value.trim();
         var status = document.getElementById('contract-status').value;
         if (!client) { showToast('请填写合作方名称', 'error'); return; }
+        if (amount <= 0) { showToast('合同金额必须大于0', 'error'); return; }
         var contracts = getContracts();
-        var newId = 'HT-2026-' + String(contracts.length + 1).padStart(3, '0');
+        var year = new Date().getFullYear();
+        var newId = 'HT-' + year + '-' + String(contracts.length + 1).padStart(3, '0');
         while (contracts.some(function (c) { return c.id === newId; })) {
             var num = parseInt(newId.split('-')[2]) + 1;
-            newId = 'HT-2026-' + String(num).padStart(3, '0');
+            newId = 'HT-' + year + '-' + String(num).padStart(3, '0');
         }
         var periodStr = period || (startDate ? startDate.replace(/-/g, '.') + ' - 至今' : '-');
         contracts.push({
@@ -2380,6 +2461,7 @@
         }
     }
 
+    var pendingRejectAuthId = null;
     function rejectAuth(id) {
         var records = getAuthRecords();
         var idx = -1;
@@ -2387,16 +2469,33 @@
         for (var i = 0; i < records.length; i++) { if (records[i].id === id) { idx = i; target = records[i]; break; } }
         if (idx >= 0 && target) {
             if (target.status !== '待审核') { showToast('该申请已处理，无需重复审核', 'error'); return; }
-            var reason = window.prompt('请输入拒绝原因：', '');
-            if (reason === null) return; // 用户取消
+            // 打开拒绝原因模态框，不再使用 window.prompt
+            pendingRejectAuthId = id;
+            var input = document.getElementById('reject-reason-input');
+            if (input) input.value = '';
+            openModal('modal-reject-auth');
+            if (input) setTimeout(function () { input.focus(); }, 100);
+        }
+    }
+
+    function confirmRejectAuth() {
+        if (!pendingRejectAuthId) return;
+        var input = document.getElementById('reject-reason-input');
+        var reason = input ? input.value.trim() : '';
+        if (!reason) { showToast('请填写拒绝原因', 'error'); return; }
+        var records = getAuthRecords();
+        var target = null;
+        for (var i = 0; i < records.length; i++) { if (records[i].id === pendingRejectAuthId) { target = records[i]; break; } }
+        if (target) {
             target.status = '已拒绝';
-            target.rejectReason = reason.trim() || '未提供原因';
+            target.rejectReason = reason;
             saveAuthRecords(records);
-            // 同步回写小程序对应角色认证状态与拒绝原因
             scWritebackAuthToSubject(target.subjectId, target.role, '已拒绝', target.rejectReason);
             renderAuth();
             showToast('已拒绝 ' + target.name + ' 的实名认证', 'error');
         }
+        pendingRejectAuthId = null;
+        closeModal('modal-reject-auth');
     }
 
     function showAuthDetail(id) {
@@ -2423,17 +2522,19 @@
             '<div class="flex items-start gap-4 py-2.5 border-b" style="border-color:var(--color-border-light);"><div class="text-sm w-24 shrink-0" style="color:var(--color-text-secondary);">真实姓名</div><div class="text-sm flex-1 break-words"><span style="color:var(--color-text);">' + escapeHtml(r.realName || '-') + '</span></div></div>' +
             '<div class="flex items-start gap-4 py-2.5 border-b" style="border-color:var(--color-border-light);"><div class="text-sm w-24 shrink-0" style="color:var(--color-text-secondary);">身份证号</div><div class="text-sm flex-1 break-words"><span style="color:var(--color-text);font-variant-numeric:tabular-nums;">' + escapeHtml(r.idCard || '-') + '</span></div></div>' +
             '</div>';
-        // 身份证照片占位
+        // 身份证照片（有上传则显示真实压缩图，未上传显示占位）
         html += '<div class="mb-4">' +
             '<div class="text-xs font-semibold mb-2" style="color:var(--color-text-muted);">身份证照片</div>' +
             '<div class="flex gap-3">' +
-                '<div class="flex-1 flex flex-col items-center justify-center rounded-lg" style="height:100px;background:var(--color-bg-muted);border:1px dashed var(--color-border);">' +
-                    '<i data-lucide="image" class="w-6 h-6 mb-1" style="color:var(--color-text-muted);"></i>' +
-                    '<span class="text-xs" style="color:var(--color-text-muted);">人像面</span>' +
+                '<div class="flex-1 flex flex-col items-center justify-center rounded-lg overflow-hidden" style="height:100px;background:var(--color-bg-muted);border:1px dashed var(--color-border);">' +
+                    (r.idfront
+                        ? '<img src="' + r.idfront + '" style="width:100%;height:100%;object-fit:cover;" alt="人像面">'
+                        : '<i data-lucide="image" class="w-6 h-6 mb-1" style="color:var(--color-text-muted);"></i><span class="text-xs" style="color:var(--color-text-muted);">人像面</span>') +
                 '</div>' +
-                '<div class="flex-1 flex flex-col items-center justify-center rounded-lg" style="height:100px;background:var(--color-bg-muted);border:1px dashed var(--color-border);">' +
-                    '<i data-lucide="image" class="w-6 h-6 mb-1" style="color:var(--color-text-muted);"></i>' +
-                    '<span class="text-xs" style="color:var(--color-text-muted);">国徽面</span>' +
+                '<div class="flex-1 flex flex-col items-center justify-center rounded-lg overflow-hidden" style="height:100px;background:var(--color-bg-muted);border:1px dashed var(--color-border);">' +
+                    (r.idback
+                        ? '<img src="' + r.idback + '" style="width:100%;height:100%;object-fit:cover;" alt="国徽面">'
+                        : '<i data-lucide="image" class="w-6 h-6 mb-1" style="color:var(--color-text-muted);"></i><span class="text-xs" style="color:var(--color-text-muted);">国徽面</span>') +
                 '</div>' +
             '</div>' +
             '</div>';
@@ -2541,19 +2642,30 @@
     function switchTimeRange(days) {
         var btns = document.querySelectorAll('.time-range-btn');
         btns.forEach(function (b) {
-            if (parseInt(b.getAttribute('data-range')) === days) {
+            var isActive = parseInt(b.getAttribute('data-range')) === days;
+            if (isActive) {
                 b.style.background = 'var(--color-primary)';
                 b.style.color = 'var(--color-text-inverse)';
             } else {
                 b.style.background = 'transparent';
                 b.style.color = 'var(--color-text-muted)';
             }
+            b.setAttribute('aria-pressed', isActive ? 'true' : 'false');
         });
-        if (window.orderTrendChart) {
-            var series = getTrendData(days);
-            window.orderTrendChart.data.labels = trendLabels(series);
-            window.orderTrendChart.data.datasets[0].data = trendCounts(series);
-            window.orderTrendChart.update();
+        var series = getTrendData(days);
+        var labels = trendLabels(series);
+        var counts = trendCounts(series);
+        var chart = scCharts['chart-order-trend'];
+        if (chart) {
+            chart.data.labels = labels;
+            chart.data.datasets[0].data = counts;
+            chart.update();
+        } else {
+            // Chart.js 加载失败时也更新降级数据摘要，不能只显示 Toast
+            var canvas = document.getElementById('chart-order-trend');
+            if (canvas) {
+                scShowChartFallback(canvas, '近' + days + '天订单趋势', labels, counts);
+            }
         }
         showToast('已切换为近' + days + '天数据', 'info');
     }
@@ -2666,9 +2778,7 @@
      * ============================================================ */
     var safetyMapInstance = null;
     var SAFETY_MAP_CENTER = { lng: 114.317, lat: 30.557 }; // 武汉三镇居中位置
-    var scBaiduMapState = 'idle'; // idle | loading | loaded | failed
-    var scBaiduMapScriptEl = null;
-    var scBaiduMapTimeout = null;
+    var scBaiduMapState = 'idle'; // 兼容引用，实际由 ScBaiduMapLoader 管理
 
     // 服务区域数据（百度地图与离线 SVG 共用同一数据源）
     var SAFETY_SERVICE_AREAS = [
@@ -2684,44 +2794,10 @@
         return typeof BMap !== 'undefined' && typeof BMap === 'object' && typeof BMap.Map === 'function';
     }
 
-    /* 动态加载百度地图脚本（带 onload/onerror/超时） */
+    /* 通过共享加载器加载百度地图（单例 Promise，多处同时请求都能收到结果） */
     function loadBaiduMapScript(onReady, onFail) {
-        if (scBaiduMapState === 'loaded' && checkBaiduMapReady()) { onReady(); return; }
-        if (scBaiduMapState === 'loading') return; // 防止重复加载
-        scBaiduMapState = 'loading';
-        scBaiduMapScriptEl = document.createElement('script');
-        scBaiduMapScriptEl.type = 'text/javascript';
-        scBaiduMapScriptEl.src = 'https://api.map.baidu.com/api?v=3.0&ak=VeydduHr00O5f7G5GOzxlkZ6jOIaSFsH';
-        scBaiduMapScriptEl.onload = function () {
-            // 脚本加载后 BMap 可能需要短暂初始化时间
-            var tries = 0;
-            function checkReady() {
-                if (checkBaiduMapReady()) {
-                    scBaiduMapState = 'loaded';
-                    if (scBaiduMapTimeout) { clearTimeout(scBaiduMapTimeout); scBaiduMapTimeout = null; }
-                    onReady();
-                } else if (tries < 10) {
-                    tries++;
-                    setTimeout(checkReady, 100);
-                } else {
-                    scBaiduMapState = 'failed';
-                    onFail();
-                }
-            }
-            checkReady();
-        };
-        scBaiduMapScriptEl.onerror = function () {
-            scBaiduMapState = 'failed';
-            onFail();
-        };
-        // 超时保护：8 秒后仍未就绪则降级
-        scBaiduMapTimeout = setTimeout(function () {
-            if (scBaiduMapState === 'loading') {
-                scBaiduMapState = 'failed';
-                onFail();
-            }
-        }, 8000);
-        document.head.appendChild(scBaiduMapScriptEl);
+        if (checkBaiduMapReady()) { onReady(); return; }
+        ScBaiduMapLoader.load().then(onReady).catch(function () { onFail(); });
     }
 
     /* 渲染离线降级 SVG 地图（不依赖任何外部网络） */
@@ -2815,12 +2891,7 @@
         var container = document.getElementById('safety-map-container');
         if (!container) return;
         safetyMapInstance = null;
-        scBaiduMapState = 'idle';
-        if (scBaiduMapScriptEl && scBaiduMapScriptEl.parentNode) {
-            scBaiduMapScriptEl.parentNode.removeChild(scBaiduMapScriptEl);
-            scBaiduMapScriptEl = null;
-        }
-        if (scBaiduMapTimeout) { clearTimeout(scBaiduMapTimeout); scBaiduMapTimeout = null; }
+        ScBaiduMapLoader.reset();
         initSafetyMap();
     }
 
@@ -2966,10 +3037,22 @@
         closeAdminSettings();
         showToast('设置已保存');
     }
+    var pendingResetDemo = false;
     function clearAdminCache() {
+        if (!pendingResetDemo) {
+            pendingResetDemo = true;
+            showToast('再次点击以确认重置全部演示数据', 'error');
+            setTimeout(function () { pendingResetDemo = false; }, 5000);
+            return;
+        }
+        pendingResetDemo = false;
+        // 删除全部 sc_* 数据，然后重新初始化种子
         Object.keys(localStorage).forEach(function(k) { if (k.indexOf('sc_') === 0) localStorage.removeItem(k); });
-        showToast('缓存已清除');
-        setTimeout(function() { location.reload(); }, 1000);
+        showToast('演示数据已重置，正在恢复种子数据…');
+        setTimeout(function() {
+            initData();
+            location.reload();
+        }, 800);
     }
     </script>
 
@@ -3074,10 +3157,10 @@
                 <div>
                     <p class="text-xs font-semibold mb-3" style="color: var(--color-text-secondary);">系统</p>
                     <div class="space-y-2">
-                        <div class="flex items-center justify-between p-3 rounded-lg cursor-pointer" style="background: var(--color-bg); border: 1px solid var(--color-border-light);" onclick="clearAdminCache()">
+                        <div class="flex items-center justify-between p-3 rounded-lg cursor-pointer" style="background: var(--color-bg); border: 1px solid var(--color-border-light);" onclick="clearAdminCache()" role="button" tabindex="0" aria-label="重置演示数据">
                             <div class="flex items-center gap-2">
                                 <i data-lucide="trash-2" class="w-4 h-4" style="color: var(--state-error);"></i>
-                                <span class="text-sm" style="color: var(--color-text);">清除缓存</span>
+                                <span class="text-sm" style="color: var(--color-text);">重置演示数据</span>
                             </div>
                             <i data-lucide="chevron-right" class="w-4 h-4" style="color: var(--color-text-muted);"></i>
                         </div>

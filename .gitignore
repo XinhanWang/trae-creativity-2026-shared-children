@@ -1,3 +1,6 @@
 # OS files
 Thumbs.db
 .DS_Store
+
+# Nested clone (do not commit)
+trae-creativity-2026-shared-children/
