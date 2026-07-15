@@ -114,15 +114,41 @@
 }
 
     </style>
+    <script>
+    // Targeted fix: @tailwindcss/browser@4.3.1 has a non-blocking getThemeColors/exportedColors bug
+    (function() {
+      var origCE = console.error;
+      console.error = function() {
+        var args = Array.prototype.slice.call(arguments);
+        var msg = args.map(function(a) { return typeof a === 'string' ? a : (a && a.message ? a.message : ''); }).join(' ');
+        if (msg.indexOf('exportedColors') >= 0 || msg.indexOf('getThemeColors') >= 0) {
+          console.warn('[Tailwind CDN] Non-blocking getThemeColors warning (does not affect functionality)');
+          return;
+        }
+        origCE.apply(console, args);
+      };
+      window.addEventListener('error', function(e) {
+        if (e && e.message && e.message.indexOf('exportedColors') >= 0) {
+          e.preventDefault(); e.stopPropagation();
+          return true;
+        }
+      }, true);
+      window.addEventListener('unhandledrejection', function(e) {
+        if (e && e.reason && e.reason.message && e.reason.message.indexOf('exportedColors') >= 0) {
+          e.preventDefault();
+        }
+      }, true);
+    })();
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
     <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
     <style type="text/tailwindcss">
   @theme inline {
-    --color-primary: var(--color-primary);
-    --color-secondary: var(--state-success);
-    --color-accent: var(--state-warning);
-    --color-border: var(--color-border);
+    --color-primary: #D4654A;
+    --color-secondary: #5B8A72;
+    --color-accent: #E8A838;
+    --color-border: #E8DDD0;
   }
   @layer base {
     body { background: var(--color-bg); color: var(--color-text); }

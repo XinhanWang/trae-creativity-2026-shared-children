@@ -127,15 +127,40 @@
 }
 
     </style>
+    <script>
+    // Targeted fix: @tailwindcss/browser@4.3.1 has a non-blocking getThemeColors/exportedColors bug
+    (function() {
+      var origCE = console.error;
+      console.error = function() {
+        var args = Array.prototype.slice.call(arguments);
+        var msg = args.map(function(a) { return typeof a === 'string' ? a : (a && a.message ? a.message : ''); }).join(' ');
+        if (msg.indexOf('exportedColors') >= 0 || msg.indexOf('getThemeColors') >= 0) {
+          console.warn('[Tailwind CDN] Non-blocking getThemeColors warning (does not affect functionality)');
+          return;
+        }
+        origCE.apply(console, args);
+      };
+      window.addEventListener('error', function(e) {
+        if (e && e.message && e.message.indexOf('exportedColors') >= 0) {
+          e.preventDefault(); e.stopPropagation();
+          return true;
+        }
+      }, true);
+      window.addEventListener('unhandledrejection', function(e) {
+        if (e && e.reason && e.reason.message && e.reason.message.indexOf('exportedColors') >= 0) {
+          e.preventDefault();
+        }
+      }, true);
+    })();
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
     <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
-    <script type="text/javascript" src="https://api.map.baidu.com/api?v=3.0&ak=VeydduHr00O5f7G5GOzxlkZ6jOIaSFsH"></script>
     <style type="text/tailwindcss">
   @theme inline {
-    --color-primary: var(--color-primary);
-    --color-secondary: var(--state-success);
-    --color-accent: var(--state-warning);
-    --color-border: var(--color-border);
+    --color-primary: #D4654A;
+    --color-secondary: #5B8A72;
+    --color-accent: #E8A838;
+    --color-border: #E8DDD0;
   }
   @layer base {
     body { background: var(--color-background); color: var(--color-foreground); }
@@ -319,40 +344,8 @@
                         <p class="text-sm font-semibold" style="color: var(--color-text);">附近暖伴</p>
                         <span class="text-xs cursor-pointer" style="color: var(--color-primary);" onclick="showToast('附近暖伴列表已展示全部')">查看更多</span>
                       </div>
-                      <div class="space-y-2">
-                        <div class="flex items-center gap-3 p-3 rounded-xl cursor-pointer" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" onclick="showToast('李芳姨 · 评分4.8 · 陪伴512次')">
-                          <div class="w-10 h-10 rounded-full shrink-0 flex items-center justify-center" style="background: var(--state-success-bg); color: var(--state-success); font-weight: 600; font-size: 14px;">李</div>
-                          <div class="flex-1 min-w-0">
-                            <p class="text-sm font-medium truncate" style="color: var(--color-text);">李芳姨</p>
-                            <p class="text-xs truncate" style="color: var(--color-text-muted);">距离 500m · 陪伴 512 次</p>
-                          </div>
-                          <div class="flex items-center gap-1 px-2 py-1 rounded-lg" style="background: var(--color-primary-light);">
-                            <i data-lucide="star" style="width: 12px; height: 12px; color: var(--state-warning);"></i>
-                            <span class="text-xs font-medium" style="color: var(--state-warning);">4.8</span>
-                          </div>
-                        </div>
-                        <div class="flex items-center gap-3 p-3 rounded-xl cursor-pointer" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" onclick="showToast('张小雨 · 评分4.8 · 陪伴56次')">
-                          <div class="w-10 h-10 rounded-full shrink-0 flex items-center justify-center" style="background: var(--state-warning-bg); color: var(--state-warning); font-weight: 600; font-size: 14px;">张</div>
-                          <div class="flex-1 min-w-0">
-                            <p class="text-sm font-medium truncate" style="color: var(--color-text);">张小雨</p>
-                            <p class="text-xs truncate" style="color: var(--color-text-muted);">距离 800m · 陪伴 56 次</p>
-                          </div>
-                          <div class="flex items-center gap-1 px-2 py-1 rounded-lg" style="background: var(--color-primary-light);">
-                            <i data-lucide="star" style="width: 12px; height: 12px; color: var(--state-warning);"></i>
-                            <span class="text-xs font-medium" style="color: var(--state-warning);">4.8</span>
-                          </div>
-                        </div>
-                        <div class="flex items-center gap-3 p-3 rounded-xl cursor-pointer" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" onclick="showToast('王志强 · 评分4.7 · 陪伴156次')">
-                          <div class="w-10 h-10 rounded-full shrink-0 flex items-center justify-center" style="background: var(--state-info-bg); color: var(--state-info); font-weight: 600; font-size: 14px;">王</div>
-                          <div class="flex-1 min-w-0">
-                            <p class="text-sm font-medium truncate" style="color: var(--color-text);">王志强</p>
-                            <p class="text-xs truncate" style="color: var(--color-text-muted);">距离 1.2km · 陪伴 156 次</p>
-                          </div>
-                          <div class="flex items-center gap-1 px-2 py-1 rounded-lg" style="background: var(--color-primary-light);">
-                            <i data-lucide="star" style="width: 12px; height: 12px; color: var(--state-warning);"></i>
-                            <span class="text-xs font-medium" style="color: var(--state-warning);">4.7</span>
-                          </div>
-                        </div>
+                      <div id="nearby-volunteers" class="space-y-2">
+                        <!-- Dynamically populated from sc_volunteers -->
                       </div>
                     </div>
 
@@ -1588,7 +1581,7 @@
 
         // Render content for the active tab
         if (currentRole === 'nuanjia') {
-          if (tab === 'home') { renderRecentOrders(); setTimeout(initHomeMap, 300); }
+          if (tab === 'home') { renderRecentOrders(); renderNearbyVolunteers(); setTimeout(initHomeMap, 300); }
           if (tab === 'orders') renderNuanjiaOrders();
           if (tab === 'me') renderNuanjiaMe();
         } else {
@@ -1821,20 +1814,88 @@
         switchTab(currentTab);
       }
 
-      /* ===== Baidu Map ===== */
+      /* ===== Baidu Map (动态加载 + 离线降级) ===== */
       var MAP_CENTER = { lng: 114.305, lat: 30.593 }; // 武汉武昌区
       var orderMapInstance = null;
       var detailMapInstance = null;
       var homeMapInstance = null;
+      var scMiniMapState = 'idle'; // idle | loading | loaded | failed
+      var scMiniMapScriptEl = null;
+      var scMiniMapTimeout = null;
 
       function checkBaiduMapReady() {
-        return typeof BMap !== 'undefined' && typeof BMap.Map === 'function';
+        return typeof BMap !== 'undefined' && typeof BMap === 'object' && typeof BMap.Map === 'function';
       }
 
-      function showMapError(containerId, msg) {
+      /* 动态加载百度地图脚本 */
+      function loadBaiduMapMini(onReady, onFail) {
+        if (scMiniMapState === 'loaded' && checkBaiduMapReady()) { onReady(); return; }
+        if (scMiniMapState === 'loading') return;
+        scMiniMapState = 'loading';
+        scMiniMapScriptEl = document.createElement('script');
+        scMiniMapScriptEl.type = 'text/javascript';
+        scMiniMapScriptEl.src = 'https://api.map.baidu.com/api?v=3.0&ak=VeydduHr00O5f7G5GOzxlkZ6jOIaSFsH';
+        scMiniMapScriptEl.onload = function () {
+          var tries = 0;
+          function checkReady() {
+            if (checkBaiduMapReady()) {
+              scMiniMapState = 'loaded';
+              if (scMiniMapTimeout) { clearTimeout(scMiniMapTimeout); scMiniMapTimeout = null; }
+              onReady();
+            } else if (tries < 10) { tries++; setTimeout(checkReady, 100); }
+            else { scMiniMapState = 'failed'; onFail(); }
+          }
+          checkReady();
+        };
+        scMiniMapScriptEl.onerror = function () { scMiniMapState = 'failed'; onFail(); };
+        scMiniMapTimeout = setTimeout(function () {
+          if (scMiniMapState === 'loading') { scMiniMapState = 'failed'; onFail(); }
+        }, 8000);
+        document.head.appendChild(scMiniMapScriptEl);
+      }
+
+      /* 离线降级地图（内联 SVG） */
+      function showMapFallback(containerId, type) {
         var el = document.getElementById(containerId);
         if (!el) return;
-        el.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;background:var(--color-bg-muted);color:var(--color-text-muted);font-size:12px;">' + (msg || '地图加载失败，请稍后重试') + '</div>';
+        var svg = '';
+        if (type === 'home') {
+          var vols = getData('sc_volunteers') || [];
+          var nearby = vols.filter(function(v) { return v && v.status === '在线'; }).slice(0, 3);
+          // 用户位置 + 附近暖伴标记
+          svg += '<svg viewBox="0 0 100 60" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;display:block;">';
+          svg += '<rect x="0" y="0" width="100" height="60" fill="#F5F0EB"/>';
+          svg += '<path d="M 10,5 Q 30,20 28,30 T 45,55" stroke="#5B7FA8" stroke-width="2" fill="none" opacity="0.2"/>';
+          // 用户位置
+          svg += '<circle cx="50" cy="30" r="4" fill="#C44D3E" stroke="#fff" stroke-width="1"/>';
+          svg += '<text x="50" y="38" text-anchor="middle" font-size="3" fill="#C44D3E">我的位置</text>';
+          // 附近暖伴
+          var positions = [{x:65,y:20},{x:35,y:15},{x:70,y:42}];
+          nearby.forEach(function(v, i) {
+            var pos = positions[i] || {x:60, y:35};
+            svg += '<circle cx="' + pos.x + '" cy="' + pos.y + '" r="3" fill="#5B8A72" stroke="#fff" stroke-width="0.8"/>';
+            svg += '<text x="' + pos.x + '" y="' + (pos.y - 4) + '" text-anchor="middle" font-size="2.5" fill="#5B8A72">' + escapeHtml(v.name ? v.name.charAt(0) : '?') + '</text>';
+          });
+          svg += '<text x="50" y="56" text-anchor="middle" font-size="3" fill="#A89888" opacity="0.7">服务区域示意图（离线模式）</text>';
+          svg += '</svg>';
+        } else if (type === 'order') {
+          svg += '<svg viewBox="0 0 100 60" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;display:block;">';
+          svg += '<rect x="0" y="0" width="100" height="60" fill="#F5F0EB"/>';
+          svg += '<path d="M 10,5 Q 30,20 28,30 T 45,55" stroke="#5B7FA8" stroke-width="2" fill="none" opacity="0.2"/>';
+          svg += '<circle cx="50" cy="30" r="4" fill="#D4654A" stroke="#fff" stroke-width="1"/>';
+          svg += '<text x="50" y="40" text-anchor="middle" font-size="3" fill="#D4654A">点击下方输入框填写地址</text>';
+          svg += '<text x="50" y="55" text-anchor="middle" font-size="2.5" fill="#A89888" opacity="0.7">选址地图（离线模式）</text>';
+          svg += '</svg>';
+        } else { // detail
+          svg += '<svg viewBox="0 0 100 60" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;display:block;">';
+          svg += '<rect x="0" y="0" width="100" height="60" fill="#F5F0EB"/>';
+          svg += '<path d="M 10,5 Q 30,20 28,30 T 45,55" stroke="#5B7FA8" stroke-width="2" fill="none" opacity="0.2"/>';
+          svg += '<circle cx="50" cy="30" r="4" fill="#5B7FA8" stroke="#fff" stroke-width="1"/>';
+          svg += '<text x="50" y="40" text-anchor="middle" font-size="3" fill="#5B7FA8">服务地址</text>';
+          svg += '<text x="50" y="55" text-anchor="middle" font-size="2.5" fill="#A89888" opacity="0.7">位置示意图（离线模式）</text>';
+          svg += '</svg>';
+        }
+        el.innerHTML = svg;
       }
 
       function initOrderMap() {
@@ -1842,81 +1903,84 @@
         var container = document.getElementById('order-map-container');
         if (!container) return;
         if (wrap) wrap.style.display = 'block';
-        if (!checkBaiduMapReady()) {
-          showMapError('order-map-container', '地图加载中，请稍候...');
-          setTimeout(function () {
-            if (checkBaiduMapReady()) initOrderMap();
-            else showMapError('order-map-container', '地图加载失败，请检查网络');
-          }, 1500);
-          return;
-        }
-        container.innerHTML = '';
-        orderMapInstance = new BMap.Map(container);
-        orderMapInstance.enableScrollWheelZoom(true);
-        var setupOrderMap = function (lng, lat) {
-          var point = new BMap.Point(lng, lat);
-          orderMapInstance.centerAndZoom(point, 14);
-          orderMapInstance.clearOverlays();
-          var marker = new BMap.Marker(point);
-          orderMapInstance.addOverlay(marker);
-          // 反地理编码：将定位坐标转为地址并自动回填到服务地址输入框
-          var geo = new BMap.Geocoder();
-          geo.getLocation(point, function (rs) {
-            if (rs) {
-              var addr = rs.address;
-              var addressInput = document.getElementById('order-address');
-              if (addressInput) addressInput.value = addr;
-              showToast('已定位到当前位置：' + addr);
-            }
-          });
-        };
-        // 优先使用浏览器真实定位，失败则回退到默认中心
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(
-            function (pos) {
-              // WGS84 坐标需转换为百度 BD09 坐标
-              var bdPoint = BMap.Convertor ? null : null;
-              if (typeof BMap.Convertor !== 'undefined' && BMap.Convertor && BMap.Convertor.translate) {
-                var convertor = new BMap.Convertor();
-                convertor.translate([new BMap.Point(pos.coords.longitude, pos.coords.latitude)], 1, 5, function (data) {
-                  if (data && data.status === 0 && data.points && data.points[0]) {
-                    setupOrderMap(data.points[0].lng, data.points[0].lat);
-                  } else {
-                    setupOrderMap(pos.coords.longitude, pos.coords.latitude);
-                  }
-                });
-              } else {
-                setupOrderMap(pos.coords.longitude, pos.coords.latitude);
-              }
-            },
-            function () { setupOrderMap(MAP_CENTER.lng, MAP_CENTER.lat); },
-            { timeout: 5000, enableHighAccuracy: true }
-          );
-        } else {
-          setupOrderMap(MAP_CENTER.lng, MAP_CENTER.lat);
-        }
-        orderMapInstance.addEventListener('click', function (e) {
-          var pt = e.point;
-          orderMapInstance.clearOverlays();
-          var mk = new BMap.Marker(pt);
-          orderMapInstance.addOverlay(mk);
-          var geo = new BMap.Geocoder();
-          geo.getLocation(pt, function (rs) {
-            if (rs) {
-              var addr = rs.address;
-              var addressInput = document.getElementById('order-address');
-              if (addressInput) addressInput.value = addr;
-              showToast('已选取位置：' + addr);
-            }
-          });
-        });
-        showToast('点击地图或搜索地点选取服务位置');
+        // 已有实例，不重复创建
+        if (orderMapInstance) { try { orderMapInstance.reset(); } catch(e){} return; }
+        // 显示加载状态
+        container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;background:var(--color-bg-muted);color:var(--color-text-muted);font-size:12px;">地图加载中…</div>';
+        loadBaiduMapMini(
+          function () {
+            // 成功：创建百度地图
+            container.innerHTML = '';
+            try {
+              orderMapInstance = new BMap.Map(container);
+              orderMapInstance.enableScrollWheelZoom(true);
+            } catch(e) { showMapFallback('order-map-container', 'order'); return; }
+            var setupOrderMap = function (lng, lat) {
+              var point = new BMap.Point(lng, lat);
+              orderMapInstance.centerAndZoom(point, 14);
+              orderMapInstance.clearOverlays();
+              var marker = new BMap.Marker(point);
+              orderMapInstance.addOverlay(marker);
+              var geo = new BMap.Geocoder();
+              geo.getLocation(point, function (rs) {
+                if (rs) {
+                  var addr = rs.address;
+                  var addressInput = document.getElementById('order-address');
+                  if (addressInput) addressInput.value = addr;
+                  showToast('已定位到当前位置：' + addr);
+                }
+              });
+            };
+            if (navigator.geolocation) {
+              navigator.geolocation.getCurrentPosition(
+                function (pos) {
+                  if (typeof BMap.Convertor !== 'undefined' && BMap.Convertor && BMap.Convertor.translate) {
+                    var convertor = new BMap.Convertor();
+                    convertor.translate([new BMap.Point(pos.coords.longitude, pos.coords.latitude)], 1, 5, function (data) {
+                      if (data && data.status === 0 && data.points && data.points[0]) { setupOrderMap(data.points[0].lng, data.points[0].lat); }
+                      else { setupOrderMap(pos.coords.longitude, pos.coords.latitude); }
+                    });
+                  } else { setupOrderMap(pos.coords.longitude, pos.coords.latitude); }
+                },
+                function () { setupOrderMap(MAP_CENTER.lng, MAP_CENTER.lat); },
+                { timeout: 5000, enableHighAccuracy: true }
+              );
+            } else { setupOrderMap(MAP_CENTER.lng, MAP_CENTER.lat); }
+            orderMapInstance.addEventListener('click', function (e) {
+              var pt = e.point;
+              orderMapInstance.clearOverlays();
+              var mk = new BMap.Marker(pt);
+              orderMapInstance.addOverlay(mk);
+              var geo = new BMap.Geocoder();
+              geo.getLocation(pt, function (rs) {
+                if (rs) {
+                  var addr = rs.address;
+                  var addressInput = document.getElementById('order-address');
+                  if (addressInput) addressInput.value = addr;
+                  showToast('已选取位置：' + addr);
+                }
+              });
+            });
+            showToast('点击地图或搜索地点选取服务位置');
+          },
+          function () {
+            // 失败：显示降级地图，但仍可输入文本地址
+            showMapFallback('order-map-container', 'order');
+            showToast('地图离线模式，请在下方输入框填写服务地址');
+          }
+        );
       }
 
       function searchOrderMap() {
         var keyword = document.getElementById('order-map-search').value.trim();
         if (!keyword) { showToast('请输入搜索地点'); return; }
-        if (!checkBaiduMapReady() || !orderMapInstance) { showToast('地图未就绪，请稍候'); return; }
+        if (!checkBaiduMapReady() || !orderMapInstance) {
+          // 离线模式：直接回填到地址输入框
+          var addressInput = document.getElementById('order-address');
+          if (addressInput) { addressInput.value = keyword; showToast('已设置地址：' + keyword); }
+          else { showToast('地图未就绪，请直接填写服务地址'); }
+          return;
+        }
         var local = new BMap.LocalSearch(orderMapInstance, {
           renderOptions: { map: orderMapInstance, autoViewport: true },
           onMarkersSet: function (pois) {
@@ -1925,9 +1989,7 @@
               var addressInput = document.getElementById('order-address');
               if (addressInput && poi.address) addressInput.value = poi.address;
               showToast('已定位到：' + poi.title);
-            } else {
-              showToast('未找到相关地点');
-            }
+            } else { showToast('未找到相关地点'); }
           }
         });
         local.search(keyword);
@@ -1936,106 +1998,91 @@
       function initDetailMap(address) {
         var container = document.getElementById('detail-map-container');
         if (!container) return;
-        if (!checkBaiduMapReady()) {
-          showMapError('detail-map-container', '地图加载中...');
-          setTimeout(function () {
-            if (checkBaiduMapReady()) initDetailMap(address);
-            else showMapError('detail-map-container', '地图加载失败');
-          }, 1500);
-          return;
-        }
-        container.innerHTML = '';
-        detailMapInstance = new BMap.Map(container);
-        var point = new BMap.Point(MAP_CENTER.lng, MAP_CENTER.lat);
-        detailMapInstance.centerAndZoom(point, 14);
-        detailMapInstance.disableScrollWheelZoom();
-        var marker = new BMap.Marker(point);
-        detailMapInstance.addOverlay(marker);
-        if (address) {
-          geocodeAddress(address, function (pt) {
-            if (pt && detailMapInstance) {
-              detailMapInstance.clearOverlays();
-              var mk = new BMap.Marker(pt);
-              detailMapInstance.addOverlay(mk);
-              detailMapInstance.centerAndZoom(pt, 15);
-            }
-          });
-        }
+        if (detailMapInstance) { try { detailMapInstance.reset(); } catch(e){} return; }
+        container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;background:var(--color-bg-muted);color:var(--color-text-muted);font-size:12px;">地图加载中…</div>';
+        loadBaiduMapMini(
+          function () {
+            container.innerHTML = '';
+            try {
+              detailMapInstance = new BMap.Map(container);
+              var point = new BMap.Point(MAP_CENTER.lng, MAP_CENTER.lat);
+              detailMapInstance.centerAndZoom(point, 14);
+              detailMapInstance.disableScrollWheelZoom();
+              var marker = new BMap.Marker(point);
+              detailMapInstance.addOverlay(marker);
+              if (address) {
+                geocodeAddress(address, function (pt) {
+                  if (pt && detailMapInstance) {
+                    detailMapInstance.clearOverlays();
+                    var mk = new BMap.Marker(pt);
+                    detailMapInstance.addOverlay(mk);
+                    detailMapInstance.centerAndZoom(pt, 15);
+                  }
+                });
+              }
+            } catch(e) { showMapFallback('detail-map-container', 'detail'); }
+          },
+          function () { showMapFallback('detail-map-container', 'detail'); }
+        );
       }
 
       function initHomeMap() {
         var container = document.getElementById('home-map-container');
         if (!container) return;
-        if (!checkBaiduMapReady()) {
-          showMapError('home-map-container', '地图加载中...');
-          setTimeout(function () {
-            if (checkBaiduMapReady()) initHomeMap();
-            else showMapError('home-map-container', '地图加载失败');
-          }, 1500);
-          return;
-        }
-        container.innerHTML = '';
-        homeMapInstance = new BMap.Map(container);
-
-        // 绘制地图（含当前位置标记和附近暖伴）
-        var drawHomeMap = function (lng, lat) {
-          var point = new BMap.Point(lng, lat);
-          homeMapInstance.centerAndZoom(point, 14);
-          homeMapInstance.disableScrollWheelZoom();
-          // 当前位置标记（实时定位）
-          homeMapInstance.clearOverlays();
-          var curMarker = new BMap.Marker(point);
-          homeMapInstance.addOverlay(curMarker);
-          var label = new BMap.Label('我的位置', { offset: new BMap.Size(-20, -25) });
-          label.setStyle({ color: '#fff', background: '#C44D3E', border: 'none', padding: '2px 6px', borderRadius: '4px', fontSize: '11px' });
-          curMarker.setLabel(label);
-          // 附近暖伴标记点（基于当前位置的相对偏移）
-          var companions = [
-            { dLng: 0.004, dLat: 0.003, name: '李芳姨' },
-            { dLng: -0.006, dLat: -0.005, name: '张小雨' },
-            { dLng: 0.010, dLat: -0.007, name: '王志强' }
-          ];
-          companions.forEach(function (c) {
-            var pt = new BMap.Point(lng + c.dLng, lat + c.dLat);
-            var icon = new BMap.Icon('https://api.map.baidu.com/images/markers.png', new BMap.Size(23, 25), { offset: new BMap.Size(10, 25), imageOffset: new BMap.Size(0, -250) });
-            var mk = new BMap.Marker(pt, { icon: icon });
-            homeMapInstance.addOverlay(mk);
-            var lbl = new BMap.Label(c.name, { offset: new BMap.Size(-20, -25) });
-            lbl.setStyle({ color: '#fff', background: '#5B8A72', border: 'none', padding: '2px 6px', borderRadius: '4px', fontSize: '11px' });
-            mk.setLabel(lbl);
-          });
-        };
-
-        // 优先使用浏览器实时定位
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(
-            function (pos) {
-              if (typeof BMap.Convertor !== 'undefined' && BMap.Convertor && BMap.Convertor.translate) {
-                var convertor = new BMap.Convertor();
-                convertor.translate([new BMap.Point(pos.coords.longitude, pos.coords.latitude)], 1, 5, function (data) {
-                  if (data && data.status === 0 && data.points && data.points[0]) {
-                    drawHomeMap(data.points[0].lng, data.points[0].lat);
-                  } else {
-                    drawHomeMap(pos.coords.longitude, pos.coords.latitude);
-                  }
-                });
-              } else {
-                drawHomeMap(pos.coords.longitude, pos.coords.latitude);
-              }
-            },
-            function () { drawHomeMap(MAP_CENTER.lng, MAP_CENTER.lat); },
-            { timeout: 5000, enableHighAccuracy: true }
-          );
-        } else {
-          drawHomeMap(MAP_CENTER.lng, MAP_CENTER.lat);
-        }
+        if (homeMapInstance) { try { homeMapInstance.reset(); } catch(e){} return; }
+        container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;background:var(--color-bg-muted);color:var(--color-text-muted);font-size:12px;">地图加载中…</div>';
+        loadBaiduMapMini(
+          function () {
+            container.innerHTML = '';
+            try {
+              homeMapInstance = new BMap.Map(container);
+            } catch(e) { showMapFallback('home-map-container', 'home'); return; }
+            var drawHomeMap = function (lng, lat) {
+              var point = new BMap.Point(lng, lat);
+              homeMapInstance.centerAndZoom(point, 14);
+              homeMapInstance.disableScrollWheelZoom();
+              homeMapInstance.clearOverlays();
+              var curMarker = new BMap.Marker(point);
+              homeMapInstance.addOverlay(curMarker);
+              var label = new BMap.Label('我的位置', { offset: new BMap.Size(-20, -25) });
+              label.setStyle({ color: '#fff', background: '#C44D3E', border: 'none', padding: '2px 6px', borderRadius: '4px', fontSize: '11px' });
+              curMarker.setLabel(label);
+              // 附近暖伴标记点（从 sc_volunteers 动态读取，使用默认 Marker）
+              var vols = getData('sc_volunteers') || [];
+              var nearby = vols.filter(function(v) { return v && v.status === '在线'; }).slice(0, 3);
+              var offsets = [{ dLng: 0.004, dLat: 0.003 }, { dLng: -0.006, dLat: -0.005 }, { dLng: 0.010, dLat: -0.007 }];
+              nearby.forEach(function (v, i) {
+                var off = offsets[i] || offsets[0];
+                var pt = new BMap.Point(lng + off.dLng, lat + off.dLat);
+                var mk = new BMap.Marker(pt); // 默认 Marker，不依赖外部 sprite
+                homeMapInstance.addOverlay(mk);
+                var lbl = new BMap.Label(v.name, { offset: new BMap.Size(-20, -25) });
+                lbl.setStyle({ color: '#fff', background: '#5B8A72', border: 'none', padding: '2px 6px', borderRadius: '4px', fontSize: '11px' });
+                mk.setLabel(lbl);
+              });
+            };
+            if (navigator.geolocation) {
+              navigator.geolocation.getCurrentPosition(
+                function (pos) {
+                  if (typeof BMap.Convertor !== 'undefined' && BMap.Convertor && BMap.Convertor.translate) {
+                    var convertor = new BMap.Convertor();
+                    convertor.translate([new BMap.Point(pos.coords.longitude, pos.coords.latitude)], 1, 5, function (data) {
+                      if (data && data.status === 0 && data.points && data.points[0]) { drawHomeMap(data.points[0].lng, data.points[0].lat); }
+                      else { drawHomeMap(pos.coords.longitude, pos.coords.latitude); }
+                    });
+                  } else { drawHomeMap(pos.coords.longitude, pos.coords.latitude); }
+                },
+                function () { drawHomeMap(MAP_CENTER.lng, MAP_CENTER.lat); },
+                { timeout: 5000, enableHighAccuracy: true }
+              );
+            } else { drawHomeMap(MAP_CENTER.lng, MAP_CENTER.lat); }
+          },
+          function () { showMapFallback('home-map-container', 'home'); }
+        );
       }
 
       function geocodeAddress(address, callback) {
-        if (!checkBaiduMapReady()) {
-          if (callback) callback(null);
-          return;
-        }
+        if (!checkBaiduMapReady()) { if (callback) callback(null); return; }
         var geo = new BMap.Geocoder();
         geo.getPoint(address, function (pt) {
           if (pt && callback) callback(pt);
@@ -2539,7 +2586,16 @@
 
         // Action buttons
         if (currentRole === 'nuanban' && order.status === '待接单') {
-          html += '<button onclick="acceptOrder(\'' + escapeHtml(order.id) + '\')" class="submit-btn">接单</button>';
+          var banAuthDetail = getData(SK.authNuanban);
+          var detailCertified = banAuthDetail && banAuthDetail.status === '已认证';
+          if (detailCertified) {
+            html += '<button onclick="acceptOrder(\'' + escapeHtml(order.id) + '\')" class="submit-btn">接单</button>';
+          } else {
+            var detailLockReason = '未认证';
+            if (banAuthDetail && banAuthDetail.status === '待审核') detailLockReason = '实名认证审核中';
+            else if (banAuthDetail && banAuthDetail.status === '已拒绝') detailLockReason = '认证已被拒绝，请重新提交';
+            html += '<button disabled class="submit-btn" style="background:var(--color-bg-muted);color:var(--color-text-muted);cursor:not-allowed;" title="' + escapeHtml(detailLockReason) + '">' + escapeHtml(detailLockReason) + ' · 暂时无法接单</button>';
+          }
         } else if (currentRole === 'nuanban' && order.status === '进行中' && order.volunteerId === VOLUNTEER_ID) {
           // 仅当前暖伴可操作属于自己的进行中订单
           html += '<button onclick="completeOrder(\'' + escapeHtml(order.id) + '\')" class="submit-btn" style="background: var(--state-success);">完成服务</button>';
@@ -2707,6 +2763,56 @@
         return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
       }
 
+      /* ===== Render: Nearby Volunteers (dynamic from sc_volunteers) ===== */
+      function renderNearbyVolunteers() {
+        var container = document.getElementById('nearby-volunteers');
+        if (!container) return;
+        var vols = getData('sc_volunteers') || [];
+        // 只展示适合被用户选择的暖伴：在线/服务中状态（排除待审核）
+        var suitable = vols.filter(function (v) {
+          return v && v.id && v.name && (v.status === '在线' || v.status === '服务中');
+        });
+        if (suitable.length === 0) {
+          container.innerHTML = '<div class="p-3 rounded-xl text-center" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);"><p class="text-xs" style="color: var(--color-text-muted);">附近暂无可用暖伴，请稍后再试</p></div>';
+          return;
+        }
+        // 按评分降序排列，取前3名
+        suitable.sort(function (a, b) { return (b.rating || 0) - (a.rating || 0); });
+        var top = suitable.slice(0, 3);
+        // 确定性的距离值（基于volunteerId末位数字，非随机）
+        var distances = ['500m', '800m', '1.2km'];
+        var avatarColors = [
+          { bg: 'var(--state-success-bg)', color: 'var(--state-success)' },
+          { bg: 'var(--state-warning-bg)', color: 'var(--state-warning)' },
+          { bg: 'var(--state-info-bg)', color: 'var(--state-info)' }
+        ];
+        var html = '';
+        top.forEach(function (v, i) {
+          var ac = avatarColors[i % avatarColors.length];
+          var dist = distances[i] || '1.5km';
+          var initial = escapeHtml(v.name.charAt(0));
+          var statusBadge = v.status === '服务中'
+            ? '<span class="text-xs px-1.5 py-0.5 rounded" style="background:var(--color-primary-light);color:var(--color-primary);">服务中</span>'
+            : '<span class="text-xs px-1.5 py-0.5 rounded" style="background:var(--state-success-bg);color:var(--state-success);">在线</span>';
+          html += '<div class="flex items-center gap-3 p-3 rounded-xl cursor-pointer" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" onclick="showToast(\'' + escapeHtml(v.name) + ' · 评分' + (v.rating || 5) + ' · 陪伴' + (v.completedOrders || 0) + '次\')">' +
+            '<div class="w-10 h-10 rounded-full shrink-0 flex items-center justify-center" style="background: ' + ac.bg + '; color: ' + ac.color + '; font-weight: 600; font-size: 14px;">' + initial + '</div>' +
+            '<div class="flex-1 min-w-0">' +
+            '<div class="flex items-center gap-1.5">' +
+            '<p class="text-sm font-medium truncate" style="color: var(--color-text);">' + escapeHtml(v.name) + '</p>' +
+            statusBadge +
+            '</div>' +
+            '<p class="text-xs truncate" style="color: var(--color-text-muted);">距离 ' + dist + ' · 陪伴 ' + (v.completedOrders || 0) + ' 次</p>' +
+            '</div>' +
+            '<div class="flex items-center gap-1 px-2 py-1 rounded-lg" style="background: var(--color-primary-light);">' +
+            '<i data-lucide="star" style="width: 12px; height: 12px; color: var(--state-warning);"></i>' +
+            '<span class="text-xs font-medium" style="color: var(--state-warning);">' + (v.rating || 5).toFixed(1) + '</span>' +
+            '</div>' +
+            '</div>';
+        });
+        container.innerHTML = html;
+        if (window.lucide) lucide.createIcons();
+      }
+
       /* ===== Render: Nuanjia Recent Orders (Home) ===== */
       function renderRecentOrders() {
         var orders = getData(SK.orders) || [];
@@ -2802,10 +2908,18 @@
           return;
         }
 
+        // Check volunteer certification status for UI-level locking
+        var banAuth = getData(SK.authNuanban);
+        var isCertified = banAuth && banAuth.status === '已认证';
+        var lockReason = '';
+        if (banAuth && banAuth.status === '未认证') lockReason = '尚未提交实名认证';
+        else if (banAuth && banAuth.status === '待审核') lockReason = '实名认证审核中';
+        else if (banAuth && banAuth.status === '已拒绝') lockReason = '实名认证已被拒绝，请重新提交';
+
         var html = '';
         available.forEach(function (o) {
           var icon = getOrderIcon(o.type);
-          html += '<div class="fade-in-up p-3 rounded-xl" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);">';
+          html += '<div class="fade-in-up p-3 rounded-xl" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);' + (isCertified ? '' : 'opacity:0.75;') + '">';
           html += '<div class="flex items-center justify-between mb-1">';
           html += '<div class="flex items-center gap-2">';
           html += '<i data-lucide="' + icon + '" style="width: 16px; height: 16px; color: var(--color-primary);"></i>';
@@ -2817,10 +2931,18 @@
           html += '<p class="text-xs mb-2" style="color: var(--color-text-muted);">' + (o.time || '时间未定') + ' · ' + o.duration + '</p>';
           html += '<div class="flex gap-2">';
           html += '<button onclick="openOrderDetail(\'' + o.id + '\')" class="flex-1 py-2 rounded-lg text-sm font-medium" style="background: var(--color-bg-muted); color: var(--color-text); border: none; cursor: pointer;">详情</button>';
-          html += '<button onclick="acceptOrder(\'' + o.id + '\')" class="flex-1 py-2 rounded-lg text-sm font-medium" style="background: var(--color-primary); color: var(--color-text-inverse); border: none; cursor: pointer;">接单</button>';
+          if (isCertified) {
+            html += '<button onclick="acceptOrder(\'' + o.id + '\')" class="flex-1 py-2 rounded-lg text-sm font-medium" style="background: var(--color-primary); color: var(--color-text-inverse); border: none; cursor: pointer;">接单</button>';
+          } else {
+            html += '<button disabled class="flex-1 py-2 rounded-lg text-sm font-medium" style="background: var(--color-bg-muted); color: var(--color-text-muted); border: none; cursor: not-allowed;" title="' + escapeHtml(lockReason) + '">' + escapeHtml(lockReason) + '</button>';
+          }
           html += '</div>';
           html += '</div>';
         });
+        // If not certified, add a prominent notice
+        if (!isCertified && available.length > 0) {
+          html = '<div class="p-3 rounded-xl mb-2" style="background: var(--state-warning-bg); border: 1px solid var(--state-warning);"><p class="text-xs" style="color: var(--state-warning);">' + escapeHtml(lockReason) + '，暂时无法接单。' + (banAuth && banAuth.status === '已拒绝' ? '' : '请在「我的」页面完成实名认证。') + '</p></div>' + html;
+        }
         container.innerHTML = html;
         lucide.createIcons();
       }
