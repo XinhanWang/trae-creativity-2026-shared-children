@@ -114,49 +114,17 @@
 }
 
     </style>
-    <script>
-    // Targeted fix: @tailwindcss/browser@4.3.1 has a non-blocking getThemeColors/exportedColors bug
-    (function() {
-      var origCE = console.error;
-      console.error = function() {
-        var args = Array.prototype.slice.call(arguments);
-        var msg = args.map(function(a) { return typeof a === 'string' ? a : (a && a.message ? a.message : ''); }).join(' ');
-        if (msg.indexOf('exportedColors') >= 0 || msg.indexOf('getThemeColors') >= 0) {
-          console.warn('[Tailwind CDN] Non-blocking getThemeColors warning (does not affect functionality)');
-          return;
-        }
-        origCE.apply(console, args);
-      };
-      window.addEventListener('error', function(e) {
-        if (e && e.message && e.message.indexOf('exportedColors') >= 0) {
-          e.preventDefault(); e.stopPropagation();
-          return true;
-        }
-      }, true);
-      window.addEventListener('unhandledrejection', function(e) {
-        if (e && e.reason && e.reason.message && e.reason.message.indexOf('exportedColors') >= 0) {
-          e.preventDefault();
-        }
-      }, true);
-    })();
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
-    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
-    <style type="text/tailwindcss">
-  @theme inline {
-    --color-primary: #D4654A;
-    --color-secondary: #5B8A72;
-    --color-accent: #E8A838;
-    --color-border: #E8DDD0;
-  }
-  @layer base {
-    body { background: var(--color-bg); color: var(--color-text); }
-    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
-    th { @apply whitespace-nowrap; }
-  }
-    </style>
+    <link rel="stylesheet" href="../../shared/css/app.css">
+    <script src="../../shared/js/lucide.min.js"></script>
+    <script src="../../shared/js/echarts.min.js"></script>
     <style>
+      html, body { overflow-x: hidden; max-width: 100%; }
+      td, th { overflow-wrap: break-word; }
+      th { white-space: nowrap; }
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+      }
+      :focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
       .no-scrollbar::-webkit-scrollbar { display: none; }
       .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
       [data-icon] {

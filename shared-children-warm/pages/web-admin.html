@@ -119,51 +119,11 @@
 }
 
     </style>
-    <script>
-    // Targeted fix: @tailwindcss/browser@4.3.1 has a non-blocking getThemeColors/exportedColors bug
-    // that logs a console error but does not affect page functionality. We catch ONLY this specific
-    // error and downgrade it to a warning. All other errors still propagate normally.
-    (function() {
-      var origCE = console.error;
-      console.error = function() {
-        var args = Array.prototype.slice.call(arguments);
-        var msg = args.map(function(a) { return typeof a === 'string' ? a : (a && a.message ? a.message : ''); }).join(' ');
-        if (msg.indexOf('exportedColors') >= 0 || msg.indexOf('getThemeColors') >= 0) {
-          console.warn('[Tailwind CDN] Non-blocking getThemeColors warning (does not affect functionality)');
-          return;
-        }
-        origCE.apply(console, args);
-      };
-      window.addEventListener('error', function(e) {
-        if (e && e.message && e.message.indexOf('exportedColors') >= 0) {
-          e.preventDefault(); e.stopPropagation();
-          return true;
-        }
-      }, true);
-      window.addEventListener('unhandledrejection', function(e) {
-        if (e && e.reason && e.reason.message && e.reason.message.indexOf('exportedColors') >= 0) {
-          e.preventDefault();
-        }
-      }, true);
-    })();
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
-    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
+    <link rel="stylesheet" href="../../shared/css/app.css">
+    <script src="../../shared/js/lucide.min.js"></script>
+    <script src="../../shared/js/chart.umd.js"></script>
+    <script src="../../shared/js/demo-store.js"></script>
     <script src="../../shared/js/baidu-map-loader.js"></script>
-    <style type="text/tailwindcss">
-  @theme inline {
-    --color-primary: #D4654A;
-    --color-secondary: #5B8A72;
-    --color-accent: #E8A838;
-    --color-border: #E8DDD0;
-  }
-  @layer base {
-    body { background: var(--color-background); color: var(--color-foreground); }
-    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
-    th { @apply whitespace-nowrap; }
-  }
-    </style>
     <style>
       .no-scrollbar::-webkit-scrollbar { display: none; }
       .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -178,6 +138,25 @@
         -webkit-mask-position: center;
         mask-position: center;
         background-color: currentColor;
+      }
+      /* 保留原 @layer base 中 td/th 的 break-words / nowrap 行为（静态CSS环境） */
+      td, th { overflow-wrap: break-word; word-break: break-all; word-break: auto-phrase; }
+      th { white-space: nowrap; }
+      /* 禁止页面级横向滚动，仅在内部容器允许 */
+      html, body { overflow-x: hidden; max-width: 100vw; }
+      :focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; border-radius: 4px; }
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+      }
+      /* 窄屏下宽表格转为信息卡片（订单/认证/合同/报警） */
+      @media (max-width: 767px) {
+        table.sc-responsive-table thead { display: none; }
+        table.sc-responsive-table, table.sc-responsive-table tbody,
+        table.sc-responsive-table tr, table.sc-responsive-table td { display: block; width: 100%; }
+        table.sc-responsive-table tr { background: var(--color-bg-card); border: 1px solid var(--color-border); border-radius: 8px; margin-bottom: 10px; padding: 8px 12px; }
+        table.sc-responsive-table td { display: flex; justify-content: space-between; gap: 12px; padding: 6px 0; border: none !important; border-bottom: 1px solid var(--color-border-light) !important; }
+        table.sc-responsive-table td:last-child { border-bottom: none !important; }
+        table.sc-responsive-table td::before { content: attr(data-label); color: var(--color-text-secondary); font-size: 12px; flex-shrink: 0; }
       }
     </style>
     <link rel="stylesheet" href="../../shared/css/animations.css">
@@ -267,12 +246,12 @@
                     <div class="text-sm truncate" style="color: var(--color-sidebar-text);">管理员</div>
                     <div class="text-xs truncate" style="color: rgba(240,232,223,0.4);">admin@nuanban.com</div>
                 </div>
-                <i data-lucide="log-out" class="w-4 h-4 shrink-0 cursor-pointer transition-colors duration-200" style="color: rgba(240,232,223,0.4);" onclick="doLogout()" title="退出登录" role="button" tabindex="0" aria-label="退出登录"></i>
+                <i data-lucide="log-out" class="w-4 h-4 shrink-0 cursor-pointer transition-colors duration-200" style="color: rgba(240,232,223,0.4);" onclick="doLogout()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();doLogout()}" title="退出登录" role="button" tabindex="0" aria-label="退出登录"></i>
             </div>
         </aside>
 
         <!-- Sidebar Overlay (mobile only) -->
-        <div id="sidebar-overlay" class="hidden lg:hidden fixed inset-0 z-40 bg-black/40" onclick="toggleSidebar()"></div>
+        <div id="sidebar-overlay" class="hidden lg:hidden fixed inset-0 z-40 bg-black/40" onclick="toggleSidebar()" role="button" tabindex="-1" aria-label="关闭侧边菜单"></div>
 
         <!-- ===== Main Area ===== -->
         <div class="flex-1 flex flex-col overflow-hidden" style="background: var(--color-bg);">
@@ -398,8 +377,8 @@
                                     实时更新中
                                 </span>
                             </div>
-                            <div class="overflow-x-auto">
-                                <table class="w-full text-sm">
+                            <div class="overflow-x-auto md:overflow-x-visible">
+                                <table class="w-full text-sm sc-responsive-table">
                                     <thead>
                                         <tr style="background: var(--color-bg-muted);">
                                             <th class="px-4 py-2.5 text-left font-medium whitespace-nowrap" style="color: var(--color-text-secondary);">订单号</th>
@@ -429,10 +408,12 @@
                     <div class="flex items-center gap-3 mb-5 flex-wrap">
                         <button onclick="filterOrders('全部')" data-filter="全部" class="order-filter-btn px-3 py-1.5 text-sm rounded-lg border transition-colors duration-200" style="background: var(--color-primary); color: var(--color-text-inverse); border-color: var(--color-primary);">全部</button>
                         <button onclick="filterOrders('待接单')" data-filter="待接单" class="order-filter-btn px-3 py-1.5 text-sm rounded-lg border transition-colors duration-200" style="background: var(--color-bg-card); color: var(--color-text-secondary); border-color: var(--color-border);">待接单</button>
+                        <button onclick="filterOrders('待服务')" data-filter="待服务" class="order-filter-btn px-3 py-1.5 text-sm rounded-lg border transition-colors duration-200" style="background: var(--color-bg-card); color: var(--color-text-secondary); border-color: var(--color-border);">待服务</button>
                         <button onclick="filterOrders('进行中')" data-filter="进行中" class="order-filter-btn px-3 py-1.5 text-sm rounded-lg border transition-colors duration-200" style="background: var(--color-bg-card); color: var(--color-text-secondary); border-color: var(--color-border);">进行中</button>
                         <button onclick="filterOrders('待确认')" data-filter="待确认" class="order-filter-btn px-3 py-1.5 text-sm rounded-lg border transition-colors duration-200" style="background: var(--color-bg-card); color: var(--color-text-secondary); border-color: var(--color-border);">待确认</button>
                         <button onclick="filterOrders('已完成')" data-filter="已完成" class="order-filter-btn px-3 py-1.5 text-sm rounded-lg border transition-colors duration-200" style="background: var(--color-bg-card); color: var(--color-text-secondary); border-color: var(--color-border);">已完成</button>
                         <button onclick="filterOrders('已取消')" data-filter="已取消" class="order-filter-btn px-3 py-1.5 text-sm rounded-lg border transition-colors duration-200" style="background: var(--color-bg-card); color: var(--color-text-secondary); border-color: var(--color-border);">已取消</button>
+                        <button onclick="filterOrders('已过期')" data-filter="已过期" class="order-filter-btn px-3 py-1.5 text-sm rounded-lg border transition-colors duration-200" style="background: var(--color-bg-card); color: var(--color-text-secondary); border-color: var(--color-border);">已过期</button>
                         <div class="flex-1"></div>
                         <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg border" style="background: var(--color-bg-card); border-color: var(--color-border);">
                             <i data-lucide="search" class="w-4 h-4" style="color: var(--color-text-muted);"></i>
@@ -441,8 +422,8 @@
                     </div>
                     <!-- Orders Table -->
                     <div class="rounded-lg border overflow-hidden" style="background: var(--color-bg-card); border-color: var(--color-border);">
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-sm">
+                        <div class="overflow-x-auto md:overflow-x-visible">
+                            <table class="w-full text-sm sc-responsive-table">
                                 <thead>
                                     <tr style="background: var(--color-bg-muted);">
                                         <th class="px-4 py-3 text-left font-medium whitespace-nowrap" style="color: var(--color-text-secondary);">订单号</th>
@@ -450,12 +431,13 @@
                                         <th class="px-4 py-3 text-left font-medium whitespace-nowrap" style="color: var(--color-text-secondary);">服务类型</th>
                                         <th class="px-4 py-3 text-left font-medium whitespace-nowrap" style="color: var(--color-text-secondary);">指派暖伴</th>
                                         <th class="px-4 py-3 text-left font-medium whitespace-nowrap" style="color: var(--color-text-secondary);">下单时间</th>
+                                        <th class="px-4 py-3 text-left font-medium whitespace-nowrap" style="color: var(--color-text-secondary);">服务时间</th>
                                         <th class="px-4 py-3 text-left font-medium whitespace-nowrap" style="color: var(--color-text-secondary);">状态</th>
                                         <th class="px-4 py-3 text-left font-medium whitespace-nowrap" style="color: var(--color-text-secondary);">操作</th>
                                     </tr>
                                 </thead>
                                 <tbody id="orders-tbody">
-                                    <tr><td colspan="7" class="px-4 py-10 text-center" style="color:var(--color-text-muted);">加载中...</td></tr>
+                                    <tr><td colspan="8" class="px-4 py-10 text-center" style="color:var(--color-text-muted);">加载中...</td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -464,6 +446,7 @@
 
                 <!-- ========== Tab: 暖伴管理 ========== -->
                 <div id="tab-volunteers" class="tab-panel hidden">
+                    <p class="text-xs mb-4" style="color: var(--color-text-muted);">下方暖伴数据为可交互样例（注册总数/在线数由下方卡片实时计算，与概览页运营沙盘数据量级不同）</p>
                     <!-- Stats -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
                         <div class="rounded-lg p-4 border" style="background: var(--color-bg-card); border-color: var(--color-border);">
@@ -660,8 +643,8 @@
                             <h3 class="text-sm font-semibold" style="color: var(--color-text);">安全预警日志</h3>
                             <span class="text-xs" style="color: var(--color-text-muted);">最近24小时</span>
                         </div>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-sm">
+                        <div class="overflow-x-auto md:overflow-x-visible">
+                            <table class="w-full text-sm sc-responsive-table">
                                 <thead>
                                     <tr style="background: var(--color-bg-muted);">
                                         <th class="px-4 py-2.5 text-left font-medium whitespace-nowrap" style="color: var(--color-text-secondary);">时间</th>
@@ -801,8 +784,8 @@
                             <h3 class="text-sm font-semibold" style="color: var(--color-text);">采购合同</h3>
                             <button onclick="showContractModal()" class="px-3 py-1.5 text-xs rounded-lg" style="background: var(--color-primary); color: var(--color-text-inverse);">新建合同</button>
                         </div>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-sm">
+                        <div class="overflow-x-auto md:overflow-x-visible">
+                            <table class="w-full text-sm sc-responsive-table">
                                 <thead>
                                     <tr style="background: var(--color-bg-muted);">
                                         <th class="px-4 py-3 text-left font-medium whitespace-nowrap" style="color: var(--color-text-secondary);">合同编号</th>
@@ -880,12 +863,22 @@
                         <button onclick="filterAuth('待审核')" data-auth-filter="待审核" class="auth-filter-btn px-3 py-1.5 text-sm rounded-lg border transition-colors duration-200" style="background: var(--color-bg-card); color: var(--color-text-secondary); border-color: var(--color-border);">待审核</button>
                         <button onclick="filterAuth('已认证')" data-auth-filter="已认证" class="auth-filter-btn px-3 py-1.5 text-sm rounded-lg border transition-colors duration-200" style="background: var(--color-bg-card); color: var(--color-text-secondary); border-color: var(--color-border);">已认证</button>
                         <button onclick="filterAuth('已拒绝')" data-auth-filter="已拒绝" class="auth-filter-btn px-3 py-1.5 text-sm rounded-lg border transition-colors duration-200" style="background: var(--color-bg-card); color: var(--color-text-secondary); border-color: var(--color-border);">已拒绝</button>
+                        <div class="flex-1"></div>
+                        <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg border" style="background: var(--color-bg-card); border-color: var(--color-border);">
+                            <i data-lucide="search" class="w-4 h-4" style="color: var(--color-text-muted);"></i>
+                            <input id="auth-search" type="text" oninput="searchAuth(this.value)" placeholder="搜索姓名或手机号" aria-label="搜索认证记录" class="bg-transparent text-sm outline-none" style="color: var(--color-text); width: 180px;">
+                        </div>
+                        <select id="auth-role-filter" onchange="filterAuthRole(this.value)" aria-label="按角色筛选" class="px-3 py-1.5 text-sm rounded-lg border outline-none" style="background: var(--color-bg-card); border-color: var(--color-border); color: var(--color-text);">
+                            <option value="全部">全部角色</option>
+                            <option value="暖家">暖家</option>
+                            <option value="暖伴">暖伴</option>
+                        </select>
                     </div>
 
                     <!-- Auth Records Table -->
                     <div class="rounded-lg border overflow-hidden" style="background: var(--color-bg-card); border-color: var(--color-border);">
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-sm">
+                        <div class="overflow-x-auto md:overflow-x-visible">
+                            <table class="w-full text-sm sc-responsive-table">
                                 <thead>
                                     <tr style="background: var(--color-bg-muted);">
                                         <th class="px-4 py-3 text-left font-medium whitespace-nowrap" style="color: var(--color-text-secondary);">申请人姓名</th>
@@ -1038,7 +1031,7 @@
     </div>
 
     <!-- Toast Container -->
-    <div id="toast-container" class="fixed top-6 right-6 space-y-2" style="z-index: var(--z-toast);"></div>
+    <div id="toast-container" class="fixed top-6 right-6 space-y-2" style="z-index: var(--z-toast);" role="status" aria-live="polite" aria-atomic="true"></div>
 
     <!-- ===== Custom Styles (inside body) ===== -->
     <style>
@@ -1520,240 +1513,23 @@
     /* ============================================================
      * 共享数据层 — 与 mini-program.html 共享相同 localStorage key
      * ============================================================ */
-    var SC_KEYS = {
-        orders: 'sc_orders',
-        volunteers: 'sc_volunteers',
-        alarms: 'sc_alarms',
-        contracts: 'sc_contracts',
-        auth: 'sc_auth_records'
-    };
-
-    function scGet(key) {
-        try {
-            var raw = localStorage.getItem(key);
-            return raw ? JSON.parse(raw) : null;
-        } catch (e) { return null; }
-    }
-    function scSet(key, data) {
-        try { localStorage.setItem(key, JSON.stringify(data)); } catch (e) {}
-    }
-
-    // 安全输出：所有用户可编辑字段进入 innerHTML 前必须转义，防止 XSS
-    function escapeHtml(str) {
-        if (str === null || str === undefined) return '';
-        return String(str)
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;')
-            .replace(/'/g, '&#39;');
-    }
-
-    // 报警时间统一格式化（兼容旧字符串/数字记录）
-    function fmtAlarmTime(a, full) {
-        if (!a) return '-';
-        var ts = (a.createdAt != null ? a.createdAt : a.time);
-        if (ts === null || ts === undefined || ts === '') return '-';
-        var n = Number(ts), d;
-        if (!isNaN(n) && n > 0) d = new Date(n);
-        else if (typeof ts === 'string' && /^\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}/.test(ts)) d = new Date(ts.replace(/-/g, '/'));
-        else if (typeof ts === 'string' && /^\d{1,2}:\d{2}$/.test(ts)) return ts; // 旧 HH:mm 字符串原样显示
-        else return String(ts);
-        if (!d || isNaN(d.getTime())) return String(ts);
-        function p(n) { return ('0' + n).slice(-2); }
-        if (full) return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes());
-        return p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes());
-    }
-
-    /* ===== 示例数据初始化（仅在 localStorage 为空时写入） ===== */
-    // === 动态日期生成 ===
-    function fmtDate(offset) {
-      var d = new Date();
-      d.setDate(d.getDate() + offset);
-      return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
-    }
-    function fmtOrderId(offset, seq) {
-      var d = new Date();
-      d.setDate(d.getDate() + offset);
-      return 'ORD' + d.getFullYear() + ('0' + (d.getMonth() + 1)).slice(-2) + ('0' + d.getDate()).slice(-2) + String(seq).padStart(4, '0');
-    }
-
+    // 共享数据层：使用 demo-store.js 提供的 ScStore（替代旧的内联种子与迁移逻辑）
+    // ScStore 已自动初始化/迁移所有演示数据（schema v11），并提供以下兼容全局：
+    //   window.scGet, window.scSet, window.escapeHtml, window.fmtAlarmTime
+    var SC_KEYS = ScStore.KEYS;
+    // scGet / scSet / escapeHtml / fmtAlarmTime / fmtDate / fmtOrderId 均由 demo-store.js 提供，
+    // 这里仅保留本地别名，避免下方业务脚本里的大批引用需要重命名。
+    var scGet = ScStore.get;
+    var scSet = ScStore.set;
+    var escapeHtml = ScStore.escapeHtml;
+    var fmtAlarmTime = ScStore.fmtAlarmTime;
+    var fmtDate = ScStore.fmtDate;
+    var fmtOrderId = ScStore.fmtOrderId;
     function initData() {
-        // === 统一 schema 版本迁移（保留数据，幂等，绝不删除既有业务数据） ===
-        // 旧实现按版本号差异 removeItem 会清空用户创建的订单/认证/健康档案，现已废弃。
-        // 种子写入仍由下方各 if(!scGet(...)) 守卫保证仅在对应 key 为空时执行。
-        // 既有 v9 数据进入下方幂等补字段流程，迁移多次结果一致。
-        if (!scGet(SC_KEYS.orders)) {
-            var _now = Date.now(), _D = 86400000;
-            function _p2(n) { return String(n).padStart(2, '0'); }
-            function _ymd(ms) { var d = new Date(ms); return d.getFullYear() + '-' + _p2(d.getMonth() + 1) + '-' + _p2(d.getDate()); }
-            var _T = _ymd(_now), _Y = _ymd(_now - _D), _Y2 = _ymd(_now - 2 * _D), _Y3 = _ymd(_now - 3 * _D), _Y4 = _ymd(_now - 4 * _D);
-            scSet(SC_KEYS.orders, [
-                { id: 'ORD' + _T.replace(/-/g, '') + '0001', type: '日常陪伴', status: '待接单', elderName: '王奶奶', address: '武汉市武昌区中南路街梅苑小区3栋', time: _T + ' 09:00', duration: '2小时', description: '陪老人散步聊天，读报纸', volunteer: null, volunteerId: null, price: 80, createdAt: _now - 3600000, ownerId: 'U001' },
-                { id: 'ORD' + _T.replace(/-/g, '') + '0002', type: '跑腿代办', status: '待接单', elderName: '李大爷', address: '武汉市洪山区珞南街卓刀泉社区12栋', time: _T + ' 10:15', duration: '1小时', description: '代购生活用品和常用药品', volunteer: null, volunteerId: null, price: 60, createdAt: _now - 7200000, ownerId: null },
-                { id: 'ORD' + _Y.replace(/-/g, '') + '0001', type: '陪同就医', status: '进行中', elderName: '王奶奶', address: '武汉市武昌区中南路街梅苑小区3栋', time: _Y + ' 07:45', duration: '3小时', description: '陪同前往武汉大学中南医院复查并取药', volunteer: '陈思雨', volunteerId: 'V-004', price: 120, createdAt: _now - _D, ownerId: 'U001' },
-                { id: 'ORD' + _Y2.replace(/-/g, '') + '0001', type: '数字辅导', status: '已完成', elderName: '赵阿姨', address: '武汉市江岸区大智街同安里7栋', time: _Y2 + ' 08:00', duration: '1.5小时', description: '教老人使用智能手机视频通话和微信', volunteer: '王志强', volunteerId: 'V-003', price: 70, createdAt: _now - 2 * _D, completedAt: _now - _D, ownerId: null },
-                { id: 'ORD' + _Y3.replace(/-/g, '') + '0001', type: '日常陪伴', status: '已完成', elderName: '王奶奶', address: '武汉市武昌区中南路街梅苑小区3栋', time: _Y3 + ' 14:00', duration: '2小时', description: '陪伴聊天，协助整理家务', volunteer: '张小雨', volunteerId: 'V-001', price: 80, createdAt: _now - 3 * _D, completedAt: _now - 2 * _D, ownerId: 'U001' },
-                { id: 'ORD' + _Y4.replace(/-/g, '') + '0001', type: '跑腿代办', status: '已取消', elderName: '吴叔叔', address: '武汉市青山区红钢城街金色港湾8栋', time: _Y4 + ' 11:20', duration: '1小时', description: '代缴水电燃气费', volunteer: null, volunteerId: null, price: 60, createdAt: _now - 4 * _D, ownerId: null }
-            ]);
-        }
-        if (!scGet(SC_KEYS.volunteers)) {
-            scSet(SC_KEYS.volunteers, [
-                { id: 'V-001', name: '张小雨', phone: '138xxxx1234', rating: 4.9, completedOrders: 328, status: '在线', skills: ['日常陪伴', '数字辅导'], area: '武昌区梅苑小区', experience: '2年经验', praiseRate: 98 },
-                { id: 'V-002', name: '李芳姨', phone: '139xxxx5678', rating: 4.8, completedOrders: 512, status: '在线', skills: ['日常陪伴', '跑腿代办', '陪同就医'], area: '洪山区卓刀泉社区', experience: '3年经验', praiseRate: 97 },
-                { id: 'V-003', name: '王志强', phone: '137xxxx9012', rating: 4.7, completedOrders: 156, status: '在线', skills: ['数字辅导', '跑腿代办'], area: '江岸区同安里', experience: '1年经验', praiseRate: 96 },
-                { id: 'V-004', name: '陈思雨', phone: '136xxxx3456', rating: 4.9, completedOrders: 89, status: '服务中', skills: ['陪同就医', '日常陪伴'], area: '汉阳区翠微街', experience: '1年经验', praiseRate: 99 },
-                { id: 'V-005', name: '刘文博', phone: '135xxxx7890', rating: 4.6, completedOrders: 67, status: '在线', skills: ['日常陪伴', '跑腿代办'], area: '江汉区锦绣家园', experience: '半年经验', praiseRate: 95 },
-                { id: 'V-006', name: '赵敏', phone: '133xxxx2345', rating: 4.8, completedOrders: 203, status: '待审核', skills: ['跑腿代办', '陪同就医'], area: '青山区金色港湾', experience: '2年经验', praiseRate: 97 },
-                { id: 'V-007', name: '孙嘉懿', phone: '138xxxx6789', rating: 4.8, completedOrders: 45, status: '在线', skills: ['日常陪伴', '数字辅导'], area: '武昌区水果湖', experience: '1年经验', praiseRate: 96 },
-                { id: 'V-008', name: '杨思琪', phone: '139xxxx1357', rating: 4.7, completedOrders: 78, status: '在线', skills: ['日常陪伴', '陪同就医'], area: '洪山区街道口', experience: '1年经验', praiseRate: 95 },
-                { id: 'V-009', name: '马晓晨', phone: '136xxxx2468', rating: 4.9, completedOrders: 112, status: '服务中', skills: ['跑腿代办', '数字辅导'], area: '江岸区百步亭', experience: '2年经验', praiseRate: 98 },
-                { id: 'V-010', name: '郭明轩', phone: '135xxxx8642', rating: 4.6, completedOrders: 34, status: '待审核', skills: ['日常陪伴', '跑腿代办'], area: '汉阳区王家湾', experience: '半年经验', praiseRate: 94 }
-            ]);
-        }
-        if (!scGet(SC_KEYS.alarms)) {
-            function _almTs(hhmm) { var p = hhmm.split(':'); var d = new Date(); d.setHours(+p[0], +p[1], 0, 0); return d.getTime(); }
-            scSet(SC_KEYS.alarms, [
-                { id: 'ALM-001', time: '14:32', createdAt: _almTs('14:32'), type: '超时预警', status: '已确认', detail: '订单#' + fmtOrderId(0, '004') + ' 服务时长超过2小时', location: '汉阳区翠微街' },
-                { id: 'ALM-002', time: '11:15', createdAt: _almTs('11:15'), type: '位置偏离', status: '已处理', detail: '暖伴李芳姨偏离服务区域500米', location: '洪山区卓刀泉社区' },
-                { id: 'ALM-003', time: '09:40', createdAt: _almTs('09:40'), type: '紧急呼叫', status: '已响应', detail: '暖家孙爷爷触发SOS按钮', location: '汉阳区翠微街5栋' }
-            ]);
-        }
-        if (!scGet(SC_KEYS.contracts)) {
-            scSet(SC_KEYS.contracts, [
-                { id: 'HT-2026-001', client: '武汉光谷科技有限公司', type: '企业工会', amount: 180000, period: '2026.01 - 2026.12', status: '执行中', startDate: '2026-01-01' },
-                { id: 'HT-2026-002', client: '中国人寿保险湖北分公司', type: '商业保险', amount: 120000, period: '2026.03 - 2027.02', status: '执行中', startDate: '2026-03-01' },
-                { id: 'HT-2026-003', client: '武汉市中南路街道办事处', type: '街道/民政', amount: 96000, period: '2026.06 - 2027.05', status: '待签署', startDate: '2026-06-01' },
-                { id: 'HT-2026-004', client: '东风汽车集团工会委员会', type: '企业工会', amount: 240000, period: '2026.07 - 2027.06', status: '待签署', startDate: '2026-07-01' }
-            ]);
-        }
-        if (!scGet(SC_KEYS.auth)) {
-            // 动态生成认证记录：暖家10条 + 暖伴10条
-            var authNames = [
-                // 暖家
-                { name: '王秀兰', display: '王奶奶', role: '暖家', area: '武昌区梅苑小区', phone: '138****8888' },
-                { name: '李建国', display: '李大爷', role: '暖家', area: '洪山区卓刀泉社区', phone: '139****0000' },
-                { name: '赵淑芬', display: '赵奶奶', role: '暖家', area: '江岸区同安里', phone: '137****2233' },
-                { name: '孙明德', display: '孙爷爷', role: '暖家', area: '汉阳区翠微街', phone: '135****4455' },
-                { name: '周桂英', display: '周奶奶', role: '暖家', area: '江汉区锦绣家园', phone: '136****6677' },
-                { name: '吴国强', display: '吴叔叔', role: '暖家', area: '青山区金色港湾', phone: '133****8899' },
-                { name: '郑美玲', display: '郑阿姨', role: '暖家', area: '武昌区中南路', phone: '138****1122' },
-                { name: '冯德海', display: '冯爷爷', role: '暖家', area: '洪山区光谷步行街', phone: '139****3344' },
-                { name: '陈玉兰', display: '陈奶奶', role: '暖家', area: '江汉区万松街', phone: '137****5566' },
-                { name: '黄志远', display: '黄大爷', role: '暖家', area: '汉阳区建桥街', phone: '135****7788' },
-                // 暖伴
-                { name: '张小雨', display: '张小雨', role: '暖伴', area: '武昌区梅苑小区', phone: '137****7777' },
-                { name: '陈思雨', display: '陈思雨', role: '暖伴', area: '汉阳区翠微街', phone: '136****3456' },
-                { name: '李芳姨', display: '李芳姨', role: '暖伴', area: '洪山区卓刀泉社区', phone: '139****5678' },
-                { name: '王志强', display: '王志强', role: '暖伴', area: '江岸区同安里', phone: '137****9012' },
-                { name: '刘文博', display: '刘文博', role: '暖伴', area: '江汉区锦绣家园', phone: '135****7890' },
-                { name: '赵敏', display: '赵敏', role: '暖伴', area: '青山区金色港湾', phone: '133****2345' },
-                { name: '孙嘉懿', display: '孙嘉懿', role: '暖伴', area: '武昌区水果湖', phone: '138****6789' },
-                { name: '杨思琪', display: '杨思琪', role: '暖伴', area: '洪山区街道口', phone: '139****1357' },
-                { name: '马晓晨', display: '马晓晨', role: '暖伴', area: '江岸区百步亭', phone: '136****2468' },
-                { name: '郭明轩', display: '郭明轩', role: '暖伴', area: '汉阳区王家湾', phone: '135****8642' }
-            ];
-            var authStatuses = ['已认证', '已认证', '已认证', '待审核', '待审核', '已认证', '已拒绝', '待审核', '已认证', '已认证', '已认证', '待审核', '已认证', '已认证', '已认证', '已拒绝', '待审核', '已认证', '待审核', '已认证'];
-            var authRecords = [];
-            var _nuanjiaSeq = 0, _nuanbanSeq = 0;
-            for (var ai = 0; ai < authNames.length; ai++) {
-                var a = authNames[ai];
-                var dayOffset = -(ai % 10);
-                var hour = 8 + (ai % 10);
-                var minute = (ai * 7) % 60;
-                // 稳定 subjectId：暖家 U00x、暖伴 V-00x（与用户/暖伴主键一致，不依赖姓名匹配）
-                var subjectId = a.role === '暖家'
-                    ? ('U' + String(++_nuanjiaSeq).padStart(3, '0'))
-                    : ('V-' + String(++_nuanbanSeq).padStart(3, '0'));
-                var rec = {
-                    id: 'AUTH-' + String(ai + 1).padStart(3, '0'),
-                    name: a.display,
-                    role: a.role,
-                    subjectId: subjectId,
-                    idCard: '4201**********' + String(1000 + ai * 37).slice(-4),
-                    phone: a.phone,
-                    submitTime: fmtDate(dayOffset) + ' ' + String(hour).padStart(2, '0') + ':' + String(minute).padStart(2, '0'),
-                    status: authStatuses[ai],
-                    realName: a.name,
-                    area: a.area
-                };
-                if (rec.status === '已拒绝') {
-                    rec.rejectReason = ai % 2 === 0 ? '身份证照片模糊' : '人脸识别不匹配';
-                }
-                authRecords.push(rec);
-            }
-            scSet(SC_KEYS.auth, authRecords);
-        }
-
-        // === 幂等迁移：为缺失字段补值（对全新种子与既有 v9 数据都安全，多次执行结果一致） ===
-        scPatchOrders();
-        scPatchVolunteers();
-        scPatchAuth();
-        scPatchAlarms();
-        // 统一 schema 版本回写，清理旧版本键（仅删键，不动业务数据）
-        localStorage.setItem('sc_schema_version', '10');
-        localStorage.removeItem('sc_admin_version');
-        localStorage.removeItem('sc_data_version');
-    }
-
-    function scPatchOrders() {
-        var orders = scGet(SC_KEYS.orders);
-        if (!orders || !orders.length) return;
-        var vols = scGet(SC_KEYS.volunteers) || [];
-        var nameToId = {};
-        vols.forEach(function (v) { if (v && v.name) nameToId[v.name] = v.id; });
-        var changed = false;
-        orders.forEach(function (o) {
-            if (o.volunteerId === undefined) {
-                o.volunteerId = (o.volunteer && nameToId[o.volunteer]) ? nameToId[o.volunteer] : null;
-                changed = true;
-            }
-            if (o.createdAt === undefined) { o.createdAt = Date.now(); changed = true; }
-        });
-        if (changed) scSet(SC_KEYS.orders, orders);
-    }
-    function scPatchVolunteers() {
-        var vols = scGet(SC_KEYS.volunteers);
-        if (!vols || !vols.length) return;
-        var changed = false;
-        vols.forEach(function (v) {
-            if (v.id === undefined) { v.id = 'V-' + String(vols.indexOf(v) + 1).padStart(3, '0'); changed = true; }
-            if (v.completedOrders === undefined) { v.completedOrders = 0; changed = true; }
-        });
-        if (changed) scSet(SC_KEYS.volunteers, vols);
-    }
-    function scPatchAuth() {
-        var recs = scGet(SC_KEYS.auth);
-        if (!recs || !recs.length) return;
-        var changed = false;
-        var _ji = 0, _bi = 0;
-        recs.forEach(function (r) {
-            if (r.subjectId === undefined) {
-                if (r.role === '暖家') r.subjectId = 'U' + String(++_ji).padStart(3, '0');
-                else if (r.role === '暖伴') r.subjectId = 'V-' + String(++_bi).padStart(3, '0');
-                else r.subjectId = 'SUB-' + r.id;
-                changed = true;
-            }
-            // 统一状态枚举：已通过 → 已认证
-            if (r.status === '已通过') { r.status = '已认证'; changed = true; }
-        });
-        if (changed) scSet(SC_KEYS.auth, recs);
-    }
-    function scPatchAlarms() {
-        var alarms = scGet(SC_KEYS.alarms);
-        if (!alarms || !alarms.length) return;
-        var changed = false;
-        alarms.forEach(function (a) {
-            if (a.createdAt === undefined) {
-                if (typeof a.time === 'number') { a.createdAt = a.time; changed = true; }
-                else if (typeof a.time === 'string' && a.time) {
-                    var m = a.time.match(/^(\d{1,2}):(\d{2})$/);
-                    if (m) { var d = new Date(); d.setHours(+m[1], +m[2], 0, 0); a.createdAt = d.getTime(); changed = true; }
-                    else { var dd = new Date(a.time.replace(/-/g, '/')); if (!isNaN(dd.getTime())) { a.createdAt = dd.getTime(); changed = true; } }
-                } else { a.createdAt = Date.now(); changed = true; }
-            }
-        });
-        if (changed) scSet(SC_KEYS.alarms, alarms);
+        // 单一入口：完全交由 ScStore 完成种子写入、字段迁移、状态对账
+        ScStore.init();
+        // 渲染前再次对账，把过期待接单转为已过期
+        ScStore.reconcileOrderStatuses(Date.now());
     }
 
     /* ============================================================
@@ -1770,6 +1546,7 @@
         var c = palette[type] || palette.info;
         var toast = document.createElement('div');
         toast.className = 'toast-animate flex items-center gap-2 px-4 py-3 rounded-lg border shadow-lg';
+        toast.setAttribute('role', 'status');
         toast.style.cssText = 'background:' + c.bg + ';border-color:' + c.color + ';min-width:200px;';
         toast.innerHTML = '<i data-lucide="' + c.icon + '" class="w-4 h-4" style="color:' + c.color + ';"></i><span class="text-sm" style="color:var(--color-text);">' + escapeHtml(msg) + '</span>';
         container.appendChild(toast);
@@ -1785,27 +1562,58 @@
     /* ============================================================
      * Modal 通用工具
      * ============================================================ */
+    // 记录打开弹窗前的焦点元素，关闭后恢复焦点
+    var scModalLastFocused = null;
+    var scModalFocusTrapHandler = null;
     function openModal(id) {
         var m = document.getElementById(id);
-        if (m) {
-            m.classList.remove('hidden');
-            m.classList.add('modal-overlay-animate');
-            var content = m.querySelector(':scope > div');
-            if (content) {
-                content.classList.remove('modal-content-animate');
-                void content.offsetWidth; // force reflow to restart animation
-                content.classList.add('modal-content-animate');
-            }
-            if (window.lucide) lucide.createIcons();
+        if (!m) return;
+        scModalLastFocused = document.activeElement;
+        m.classList.remove('hidden');
+        m.classList.add('modal-overlay-animate');
+        m.setAttribute('aria-hidden', 'false');
+        var content = m.querySelector(':scope > div');
+        if (content) {
+            content.classList.remove('modal-content-animate');
+            void content.offsetWidth; // force reflow to restart animation
+            content.classList.add('modal-content-animate');
         }
+        if (window.lucide) lucide.createIcons();
+        // 初始聚焦：优先聚焦关闭按钮，其次首个可聚焦元素
+        setTimeout(function () {
+            var focusables = m.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+            if (focusables.length) {
+                var closeBtn = m.querySelector('[aria-label="关闭"]');
+                (closeBtn || focusables[0]).focus();
+            }
+        }, 50);
+        // Tab 焦点约束
+        if (scModalFocusTrapHandler) document.removeEventListener('keydown', scModalFocusTrapHandler);
+        scModalFocusTrapHandler = function (e) {
+            if (e.key !== 'Tab' || m.classList.contains('hidden')) return;
+            var f = m.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+            if (!f.length) return;
+            var first = f[0], last = f[f.length - 1];
+            if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+            else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+        };
+        document.addEventListener('keydown', scModalFocusTrapHandler);
     }
     function closeModal(id) {
         var m = document.getElementById(id);
         if (m) {
             m.classList.add('hidden');
             m.classList.remove('modal-overlay-animate');
+            m.setAttribute('aria-hidden', 'true');
             var content = m.querySelector(':scope > div');
             if (content) content.classList.remove('modal-content-animate');
+        }
+        // 移除焦点约束
+        if (scModalFocusTrapHandler) { document.removeEventListener('keydown', scModalFocusTrapHandler); scModalFocusTrapHandler = null; }
+        // 恢复触发按钮焦点
+        if (scModalLastFocused && typeof scModalLastFocused.focus === 'function') {
+            try { scModalLastFocused.focus(); } catch (e) {}
+            scModalLastFocused = null;
         }
     }
     // ESC 键关闭所有弹窗
@@ -1836,12 +1644,15 @@
         return map[type] || 'var(--color-bg-muted)|var(--color-text-secondary)';
     }
     function orderStatusStyle(status) {
+        // 与 ScStore.orderStatusStyle 保持一致，支持全部7种状态
         var map = {
-            '进行中': 'var(--state-success-bg)|var(--state-success)',
             '待接单': 'var(--state-info-bg)|var(--state-info)',
+            '待服务': 'var(--color-primary-light)|var(--color-primary)',
+            '进行中': 'var(--state-success-bg)|var(--state-success)',
             '待确认': 'var(--state-warning-bg)|var(--state-warning)',
             '已完成': 'var(--color-bg-muted)|var(--color-text-muted)',
-            '已取消': 'var(--state-error-bg)|var(--state-error)'
+            '已取消': 'var(--state-error-bg)|var(--state-error)',
+            '已过期': 'var(--color-bg-muted)|var(--color-text-muted)'
         };
         return map[status] || 'var(--color-bg-muted)|var(--color-text-secondary)';
     }
@@ -1891,6 +1702,8 @@
     function renderOrders() {
         var tbody = document.getElementById('orders-tbody');
         if (!tbody) return;
+        // 渲染前对账：把过期待接单自动转为已过期，避免页面显示矛盾状态
+        ScStore.reconcileOrderStatuses(Date.now());
         var orders = getOrders();
         var kw = currentOrderSearch.toLowerCase();
         var filtered = orders.filter(function (o) {
@@ -1899,7 +1712,7 @@
             return matchFilter && matchSearch;
         });
         if (filtered.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="7" class="px-4 py-10 text-center" style="color:var(--color-text-muted);">暂无符合条件的订单</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="8" class="px-4 py-10 text-center" style="color:var(--color-text-muted);">暂无符合条件的订单</td></tr>';
             return;
         }
         var html = '';
@@ -1909,8 +1722,11 @@
             var volunteerCell = o.volunteer
                 ? '<span style="color:var(--color-text);">' + escapeHtml(o.volunteer) + '</span>'
                 : '<span style="color:var(--color-text-muted);">未指派</span>';
+            // 兼容旧数据：serviceStartAt 缺失时回退到 time 字符串；createdAt 缺失回退到 serviceStartAt
+            var createdStr = ScStore.fmtTime(o.createdAt != null ? o.createdAt : o.serviceStartAt, true);
+            var serviceStr = ScStore.fmtTime(o.serviceStartAt != null ? o.serviceStartAt : o.time, true);
             var actionBtn;
-            // 仅“待接单”订单允许指派；已取消/待确认/已完成一律只读，禁止出现指派按钮
+            // 仅“待接单”订单允许指派；待服务/进行中/待确认/已完成/已取消/已过期一律只读
             if (o.status === '待接单') {
                 actionBtn = '<button onclick="showAssignModal(\'' + escapeHtml(o.id) + '\')" class="text-xs mr-2" style="color:var(--color-primary);">指派</button>' +
                             '<button onclick="showOrderDetail(\'' + escapeHtml(o.id) + '\')" class="text-xs" style="color:var(--color-text-secondary);">详情</button>';
@@ -1918,13 +1734,14 @@
                 actionBtn = '<button onclick="showOrderDetail(\'' + escapeHtml(o.id) + '\')" class="text-xs" style="color:var(--color-primary);">详情</button>';
             }
             html += '<tr class="border-t fade-in-up" style="border-color:var(--color-border-light);">' +
-                '<td class="px-4 py-3 whitespace-nowrap truncate" style="color:var(--color-text);font-variant-numeric:tabular-nums;">#' + escapeHtml(o.id) + '</td>' +
-                '<td class="px-4 py-3 whitespace-nowrap"><div class="truncate" style="color:var(--color-text);">' + escapeHtml(o.elderName) + '</div><div class="text-xs truncate" style="color:var(--color-text-muted);">' + escapeHtml(o.address) + '</div></td>' +
-                '<td class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background:' + ts[0] + ';color:' + ts[1] + ';">' + escapeHtml(o.type) + '</span></td>' +
-                '<td class="px-4 py-3 whitespace-nowrap truncate">' + volunteerCell + '</td>' +
-                '<td class="px-4 py-3 whitespace-nowrap" style="color:var(--color-text-secondary);font-variant-numeric:tabular-nums;">' + escapeHtml(o.time) + '</td>' +
-                '<td class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background:' + ss[0] + ';color:' + ss[1] + ';">' + escapeHtml(o.status) + '</span></td>' +
-                '<td class="px-4 py-3 whitespace-nowrap">' + actionBtn + '</td>' +
+                '<td data-label="订单号" class="px-4 py-3 whitespace-nowrap truncate" style="color:var(--color-text);font-variant-numeric:tabular-nums;">#' + escapeHtml(o.id) + '</td>' +
+                '<td data-label="暖家信息" class="px-4 py-3 whitespace-nowrap"><div class="truncate" style="color:var(--color-text);">' + escapeHtml(o.elderName) + '</div><div class="text-xs truncate" style="color:var(--color-text-muted);">' + escapeHtml(o.address) + '</div></td>' +
+                '<td data-label="服务类型" class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background:' + ts[0] + ';color:' + ts[1] + ';">' + escapeHtml(o.type) + '</span></td>' +
+                '<td data-label="指派暖伴" class="px-4 py-3 whitespace-nowrap truncate">' + volunteerCell + '</td>' +
+                '<td data-label="下单时间" class="px-4 py-3 whitespace-nowrap" style="color:var(--color-text-secondary);font-variant-numeric:tabular-nums;">' + escapeHtml(createdStr) + '</td>' +
+                '<td data-label="服务时间" class="px-4 py-3 whitespace-nowrap" style="color:var(--color-text-secondary);font-variant-numeric:tabular-nums;">' + escapeHtml(serviceStr) + '</td>' +
+                '<td data-label="状态" class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background:' + ss[0] + ';color:' + ss[1] + ';">' + escapeHtml(o.status) + '</span></td>' +
+                '<td data-label="操作" class="px-4 py-3 whitespace-nowrap">' + actionBtn + '</td>' +
                 '</tr>';
         });
         tbody.innerHTML = html;
@@ -1960,18 +1777,24 @@
         var body = document.getElementById('order-detail-body');
         var ts = orderTypeStyle(o.type).split('|');
         var ss = orderStatusStyle(o.status).split('|');
+        var createdStr = ScStore.fmtTime(o.createdAt != null ? o.createdAt : o.serviceStartAt, true);
+        var serviceStr = ScStore.fmtTime(o.serviceStartAt != null ? o.serviceStartAt : o.time, true);
         var rows = [
             ['订单编号', '#' + o.id, 'text'],
             ['服务类型', o.type, 'type'],
             ['订单状态', o.status, 'status'],
             ['暖家姓名', o.elderName, 'text'],
             ['服务地址', o.address, 'text'],
-            ['服务时间', o.time, 'text'],
+            ['下单时间', createdStr, 'text'],
+            ['服务时间', serviceStr, 'text'],
             ['服务时长', o.duration, 'text'],
             ['指派暖伴', (o.volunteer || '未指派') + (o.volunteerId ? '（' + o.volunteerId + '）' : ''), 'text'],
             ['服务费用', '¥' + o.price, 'text'],
             ['需求描述', o.description || '-', 'text']
         ];
+        // 已过期/已取消：追加原因
+        if (o.status === '已过期' && o.expireReason) rows.push(['过期原因', o.expireReason, 'error']);
+        if (o.status === '已取消' && o.cancelReason) rows.push(['取消原因', o.cancelReason, 'error']);
         var html = '';
         rows.forEach(function (r) {
             var valHtml;
@@ -1979,6 +1802,8 @@
                 valHtml = '<span class="px-2 py-0.5 rounded text-xs" style="background:' + ss[0] + ';color:' + ss[1] + ';">' + escapeHtml(r[1]) + '</span>';
             } else if (r[2] === 'type') {
                 valHtml = '<span class="px-2 py-0.5 rounded text-xs" style="background:' + ts[0] + ';color:' + ts[1] + ';">' + escapeHtml(r[1]) + '</span>';
+            } else if (r[2] === 'error') {
+                valHtml = '<span style="color:var(--state-error);">' + escapeHtml(r[1]) + '</span>';
             } else {
                 valHtml = '<span style="color:var(--color-text);">' + escapeHtml(r[1]) + '</span>';
             }
@@ -1996,9 +1821,9 @@
         var orders = getOrders();
         var order = null;
         for (var i = 0; i < orders.length; i++) { if (orders[i].id === id) { order = orders[i]; break; } }
-        // 入口校验：仅待接单订单可指派
+        // 入口校验：仅待接单订单可指派（待服务/进行中/待确认/已完成/已取消/已过期 均不可）
         if (!order || order.status !== '待接单') {
-            showToast('当前订单状态不可指派（仅“待接单”可指派）', 'error');
+            showToast('当前订单状态不可指派（仅“待接单”可指派；已过期/已取消等不可指派）', 'error');
             return;
         }
         var orderType = order ? order.type : '';
@@ -2083,15 +1908,24 @@
         if (oidx < 0 || !v) { showToast('指派失败：订单或暖伴不存在', 'error'); return; }
         var o = orders[oidx];
         // 修改函数内部再次校验：订单仍为待接单、暖伴已认证、状态在线、技能匹配
-        if (o.status !== '待接单') { showToast('订单已不在待接单状态，无法指派', 'error'); renderOrders(); closeModal('modal-assign'); return; }
+        if (o.status !== '待接单') {
+            showToast('订单已不在待接单状态，无法指派（当前状态：' + o.status + '）', 'error');
+            renderOrders(); closeModal('modal-assign'); return;
+        }
+        // 已过期订单一律禁止指派（即便被误标回待接单也拦截）
+        if (o.status === '已过期' || (o.serviceStartAt && o.serviceStartAt <= Date.now() && o.status === '待接单')) {
+            showToast('该订单已超过预约服务时间，已过期，不可指派', 'error');
+            ScStore.reconcileOrderStatuses(Date.now()); renderOrders(); closeModal('modal-assign'); return;
+        }
         if (o.volunteerId) { showToast('该订单已指派暖伴，禁止重复指派', 'error'); renderOrders(); closeModal('modal-assign'); return; }
         if (v.status !== '在线') { showToast('该暖伴当前不在线，无法指派', 'error'); return; }
         if (!isVolunteerCertified(v.id)) { showToast('该暖伴未完成实名认证，无法指派', 'error'); return; }
         if (!v.skills || v.skills.indexOf(o.type) < 0) { showToast('该暖伴技能不匹配，无法指派', 'error'); return; }
-        // 通过校验：订单 → 进行中（保存 volunteerId + 姓名），暖伴 → 服务中
+        // 通过校验：订单 → 待服务（已指派但尚未开始），并记录 assignedAt
         o.volunteerId = v.id;
         o.volunteer = v.name;
-        o.status = '进行中';
+        o.status = '待服务';
+        o.assignedAt = Date.now();
         saveOrders(orders);
         for (var k = 0; k < volunteers.length; k++) {
             if (volunteers[k].id === volunteerId) { volunteers[k].status = '服务中'; break; }
@@ -2208,13 +2042,13 @@
             var ss = processed ? 'var(--state-success-bg)|var(--state-success)'.split('|') : 'var(--state-warning-bg)|var(--state-warning)'.split('|');
             var actionBtn = processed
                 ? '<span class="text-xs" style="color:var(--color-text-muted);">已处理</span>'
-                : '<button onclick="processAlarm(\'' + a.id + '\')" class="text-xs px-2.5 py-1 rounded" style="background:var(--color-primary);color:var(--color-text-inverse);">处理</button>';
+                : '<button onclick="processAlarm(\'' + escapeHtml(a.id) + '\')" class="text-xs px-2.5 py-1 rounded" style="background:var(--color-primary);color:var(--color-text-inverse);">处理</button>';
             html += '<tr class="border-t fade-in-up" style="border-color:var(--color-border-light);">' +
-                '<td class="px-4 py-2.5 whitespace-nowrap" style="color:var(--color-text-secondary);font-variant-numeric:tabular-nums;">' + escapeHtml(fmtAlarmTime(a, false)) + '</td>' +
-                '<td class="px-4 py-2.5 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background:' + ts[0] + ';color:' + ts[1] + ';">' + escapeHtml(a.type) + '</span></td>' +
-                '<td class="px-4 py-2.5 truncate" style="color:var(--color-text);">' + escapeHtml(a.detail || a.location || '') + '</td>' +
-                '<td class="px-4 py-2.5 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background:' + ss[0] + ';color:' + ss[1] + ';">' + escapeHtml(a.status) + '</span></td>' +
-                '<td class="px-4 py-2.5 whitespace-nowrap">' + actionBtn + '</td>' +
+                '<td data-label="时间" class="px-4 py-2.5 whitespace-nowrap" style="color:var(--color-text-secondary);font-variant-numeric:tabular-nums;">' + escapeHtml(fmtAlarmTime(a, false)) + '</td>' +
+                '<td data-label="类型" class="px-4 py-2.5 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background:' + ts[0] + ';color:' + ts[1] + ';">' + escapeHtml(a.type) + '</span></td>' +
+                '<td data-label="详情" class="px-4 py-2.5 truncate" style="color:var(--color-text);">' + escapeHtml(a.detail || a.location || '') + '</td>' +
+                '<td data-label="状态" class="px-4 py-2.5 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background:' + ss[0] + ';color:' + ss[1] + ';">' + escapeHtml(a.status) + '</span></td>' +
+                '<td data-label="操作" class="px-4 py-2.5 whitespace-nowrap">' + actionBtn + '</td>' +
                 '</tr>';
         });
         tbody.innerHTML = html;
@@ -2253,12 +2087,12 @@
             var ss = contractStatusStyle(c.status).split('|');
             var amountStr = c.amount >= 10000 ? '¥' + (c.amount / 10000).toFixed(1) + '万/年' : '¥' + c.amount + '/年';
             html += '<tr class="border-t fade-in-up" style="border-color:var(--color-border-light);">' +
-                '<td class="px-4 py-3 whitespace-nowrap truncate" style="color:var(--color-text);font-variant-numeric:tabular-nums;">' + escapeHtml(c.id) + '</td>' +
-                '<td class="px-4 py-3 whitespace-nowrap truncate" style="color:var(--color-text);">' + escapeHtml(c.client) + '</td>' +
-                '<td class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background:' + ts[0] + ';color:' + ts[1] + ';">' + escapeHtml(c.type) + '</span></td>' +
-                '<td class="px-4 py-3 whitespace-nowrap" style="color:var(--color-text);font-variant-numeric:tabular-nums;">' + escapeHtml(amountStr) + '</td>' +
-                '<td class="px-4 py-3 whitespace-nowrap" style="color:var(--color-text-secondary);font-variant-numeric:tabular-nums;">' + escapeHtml(c.period || '-') + '</td>' +
-                '<td class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background:' + ss[0] + ';color:' + ss[1] + ';">' + escapeHtml(c.status) + '</span></td>' +
+                '<td data-label="合同编号" class="px-4 py-3 whitespace-nowrap truncate" style="color:var(--color-text);font-variant-numeric:tabular-nums;">' + escapeHtml(c.id) + '</td>' +
+                '<td data-label="合作方" class="px-4 py-3 whitespace-nowrap truncate" style="color:var(--color-text);">' + escapeHtml(c.client) + '</td>' +
+                '<td data-label="类型" class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background:' + ts[0] + ';color:' + ts[1] + ';">' + escapeHtml(c.type) + '</span></td>' +
+                '<td data-label="金额" class="px-4 py-3 whitespace-nowrap" style="color:var(--color-text);font-variant-numeric:tabular-nums;">' + escapeHtml(amountStr) + '</td>' +
+                '<td data-label="有效期" class="px-4 py-3 whitespace-nowrap" style="color:var(--color-text-secondary);font-variant-numeric:tabular-nums;">' + escapeHtml(c.period || '-') + '</td>' +
+                '<td data-label="状态" class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background:' + ss[0] + ';color:' + ss[1] + ';">' + escapeHtml(c.status) + '</span></td>' +
                 '</tr>';
         });
         tbody.innerHTML = html;
@@ -2332,9 +2166,13 @@
      * 实名认证审核
      * ============================================================ */
     var currentAuthFilter = '全部';
+    var currentAuthSearch = '';
+    var currentAuthRoleFilter = '全部';
 
     function getAuthRecords() { return scGet(SC_KEYS.auth) || []; }
     function saveAuthRecords(records) { scSet(SC_KEYS.auth, records); }
+    function searchAuth(keyword) { currentAuthSearch = (keyword || '').toLowerCase(); renderAuth(); }
+    function filterAuthRole(role) { currentAuthRoleFilter = role || '全部'; renderAuth(); }
 
     function authStatusStyle(status) {
         var map = {
@@ -2364,7 +2202,7 @@
         var tbody = document.getElementById('auth-tbody');
         if (!tbody) return;
         var records = getAuthRecords();
-        // Update stats
+        // Update stats — 全部记录同源计算（统计卡 / 侧栏徽标 / 表格行数都用同一份数据）
         var pending = records.filter(function (r) { return r.status === '待审核'; }).length;
         var approved = records.filter(function (r) { return r.status === '已认证'; }).length;
         var rejected = records.filter(function (r) { return r.status === '已拒绝'; }).length;
@@ -2377,9 +2215,15 @@
         if (rejectedEl) rejectedEl.textContent = rejected;
         if (totalEl) totalEl.textContent = records.length;
         updateAuthBadge();
-        // Filter
+        // Filter: 状态 + 角色 + 关键字 三重过滤
         var filtered = records.filter(function (r) {
-            return (currentAuthFilter === '全部') || (r.status === currentAuthFilter);
+            var matchStatus = (currentAuthFilter === '全部') || (r.status === currentAuthFilter);
+            var matchRole = (currentAuthRoleFilter === '全部') || (r.role === currentAuthRoleFilter);
+            var matchSearch = !currentAuthSearch ||
+                (r.name || '').toLowerCase().indexOf(currentAuthSearch) >= 0 ||
+                (r.realName || '').toLowerCase().indexOf(currentAuthSearch) >= 0 ||
+                (r.phone || '').toLowerCase().indexOf(currentAuthSearch) >= 0;
+            return matchStatus && matchRole && matchSearch;
         });
         if (filtered.length === 0) {
             tbody.innerHTML = '<tr><td colspan="7" class="px-4 py-10 text-center" style="color:var(--color-text-muted);">暂无符合条件的认证申请</td></tr>';
@@ -2398,14 +2242,19 @@
             } else {
                 actionBtn = '<button onclick="showAuthDetail(\'' + escapeHtml(r.id) + '\')" class="text-xs" style="color:var(--color-primary);">详情</button>';
             }
+            // 被拒绝的记录在状态列后追加拒绝原因（窄屏卡片化时也可见）
+            var statusCell = '<span class="px-2 py-0.5 rounded text-xs" style="background:' + ss[0] + ';color:' + ss[1] + ';">' + escapeHtml(r.status) + '</span>';
+            if (r.status === '已拒绝' && r.rejectReason) {
+                statusCell += '<div class="text-xs mt-1" style="color:var(--state-error);">' + escapeHtml(r.rejectReason) + '</div>';
+            }
             html += '<tr class="border-t fade-in-up" style="border-color:var(--color-border-light);">' +
-                '<td class="px-4 py-3 whitespace-nowrap truncate" style="color:var(--color-text);">' + escapeHtml(r.name) + '</td>' +
-                '<td class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background:' + rs[0] + ';color:' + rs[1] + ';">' + escapeHtml(r.role) + '</span></td>' +
-                '<td class="px-4 py-3 whitespace-nowrap truncate" style="color:var(--color-text-secondary);font-variant-numeric:tabular-nums;">' + escapeHtml(r.idCard) + '</td>' +
-                '<td class="px-4 py-3 whitespace-nowrap" style="color:var(--color-text-secondary);font-variant-numeric:tabular-nums;">' + escapeHtml(r.phone) + '</td>' +
-                '<td class="px-4 py-3 whitespace-nowrap" style="color:var(--color-text-secondary);font-variant-numeric:tabular-nums;">' + escapeHtml(r.submitTime) + '</td>' +
-                '<td class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background:' + ss[0] + ';color:' + ss[1] + ';">' + escapeHtml(r.status) + '</span></td>' +
-                '<td class="px-4 py-3 whitespace-nowrap">' + actionBtn + '</td>' +
+                '<td data-label="申请人姓名" class="px-4 py-3 whitespace-nowrap truncate" style="color:var(--color-text);">' + escapeHtml(r.name) + '</td>' +
+                '<td data-label="角色" class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background:' + rs[0] + ';color:' + rs[1] + ';">' + escapeHtml(r.role) + '</span></td>' +
+                '<td data-label="身份证号" class="px-4 py-3 whitespace-nowrap truncate" style="color:var(--color-text-secondary);font-variant-numeric:tabular-nums;">' + escapeHtml(r.idCard) + '</td>' +
+                '<td data-label="手机号" class="px-4 py-3 whitespace-nowrap" style="color:var(--color-text-secondary);font-variant-numeric:tabular-nums;">' + escapeHtml(r.phone) + '</td>' +
+                '<td data-label="提交时间" class="px-4 py-3 whitespace-nowrap" style="color:var(--color-text-secondary);font-variant-numeric:tabular-nums;">' + escapeHtml(r.submitTime) + '</td>' +
+                '<td data-label="状态" class="px-4 py-3 whitespace-nowrap">' + statusCell + '</td>' +
+                '<td data-label="操作" class="px-4 py-3 whitespace-nowrap">' + actionBtn + '</td>' +
                 '</tr>';
         });
         tbody.innerHTML = html;
@@ -2430,12 +2279,15 @@
     }
 
     // 认证审核通过/拒绝时，按 subjectId 同步回写小程序对应角色认证状态（禁止用姓名匹配）
+    // 同时同步到 ScStore.KEYS.authNuanjia / authNuanban，保证后台/小程序两侧状态一致
     function scWritebackAuthToSubject(subjectId, role, status, rejectReason) {
         if (!subjectId) return;
+        // 暖家：subjectId 形如 U001..U010；暖伴：V-001..V-010
+        // 小程序侧仅 U001 / V-001 是当前演示用户，其余仅更新后台 sc_auth_records
         var key = null;
-        if (role === '暖家' && subjectId === 'U001') key = 'sc_auth_nuanjia';
-        else if (role === '暖伴' && subjectId === 'V-001') key = 'sc_auth_nuanban';
-        if (!key) return; // 非当前演示用户（无小程序侧记录），仅更新后台记录
+        if (role === '暖家' && subjectId === 'U001') key = ScStore.KEYS.authNuanjia;
+        else if (role === '暖伴' && subjectId === 'V-001') key = ScStore.KEYS.authNuanban;
+        if (!key) return; // 非当前演示用户（无小程序侧记录），仅更新后台 sc_auth_records
         var rec = scGet(key);
         if (!rec) rec = { status: '未认证' };
         rec.status = status;
@@ -2522,21 +2374,23 @@
             '<div class="flex items-start gap-4 py-2.5 border-b" style="border-color:var(--color-border-light);"><div class="text-sm w-24 shrink-0" style="color:var(--color-text-secondary);">真实姓名</div><div class="text-sm flex-1 break-words"><span style="color:var(--color-text);">' + escapeHtml(r.realName || '-') + '</span></div></div>' +
             '<div class="flex items-start gap-4 py-2.5 border-b" style="border-color:var(--color-border-light);"><div class="text-sm w-24 shrink-0" style="color:var(--color-text-secondary);">身份证号</div><div class="text-sm flex-1 break-words"><span style="color:var(--color-text);font-variant-numeric:tabular-nums;">' + escapeHtml(r.idCard || '-') + '</span></div></div>' +
             '</div>';
-        // 身份证照片（有上传则显示真实压缩图，未上传显示占位）
+        // 证件材料：演示数据均为脱敏占位，不展示空白证件框
         html += '<div class="mb-4">' +
-            '<div class="text-xs font-semibold mb-2" style="color:var(--color-text-muted);">身份证照片</div>' +
-            '<div class="flex gap-3">' +
-                '<div class="flex-1 flex flex-col items-center justify-center rounded-lg overflow-hidden" style="height:100px;background:var(--color-bg-muted);border:1px dashed var(--color-border);">' +
-                    (r.idfront
-                        ? '<img src="' + r.idfront + '" style="width:100%;height:100%;object-fit:cover;" alt="人像面">'
-                        : '<i data-lucide="image" class="w-6 h-6 mb-1" style="color:var(--color-text-muted);"></i><span class="text-xs" style="color:var(--color-text-muted);">人像面</span>') +
-                '</div>' +
-                '<div class="flex-1 flex flex-col items-center justify-center rounded-lg overflow-hidden" style="height:100px;background:var(--color-bg-muted);border:1px dashed var(--color-border);">' +
-                    (r.idback
-                        ? '<img src="' + r.idback + '" style="width:100%;height:100%;object-fit:cover;" alt="国徽面">'
-                        : '<i data-lucide="image" class="w-6 h-6 mb-1" style="color:var(--color-text-muted);"></i><span class="text-xs" style="color:var(--color-text-muted);">国徽面</span>') +
-                '</div>' +
-            '</div>' +
+            '<div class="text-xs font-semibold mb-2" style="color:var(--color-text-muted);">证件材料</div>' +
+            (r.idfront || r.idback
+                ? '<div class="flex gap-3">' +
+                    '<div class="flex-1 flex flex-col items-center justify-center rounded-lg overflow-hidden" style="height:100px;background:var(--color-bg-muted);border:1px solid var(--color-border);">' +
+                        (r.idfront ? '<img src="' + escapeHtml(r.idfront) + '" style="width:100%;height:100%;object-fit:cover;" alt="人像面">' : '<span class="text-xs" style="color:var(--color-text-muted);">人像面</span>') +
+                    '</div>' +
+                    '<div class="flex-1 flex flex-col items-center justify-center rounded-lg overflow-hidden" style="height:100px;background:var(--color-bg-muted);border:1px solid var(--color-border);">' +
+                        (r.idback ? '<img src="' + escapeHtml(r.idback) + '" style="width:100%;height:100%;object-fit:cover;" alt="国徽面">' : '<span class="text-xs" style="color:var(--color-text-muted);">国徽面</span>') +
+                    '</div>' +
+                '</div>'
+                : '<div class="flex items-center gap-3 p-4 rounded-lg" style="background:var(--color-bg-muted);border:1px dashed var(--color-border);">' +
+                    '<i data-lucide="shield-check" class="w-5 h-5 shrink-0" style="color:var(--state-info);"></i>' +
+                    '<div class="flex-1"><div class="text-sm" style="color:var(--color-text);">' + escapeHtml(r.materialNote || '已脱敏演示材料（非真实证件）') + '</div>' +
+                    '<div class="text-xs mt-0.5" style="color:var(--color-text-muted);">演示环境不存储真实证件影像，仅保留脱敏元数据用于审核流程演示</div></div>' +
+                '</div>') +
             '</div>';
         // 提交时间与状态
         html += '<div class="mb-4">' +
@@ -2609,22 +2463,24 @@
             '陪同就医': ['var(--color-primary-light)', 'var(--color-primary)']
         };
         var statusColors = {
-            '进行中': ['var(--state-success-bg)', 'var(--state-success)'],
             '待接单': ['var(--state-info-bg)', 'var(--state-info)'],
+            '待服务': ['var(--color-primary-light)', 'var(--color-primary)'],
+            '进行中': ['var(--state-success-bg)', 'var(--state-success)'],
             '待确认': ['var(--state-warning-bg)', 'var(--state-warning)'],
             '已完成': ['var(--color-bg-muted)', 'var(--color-text-muted)'],
-            '已取消': ['var(--state-error-bg)', 'var(--state-error)']
+            '已取消': ['var(--state-error-bg)', 'var(--state-error)'],
+            '已过期': ['var(--color-bg-muted)', 'var(--color-text-muted)']
         };
         var html = '';
         orders.slice(0, 5).forEach(function (o) {
             var tc = typeColors[o.type] || ['var(--color-bg-muted)', 'var(--color-text-secondary)'];
             var sc = statusColors[o.status] || ['var(--color-bg-muted)', 'var(--color-text-secondary)'];
             html += '<tr class="border-t fade-in-up" style="border-color: var(--color-border-light);">';
-            html += '<td class="px-4 py-2.5 whitespace-nowrap truncate" style="color: var(--color-text); font-variant-numeric: tabular-nums;">#' + escapeHtml(o.id) + '</td>';
-            html += '<td class="px-4 py-2.5 whitespace-nowrap truncate" style="color: var(--color-text);">' + escapeHtml(o.elderName) + ' · ' + escapeHtml(o.address) + '</td>';
-            html += '<td class="px-4 py-2.5 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: ' + tc[0] + '; color: ' + tc[1] + ';">' + escapeHtml(o.type) + '</span></td>';
-            html += '<td class="px-4 py-2.5 whitespace-nowrap truncate" style="color: var(--color-text);">' + escapeHtml(o.volunteer || '-') + '</td>';
-            html += '<td class="px-4 py-2.5 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: ' + sc[0] + '; color: ' + sc[1] + ';">' + escapeHtml(o.status) + '</span></td>';
+            html += '<td data-label="订单号" class="px-4 py-2.5 whitespace-nowrap truncate" style="color: var(--color-text); font-variant-numeric: tabular-nums;">#' + escapeHtml(o.id) + '</td>';
+            html += '<td data-label="暖家" class="px-4 py-2.5 whitespace-nowrap truncate" style="color: var(--color-text);">' + escapeHtml(o.elderName) + ' · ' + escapeHtml(o.address) + '</td>';
+            html += '<td data-label="服务类型" class="px-4 py-2.5 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: ' + tc[0] + '; color: ' + tc[1] + ';">' + escapeHtml(o.type) + '</span></td>';
+            html += '<td data-label="暖伴" class="px-4 py-2.5 whitespace-nowrap truncate" style="color: var(--color-text);">' + escapeHtml(o.volunteer || '-') + '</td>';
+            html += '<td data-label="状态" class="px-4 py-2.5 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs" style="background: ' + sc[0] + '; color: ' + sc[1] + ';">' + escapeHtml(o.status) + '</span></td>';
             html += '</tr>';
         });
         tbody.innerHTML = html;
@@ -3046,18 +2902,18 @@
             return;
         }
         pendingResetDemo = false;
-        // 删除全部 sc_* 数据，然后重新初始化种子
-        Object.keys(localStorage).forEach(function(k) { if (k.indexOf('sc_') === 0) localStorage.removeItem(k); });
+        // 统一通过 ScStore 重置：清除全部 sc_* 数据 + 重新写入 schema v11 种子
+        ScStore.resetAll();
         showToast('演示数据已重置，正在恢复种子数据…');
         setTimeout(function() {
-            initData();
+            ScStore.reconcileOrderStatuses(Date.now());
             location.reload();
         }, 800);
     }
     </script>
 
     <!-- Admin Settings Modal -->
-    <div id="admin-settings-modal" class="hidden fixed inset-0 z-[500] flex items-center justify-center p-4" style="background: rgba(61,46,36,0.4);">
+    <div id="admin-settings-modal" class="hidden fixed inset-0 z-[500] flex items-center justify-center p-4" style="background: rgba(61,46,36,0.4);" role="dialog" aria-modal="true" aria-labelledby="admin-settings-title">
         <div class="w-full max-w-md rounded-xl shadow-xl max-h-[90vh] overflow-y-auto" style="background: var(--color-bg-card);">
             <!-- Header -->
             <div class="px-6 py-4 border-b flex items-center justify-between" style="border-color: var(--color-border);">

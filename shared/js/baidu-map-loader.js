@@ -2,13 +2,8 @@
  * shared/js/baidu-map-loader.js
  * 共享百度地图异步加载器（单例 Promise + 回调队列 + 超时 + 重试）
  *
- * 使用百度地图异步 callback 方式加载，避免 document.write 问题：
- *   https://api.map.baidu.com/api?v=3.0&ak=AK&callback=__scBaiduMapReady__
- *
- * 用法：
- *   ScBaiduMapLoader.load().then(function() { /* BMap 可用 *\/ }).catch(function() { /* 降级 *\/ });
- *   ScBaiduMapLoader.reset();  // 重置状态以重试
- *   ScBaiduMapLoader.isReady(); // 快速检测
+ * 修复：旧定时器泄漏、重复轮询、并发回调问题。
+ * 保证失败后稳定降级且可以手动重试。
  */
 (function (window) {
   'use strict';
@@ -19,7 +14,7 @@
   var TIMEOUT_MS = 8000;
   var MAX_RETRIES = 2;
   var READY_CHECK_INTERVAL = 100;
-  var READY_CHECK_MAX = 30; // 3 seconds of polling after script load
+  var READY_CHECK_MAX = 30; // 3 seconds of polling
 
   var state = 'idle'; // idle | loading | loaded | failed
   var promise = null;
@@ -27,7 +22,9 @@
   var rejectFn = null;
   var scriptEl = null;
   var timeoutTimer = null;
+  var pollTimer = null;
   var retryCount = 0;
+  var settled = false; // ensures resolve/reject called exactly once
 
   function isReady() {
     return typeof window.BMap !== 'undefined' &&
@@ -37,19 +34,19 @@
 
   function cleanupScript() {
     if (scriptEl && scriptEl.parentNode) {
-      scriptEl.parentNode.removeChild(scriptEl);
+      try { scriptEl.parentNode.removeChild(scriptEl); } catch (e) {}
     }
     scriptEl = null;
   }
 
   function cleanupTimers() {
-    if (timeoutTimer) {
-      clearTimeout(timeoutTimer);
-      timeoutTimer = null;
-    }
+    if (timeoutTimer) { clearTimeout(timeoutTimer); timeoutTimer = null; }
+    if (pollTimer) { clearTimeout(pollTimer); pollTimer = null; }
   }
 
   function fail(reason) {
+    if (settled) return;
+    settled = true;
     state = 'failed';
     cleanupTimers();
     cleanupScript();
@@ -59,6 +56,8 @@
   }
 
   function succeed() {
+    if (settled) return;
+    settled = true;
     state = 'loaded';
     cleanupTimers();
     if (resolveFn) {
@@ -67,20 +66,24 @@
   }
 
   function pollForReady() {
+    // Prevent concurrent polling
+    if (pollTimer) clearTimeout(pollTimer);
     var tries = 0;
     function check() {
+      if (settled) return;
       if (isReady()) {
         succeed();
         return;
       }
       tries++;
       if (tries < READY_CHECK_MAX) {
-        setTimeout(check, READY_CHECK_INTERVAL);
+        pollTimer = setTimeout(check, READY_CHECK_INTERVAL);
       } else {
-        // Script loaded but BMap not available - might be AK restriction
+        // Script loaded but BMap not available
         if (retryCount < MAX_RETRIES) {
           retryCount++;
           cleanupScript();
+          cleanupTimers();
           startLoad();
         } else {
           fail('BMap not available after retries (possible AK domain restriction)');
@@ -91,9 +94,13 @@
   }
 
   function startLoad() {
-    // Set up the global callback - Baidu will call this when the API is ready
+    // Clean up any previous attempt's resources
+    cleanupTimers();
+    cleanupScript();
+
+    // Set up the global callback
     window[CALLBACK_NAME] = function () {
-      // The callback is called, but BMap might still need a moment
+      if (settled) return;
       pollForReady();
     };
 
@@ -103,12 +110,12 @@
     scriptEl.src = SCRIPT_URL;
 
     scriptEl.onload = function () {
-      // Script downloaded; the callback should fire, but poll as fallback
-      // in case callback was already called or doesn't fire
-      if (state === 'loading') {
-        // Give the callback a chance, then start polling
+      // Script downloaded. If callback hasn't fired yet, start polling as fallback.
+      // The callback itself also calls pollForReady, but pollForReady
+      // guards against concurrent polling.
+      if (!settled && state === 'loading') {
         setTimeout(function () {
-          if (state === 'loading') {
+          if (!settled && state === 'loading') {
             pollForReady();
           }
         }, 50);
@@ -116,22 +123,25 @@
     };
 
     scriptEl.onerror = function () {
+      if (settled) return;
       if (retryCount < MAX_RETRIES) {
         retryCount++;
         cleanupScript();
-        // Brief delay before retry
+        cleanupTimers();
         setTimeout(startLoad, 500);
       } else {
         fail('Script load error');
       }
     };
 
-    // Timeout protection
+    // Timeout protection — single timer per attempt
     timeoutTimer = setTimeout(function () {
+      if (settled) return;
       if (state === 'loading') {
         if (retryCount < MAX_RETRIES) {
           retryCount++;
           cleanupScript();
+          cleanupTimers();
           startLoad();
         } else {
           fail('Load timeout');
@@ -142,25 +152,18 @@
     document.head.appendChild(scriptEl);
   }
 
-  /**
-   * Load the Baidu Map API. Returns a singleton Promise.
-   * Multiple callers all receive the same Promise result.
-   */
   function load() {
     if (state === 'loaded' && isReady()) {
       return Promise.resolve();
     }
-    if (promise && state === 'loading') {
-      return promise;
-    }
-    if (promise && state === 'loaded') {
-      // BMap was loaded but somehow not ready now (shouldn't happen normally)
+    if (promise && (state === 'loading' || state === 'loaded')) {
       return promise;
     }
 
     // Start fresh (idle or failed)
     state = 'loading';
     retryCount = 0;
+    settled = false;
     promise = new Promise(function (resolve, reject) {
       resolveFn = resolve;
       rejectFn = reject;
@@ -169,28 +172,21 @@
     return promise;
   }
 
-  /**
-   * Reset the loader state to allow retry from failed state.
-   * Call this when user clicks "retry" on offline map.
-   */
   function reset() {
     state = 'idle';
     promise = null;
     resolveFn = null;
     rejectFn = null;
+    settled = false;
+    retryCount = 0;
     cleanupTimers();
     cleanupScript();
-    retryCount = 0;
   }
 
-  /**
-   * Get current state for UI feedback.
-   */
   function getState() {
     return state;
   }
 
-  // Export
   window.ScBaiduMapLoader = {
     load: load,
     reset: reset,

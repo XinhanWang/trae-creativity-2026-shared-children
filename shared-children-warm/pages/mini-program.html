@@ -127,48 +127,10 @@
 }
 
     </style>
-    <script>
-    // Targeted fix: @tailwindcss/browser@4.3.1 has a non-blocking getThemeColors/exportedColors bug
-    (function() {
-      var origCE = console.error;
-      console.error = function() {
-        var args = Array.prototype.slice.call(arguments);
-        var msg = args.map(function(a) { return typeof a === 'string' ? a : (a && a.message ? a.message : ''); }).join(' ');
-        if (msg.indexOf('exportedColors') >= 0 || msg.indexOf('getThemeColors') >= 0) {
-          console.warn('[Tailwind CDN] Non-blocking getThemeColors warning (does not affect functionality)');
-          return;
-        }
-        origCE.apply(console, args);
-      };
-      window.addEventListener('error', function(e) {
-        if (e && e.message && e.message.indexOf('exportedColors') >= 0) {
-          e.preventDefault(); e.stopPropagation();
-          return true;
-        }
-      }, true);
-      window.addEventListener('unhandledrejection', function(e) {
-        if (e && e.reason && e.reason.message && e.reason.message.indexOf('exportedColors') >= 0) {
-          e.preventDefault();
-        }
-      }, true);
-    })();
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
-    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <link rel="stylesheet" href="../../shared/css/app.css">
+    <script src="../../shared/js/lucide.min.js"></script>
+    <script src="../../shared/js/demo-store.js"></script>
     <script src="../../shared/js/baidu-map-loader.js"></script>
-    <style type="text/tailwindcss">
-  @theme inline {
-    --color-primary: #D4654A;
-    --color-secondary: #5B8A72;
-    --color-accent: #E8A838;
-    --color-border: #E8DDD0;
-  }
-  @layer base {
-    body { background: var(--color-background); color: var(--color-foreground); }
-    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
-    th { @apply whitespace-nowrap; }
-  }
-    </style>
     <style>
       .no-scrollbar::-webkit-scrollbar { display: none; }
       .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -195,20 +157,33 @@
       #phone-screen .text-3xl { font-size: calc(1.875rem * var(--font-scale, 1)); }
 
       /* Mobile responsive: no page-level horizontal scroll */
+      html, body { overflow-x: hidden; max-width: 100%; }
       .sc-main-padded { padding: 1rem; }
       .sc-intro-panel { padding-top: 0; }
       .sc-intro-panel h1 { font-size: 1.75rem; margin-bottom: 0.5rem; }
       .sc-intro-panel p.text-lg { font-size: 0.95rem; margin-bottom: 1rem; }
-      .sc-intro-panel .flex.gap-3.mb-8 { margin-bottom: 1rem; }
+      .sc-intro-panel .flex.gap-3.mb-8 { margin-bottom: 1rem; justify-content: center; }
       @media (min-width: 768px) {
         .sc-main-padded { padding: 2rem; }
         .sc-intro-panel { padding-top: 3rem; }
         .sc-intro-panel h1 { font-size: 2.5rem; margin-bottom: 1rem; }
         .sc-intro-panel p.text-lg { font-size: 1.125rem; margin-bottom: 2rem; }
-        .sc-intro-panel .flex.gap-3.mb-8 { margin-bottom: 2rem; }
+        .sc-intro-panel .flex.gap-3.mb-8 { margin-bottom: 2rem; justify-content: center; }
+      }
+      @media (min-width: 1024px) {
+        .sc-intro-panel .flex.gap-3.mb-8 { justify-content: flex-start; }
       }
       @media (max-width: 390px) {
         .sc-main-padded { padding: 0.5rem; }
+      }
+      /* Respect reduced motion preference */
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+          scroll-behavior: auto !important;
+        }
       }
     </style>
     <link rel="stylesheet" href="../../shared/css/animations.css">
@@ -225,11 +200,11 @@
 
           <!-- Role Switch Buttons -->
           <div class="flex flex-col sm:flex-row gap-3 mb-8">
-            <button id="btn-nuanjia" onclick="switchRole('nuanjia')" class="ripple-btn flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-base font-semibold transition-all duration-250" style="background: var(--color-primary); color: var(--color-text-inverse); border: none; cursor: pointer; box-shadow: var(--shadow-sm);">
+            <button id="btn-nuanjia" onclick="switchRole('nuanjia')" aria-pressed="true" class="ripple-btn flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-base font-semibold transition-all duration-250" style="background: var(--color-primary); color: var(--color-text-inverse); border: none; cursor: pointer; box-shadow: var(--shadow-sm);">
               <i data-lucide="home" style="width: 18px; height: 18px;"></i>
               <span>暖家模式</span>
             </button>
-            <button id="btn-nuanban" onclick="switchRole('nuanban')" class="ripple-btn flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-base font-semibold transition-all duration-250" style="background: transparent; color: var(--color-text); border: 1px solid var(--color-border); cursor: pointer;">
+            <button id="btn-nuanban" onclick="switchRole('nuanban')" aria-pressed="false" class="ripple-btn flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-base font-semibold transition-all duration-250" style="background: transparent; color: var(--color-text); border: 1px solid var(--color-border); cursor: pointer;">
               <i data-lucide="heart-handshake" style="width: 18px; height: 18px;"></i>
               <span>暖伴模式</span>
             </button>
@@ -265,7 +240,7 @@
 
         <!-- Phone Mockup -->
         <div class="shrink-0 w-full lg:w-auto flex justify-center">
-          <div class="relative" style="width: min(390px, 100%); aspect-ratio: 390 / 800; max-height: calc(100vh - 48px);">
+          <div class="relative" style="width: min(390px, 100%, calc((100vh - 48px) * 390 / 800)); aspect-ratio: 390 / 800;">
             <!-- Phone Frame -->
             <div class="absolute inset-0 rounded-[48px]" style="background: var(--color-phone-frame); box-shadow: 0 24px 80px var(--color-phone-frame-shadow), 0 0 0 2px var(--color-phone-frame-border), inset 0 0 0 2px var(--color-phone-frame-inner);"></div>
 
@@ -302,13 +277,13 @@
                         <p class="text-xs" style="color: var(--color-text-muted);" id="nj-greeting">上午好</p>
                         <p class="text-lg font-semibold" style="color: var(--color-text); font-family: var(--font-serif);" id="nj-home-name">王奶奶的家</p>
                       </div>
-                      <div class="w-10 h-10 rounded-full flex items-center justify-center cursor-pointer" style="background: var(--color-primary-light);" onclick="showToast('暂无新消息')">
+                      <div class="w-10 h-10 rounded-full flex items-center justify-center cursor-pointer" role="button" tabindex="0" aria-label="消息" style="background: var(--color-primary-light);" onclick="showToast('暂无新消息')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();showToast('暂无新消息')}">
                         <i data-lucide="bell" style="width: 18px; height: 18px; color: var(--color-primary);"></i>
                       </div>
                     </div>
 
                     <!-- Emergency SOS Button -->
-                    <button onclick="openAlarmModal()" class="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-base transition-transform duration-150" style="background: var(--state-error); color: var(--color-text-inverse); border: none; cursor: pointer; box-shadow: 0 2px 12px var(--state-error-shadow);">
+                    <button role="button" tabindex="0" onclick="openAlarmModal()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openAlarmModal()}" class="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-base transition-transform duration-150" style="background: var(--state-error); color: var(--color-text-inverse); border: none; cursor: pointer; box-shadow: 0 2px 12px var(--state-error-shadow);">
                       <i data-lucide="phone-call" style="width: 20px; height: 20px;"></i>
                       <span>一键报警</span>
                     </button>
@@ -336,7 +311,7 @@
                     </div>
 
                     <!-- Health Archive Entry -->
-                    <div class="flex items-center gap-3 p-3 rounded-xl cursor-pointer" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" role="button" tabindex="0" aria-label="健康档案" onclick="openHealthModal()" onkeydown="handleCardKey(event,'health')">
+                    <div class="flex items-center gap-3 p-3 rounded-xl cursor-pointer" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" role="button" tabindex="0" aria-label="健康档案" role="button" tabindex="0" onclick="openHealthModal()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openHealthModal()}" onkeydown="handleCardKey(event,'health')">
                       <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style="background: var(--state-success-bg);">
                         <i data-lucide="heart-pulse" style="width: 20px; height: 20px; color: var(--state-success);"></i>
                       </div>
@@ -351,7 +326,7 @@
                     <div>
                       <div class="flex items-center justify-between mb-3">
                         <p class="text-sm font-semibold" style="color: var(--color-text);">附近地图</p>
-                        <span class="text-xs cursor-pointer" style="color: var(--color-primary);" onclick="initHomeMap()">刷新地图</span>
+                        <span class="text-xs cursor-pointer" style="color: var(--color-primary);" role="button" tabindex="0" onclick="refreshHomeMapAndList()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();refreshHomeMapAndList()}">刷新地图</span>
                       </div>
                       <div id="home-map-container" style="height:150px; border-radius:12px; overflow:hidden; border:1px solid var(--color-border-light); background: var(--color-bg-muted);"></div>
                     </div>
@@ -392,7 +367,7 @@
                         <p class="text-base font-semibold truncate" id="me-name">王奶奶</p>
                         <p class="text-xs truncate" style="opacity: 0.85;" id="me-phone">138****8888</p>
                       </div>
-                      <button onclick="openProfileModal()" class="text-xs px-3 py-1.5 rounded-lg shrink-0" style="background: rgba(255,255,255,0.2); color: var(--color-text-inverse); border: none; cursor: pointer; font-weight: 500;">编辑</button>
+                      <button role="button" tabindex="0" onclick="openProfileModal()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openProfileModal()}" class="text-xs px-3 py-1.5 rounded-lg shrink-0" style="background: rgba(255,255,255,0.2); color: var(--color-text-inverse); border: none; cursor: pointer; font-weight: 500;">编辑</button>
                     </div>
 
                     <!-- Function List -->
@@ -419,7 +394,7 @@
                         <i data-lucide="chevron-right" style="width: 16px; height: 16px; color: var(--color-text-muted);"></i>
                       </div>
 
-                      <div class="flex items-center gap-3 p-3 rounded-xl cursor-pointer" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" onclick="openAlarmsList()">
+                      <div class="flex items-center gap-3 p-3 rounded-xl cursor-pointer" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" role="button" tabindex="0" onclick="openAlarmsList()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openAlarmsList()}">
                         <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style="background: var(--state-warning-bg);">
                           <i data-lucide="bell" style="width: 20px; height: 20px; color: var(--state-warning);"></i>
                         </div>
@@ -441,7 +416,7 @@
                         <i data-lucide="chevron-right" style="width: 16px; height: 16px; color: var(--color-text-muted);"></i>
                       </div>
 
-                      <div class="flex items-center gap-3 p-3 rounded-xl cursor-pointer" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" onclick="openAuthModal()">
+                      <div class="flex items-center gap-3 p-3 rounded-xl cursor-pointer" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" role="button" tabindex="0" onclick="openAuthModal()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openAuthModal()}">
                         <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style="background: var(--state-error-bg);">
                           <i data-lucide="shield-check" style="width: 20px; height: 20px; color: var(--state-error);"></i>
                         </div>
@@ -452,7 +427,7 @@
                         <i data-lucide="chevron-right" style="width: 16px; height: 16px; color: var(--color-text-muted);"></i>
                       </div>
 
-                      <div class="flex items-center gap-3 p-3 rounded-xl cursor-pointer" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" onclick="openSettingsModal()">
+                      <div class="flex items-center gap-3 p-3 rounded-xl cursor-pointer" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" role="button" tabindex="0" onclick="openSettingsModal()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openSettingsModal()}">
                         <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style="background: var(--color-bg-muted);">
                           <i data-lucide="settings" style="width: 20px; height: 20px; color: var(--color-text-secondary);"></i>
                         </div>
@@ -480,7 +455,7 @@
                         <p class="text-xs" style="color: var(--color-text-muted);">下午好</p>
                         <p class="text-lg font-semibold" style="color: var(--color-text); font-family: var(--font-serif);" id="nuanban-home-name">暖伴 · 张小雨</p>
                       </div>
-                      <div class="w-10 h-10 rounded-full flex items-center justify-center cursor-pointer" style="background: var(--color-primary-light);" onclick="showToast('暂无新消息')">
+                      <div class="w-10 h-10 rounded-full flex items-center justify-center cursor-pointer" role="button" tabindex="0" aria-label="消息" style="background: var(--color-primary-light);" onclick="showToast('暂无新消息')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();showToast('暂无新消息')}">
                         <i data-lucide="bell" style="width: 18px; height: 18px; color: var(--color-primary);"></i>
                       </div>
                     </div>
@@ -509,7 +484,7 @@
                     </div>
 
                     <!-- Training Entry -->
-                    <div class="flex items-center gap-3 p-3 rounded-xl cursor-pointer" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" onclick="openTrainingModal()">
+                    <div class="flex items-center gap-3 p-3 rounded-xl cursor-pointer" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" role="button" tabindex="0" onclick="openTrainingModal()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openTrainingModal()}">
                       <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style="background: var(--state-warning-bg);">
                         <i data-lucide="graduation-cap" style="width: 20px; height: 20px; color: var(--state-warning);"></i>
                       </div>
@@ -544,7 +519,7 @@
                         <p class="text-base font-semibold" id="volunteer-name">张小雨</p>
                         <p class="text-xs" style="opacity: 0.85;" id="volunteer-subtitle">认证暖伴 · 评分 4.8</p>
                       </div>
-                      <button onclick="openVolunteerProfileModal()" class="text-xs px-3 py-1.5 rounded-lg shrink-0" style="background: rgba(255,255,255,0.2); color: var(--color-text-inverse); border: none; cursor: pointer; font-weight: 500;">编辑</button>
+                      <button role="button" tabindex="0" onclick="openVolunteerProfileModal()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openVolunteerProfileModal()}" class="text-xs px-3 py-1.5 rounded-lg shrink-0" style="background: rgba(255,255,255,0.2); color: var(--color-text-inverse); border: none; cursor: pointer; font-weight: 500;">编辑</button>
                     </div>
 
                     <!-- Stats -->
@@ -910,7 +885,7 @@
                           <i data-lucide="bell" style="width:18px;height:18px;color:var(--color-primary);"></i>
                           <span class="text-sm" style="color: var(--color-text);">订单通知</span>
                         </div>
-                        <div class="settings-toggle" data-key="notifyOrder" onclick="toggleSetting(this)">
+                        <div class="settings-toggle" role="switch" tabindex="0" data-key="notifyOrder" onclick="toggleSetting(this)">
                           <span class="toggle-knob"></span>
                         </div>
                       </div>
@@ -919,7 +894,7 @@
                           <i data-lucide="heart-pulse" style="width:18px;height:18px;color:var(--state-error);"></i>
                           <span class="text-sm" style="color: var(--color-text);">健康提醒</span>
                         </div>
-                        <div class="settings-toggle" data-key="notifyHealth" onclick="toggleSetting(this)">
+                        <div class="settings-toggle" role="switch" tabindex="0" data-key="notifyHealth" onclick="toggleSetting(this)">
                           <span class="toggle-knob"></span>
                         </div>
                       </div>
@@ -928,7 +903,7 @@
                           <i data-lucide="megaphone" style="width:18px;height:18px;color:var(--state-warning);"></i>
                           <span class="text-sm" style="color: var(--color-text);">活动推送</span>
                         </div>
-                        <div class="settings-toggle" data-key="notifyActivity" onclick="toggleSetting(this)">
+                        <div class="settings-toggle" role="switch" tabindex="0" data-key="notifyActivity" onclick="toggleSetting(this)">
                           <span class="toggle-knob"></span>
                         </div>
                       </div>
@@ -937,7 +912,7 @@
                     <!-- Privacy Settings -->
                     <p class="text-xs font-semibold mb-2" style="color: var(--color-text-secondary);">隐私与安全</p>
                     <div class="space-y-2 mb-4">
-                      <div class="flex items-center justify-between p-3 rounded-xl cursor-pointer" style="background: var(--color-bg); border: 1px solid var(--color-border-light);" onclick="showToast('已开启位置权限管理')">
+                      <div class="flex items-center justify-between p-3 rounded-xl cursor-pointer" style="background: var(--color-bg); border: 1px solid var(--color-border-light);" role="button" tabindex="0" onclick="showToast('已开启位置权限管理')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();showToast('已开启位置权限管理')}">
                         <div class="flex items-center gap-2">
                           <i data-lucide="map-pin" style="width:18px;height:18px;color:var(--state-info);"></i>
                           <span class="text-sm" style="color: var(--color-text);">位置权限</span>
@@ -949,7 +924,7 @@
                           <i data-lucide="shield-check" style="width:18px;height:18px;color:var(--state-success);"></i>
                           <span class="text-sm" style="color: var(--color-text);">隐藏手机号</span>
                         </div>
-                        <div class="settings-toggle" data-key="hidePhone" onclick="toggleSetting(this)">
+                        <div class="settings-toggle" role="switch" tabindex="0" data-key="hidePhone" onclick="toggleSetting(this)">
                           <span class="toggle-knob"></span>
                         </div>
                       </div>
@@ -966,7 +941,7 @@
                     <!-- Other -->
                     <p class="text-xs font-semibold mb-2" style="color: var(--color-text-secondary);">其他</p>
                     <div class="space-y-2 mb-4">
-                      <div class="flex items-center justify-between p-3 rounded-xl cursor-pointer" style="background: var(--color-bg); border: 1px solid var(--color-border-light);" onclick="showToast('当前版本 v1.0.0')">
+                      <div class="flex items-center justify-between p-3 rounded-xl cursor-pointer" style="background: var(--color-bg); border: 1px solid var(--color-border-light);" role="button" tabindex="0" onclick="showToast('当前版本 v1.0.0')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();showToast('当前版本 v1.0.0')}">
                         <div class="flex items-center gap-2">
                           <i data-lucide="info" style="width:18px;height:18px;color:var(--color-text-muted);"></i>
                           <span class="text-sm" style="color: var(--color-text);">关于我们</span>
@@ -986,7 +961,7 @@
               </div>
 
               <!-- Toast -->
-              <div id="toast" class="toast" style="display:none"></div>
+              <div id="toast" class="toast" style="display:none" aria-live="polite" aria-atomic="true" role="status"></div>
 
             </div>
           </div>
@@ -1226,16 +1201,8 @@
     </style>
 
     <script>
-      /* ===== Storage Keys ===== */
-      var SK = {
-        orders: 'sc_orders',
-        profile: 'sc_profile',
-        health: 'sc_health_records',
-        alarms: 'sc_alarms',
-        volunteer: 'sc_volunteer_profile',
-        authNuanjia: 'sc_auth_nuanjia',
-        authNuanban: 'sc_auth_nuanban'
-      };
+      /* ===== Storage Keys (from demo-store.js ScStore.KEYS) ===== */
+      var SK = ScStore.KEYS;
 
       var currentRole = 'nuanjia';
       var currentTab = 'home';
@@ -1243,238 +1210,11 @@
       // 当前演示暖伴使用稳定 ID，业务关联只使用 volunteerId，姓名仅用于展示
       var VOLUNTEER_ID = 'V-001';
 
-      /* ===== Data Helpers ===== */
-      function getData(key) {
-        try {
-          var raw = localStorage.getItem(key);
-          return raw ? JSON.parse(raw) : null;
-        } catch (e) {
-          return null;
-        }
-      }
-      function saveData(key, data) {
-        try {
-          localStorage.setItem(key, JSON.stringify(data));
-        } catch (e) {
-          console.error('Storage error:', e);
-        }
-      }
+      /* ===== Data Helpers (provided by demo-store.js: getData, saveData, escapeHtml, fmtAlarmTime, fmtTime, fmtDate, fmtOrderId, fmtDistance) ===== */
 
-      /* ===== Initialize Sample Data ===== */
-      function _ymd(ms) { var d = new Date(ms); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
-      var DATA_VERSION = '9';
+      /* ===== Initialize Demo Data (delegated to demo-store.js ScStore.init) ===== */
       function initData() {
-        // === 统一 schema 版本迁移（保留数据，幂等，绝不删除既有业务数据） ===
-        // 旧实现按版本号差异 removeItem 会清空用户创建的订单/认证/健康档案/设置，现已废弃。
-        // 种子写入仍由下方各 if(!getData(...)) 守卫保证仅在对应 key 为空时执行。
-        // 既有 v9 数据进入下方幂等补字段流程，迁移多次结果一致。
-        // （此处不再做任何 localStorage.removeItem 业务数据操作）
-
-        // === 动态日期生成 ===
-        function fmtDate(offset) {
-          var d = new Date();
-          d.setDate(d.getDate() + offset);
-          return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
-        }
-        function fmtOrderId(offset, seq) {
-          var d = new Date();
-          d.setDate(d.getDate() + offset);
-          return 'ORD' + d.getFullYear() + ('0' + (d.getMonth() + 1)).slice(-2) + ('0' + d.getDate()).slice(-2) + String(seq).padStart(4, '0');
-        }
-
-        if (!getData(SK.orders)) {
-          var _now = Date.now(), _D = 86400000;
-          var _T = _ymd(_now), _Y = _ymd(_now - _D), _Y2 = _ymd(_now - 2 * _D), _Y3 = _ymd(_now - 3 * _D), _Y4 = _ymd(_now - 4 * _D);
-          saveData(SK.orders, [
-            {
-              id: 'ORD' + _T.replace(/-/g, '') + '0001', type: '日常陪伴', status: '待接单',
-              elderName: '王奶奶', address: '武汉市武昌区中南路街梅苑小区3栋',
-              time: _T + ' 09:00', duration: '2小时',
-              description: '陪老人散步聊天，读报纸', volunteer: null, volunteerId: null,
-              price: 80, createdAt: _now - 3600000, ownerId: 'U001'
-            },
-            {
-              id: 'ORD' + _T.replace(/-/g, '') + '0002', type: '跑腿代办', status: '待接单',
-              elderName: '李大爷', address: '武汉市洪山区珞南街卓刀泉社区12栋',
-              time: _T + ' 10:15', duration: '1小时',
-              description: '代购生活用品和常用药品', volunteer: null, volunteerId: null,
-              price: 60, createdAt: _now - 7200000, ownerId: null
-            },
-            {
-              id: 'ORD' + _Y.replace(/-/g, '') + '0001', type: '陪同就医', status: '进行中',
-              elderName: '王奶奶', address: '武汉市武昌区中南路街梅苑小区3栋',
-              time: _Y + ' 07:45', duration: '3小时',
-              description: '陪同前往武汉大学中南医院复查并取药', volunteer: '陈思雨', volunteerId: 'V-004',
-              price: 120, createdAt: _now - _D, ownerId: 'U001'
-            },
-            {
-              id: 'ORD' + _Y2.replace(/-/g, '') + '0001', type: '数字辅导', status: '已完成',
-              elderName: '赵阿姨', address: '武汉市江岸区大智街同安里7栋',
-              time: _Y2 + ' 08:00', duration: '1.5小时',
-              description: '教老人使用智能手机视频通话和微信', volunteer: '王志强', volunteerId: 'V-003',
-              price: 70, createdAt: _now - 2 * _D, completedAt: _now - _D, ownerId: null
-            },
-            {
-              id: 'ORD' + _Y3.replace(/-/g, '') + '0001', type: '日常陪伴', status: '已完成',
-              elderName: '王奶奶', address: '武汉市武昌区中南路街梅苑小区3栋',
-              time: _Y3 + ' 14:00', duration: '2小时',
-              description: '陪伴聊天，协助整理家务', volunteer: '张小雨', volunteerId: 'V-001',
-              price: 80, createdAt: _now - 3 * _D, completedAt: _now - 2 * _D, ownerId: 'U001'
-            },
-            {
-              id: 'ORD' + _Y4.replace(/-/g, '') + '0001', type: '跑腿代办', status: '已取消',
-              elderName: '吴叔叔', address: '武汉市青山区红钢城街金色港湾8栋',
-              time: _Y4 + ' 11:20', duration: '1小时',
-              description: '代缴水电燃气费', volunteer: null, volunteerId: null,
-              price: 60, createdAt: _now - 4 * _D, ownerId: null
-            }
-          ]);
-        }
-        // 共享暖伴列表（sc_volunteers）：与后台同源种子，保证首次访问小程序即有附近暖伴
-        if (!getData('sc_volunteers')) {
-          saveData('sc_volunteers', [
-            { id: 'V-001', name: '张小雨', phone: '138xxxx1234', rating: 4.9, completedOrders: 328, status: '在线', skills: ['日常陪伴', '数字辅导'], area: '武昌区梅苑小区', experience: '2年经验', praiseRate: 98 },
-            { id: 'V-002', name: '李芳姨', phone: '139xxxx5678', rating: 4.8, completedOrders: 512, status: '在线', skills: ['日常陪伴', '跑腿代办', '陪同就医'], area: '洪山区卓刀泉社区', experience: '3年经验', praiseRate: 97 },
-            { id: 'V-003', name: '王志强', phone: '137xxxx9012', rating: 4.7, completedOrders: 156, status: '在线', skills: ['数字辅导', '跑腿代办'], area: '江岸区同安里', experience: '1年经验', praiseRate: 96 },
-            { id: 'V-004', name: '陈思雨', phone: '136xxxx3456', rating: 4.9, completedOrders: 89, status: '服务中', skills: ['陪同就医', '日常陪伴'], area: '汉阳区翠微街', experience: '1年经验', praiseRate: 99 },
-            { id: 'V-005', name: '刘文博', phone: '135xxxx7890', rating: 4.6, completedOrders: 67, status: '在线', skills: ['日常陪伴', '跑腿代办'], area: '江汉区锦绣家园', experience: '半年经验', praiseRate: 95 },
-            { id: 'V-006', name: '赵敏', phone: '133xxxx2345', rating: 4.8, completedOrders: 203, status: '待审核', skills: ['跑腿代办', '陪同就医'], area: '青山区金色港湾', experience: '2年经验', praiseRate: 97 },
-            { id: 'V-007', name: '孙嘉懿', phone: '138xxxx6789', rating: 4.8, completedOrders: 45, status: '在线', skills: ['日常陪伴', '数字辅导'], area: '武昌区水果湖', experience: '1年经验', praiseRate: 96 },
-            { id: 'V-008', name: '杨思琪', phone: '139xxxx1357', rating: 4.7, completedOrders: 78, status: '在线', skills: ['日常陪伴', '陪同就医'], area: '洪山区街道口', experience: '1年经验', praiseRate: 95 },
-            { id: 'V-009', name: '马晓晨', phone: '136xxxx2468', rating: 4.9, completedOrders: 112, status: '服务中', skills: ['跑腿代办', '数字辅导'], area: '江岸区百步亭', experience: '2年经验', praiseRate: 98 },
-            { id: 'V-010', name: '郭明轩', phone: '135xxxx8642', rating: 4.6, completedOrders: 34, status: '待审核', skills: ['日常陪伴', '跑腿代办'], area: '汉阳区王家湾', experience: '半年经验', praiseRate: 94 }
-          ]);
-        }
-        // 共享认证记录（sc_auth_records）：首次访问小程序时补种子，保证后台审核闭环
-        if (!getData('sc_auth_records')) {
-          var _nowAuth = Date.now();
-          saveData('sc_auth_records', [
-            { id: 'AUTH-001', name: '王奶奶', role: '暖家', subjectId: 'U001', idCard: '4201**********1000', phone: '138****8888', submitTime: fmtDate(-2) + ' 09:00', status: '已认证', realName: '王秀兰', area: '武昌区梅苑小区' },
-            { id: 'AUTH-002', name: '张小雨', role: '暖伴', subjectId: 'V-001', idCard: '4201**********1037', phone: '137****7777', submitTime: fmtDate(-30) + ' 08:00', status: '已认证', realName: '张明', area: '武昌区梅苑小区' }
-          ]);
-        }
-        if (!getData(SK.profile)) {
-          saveData(SK.profile, {
-            userId: 'U001',
-            name: '王奶奶', phone: '13888888888', address: '武汉市武昌区中南路街梅苑小区3栋',
-            emergency: '王小明 13900000000', role: 'nuanjia'
-          });
-        }
-        if (!getData(SK.health)) {
-          saveData(SK.health, {
-            bloodPressure: '130/85', bloodSugar: '5.6',
-            medications: '降压药 每日1次', allergies: '青霉素',
-            notes: '高血压病史3年', lastUpdate: Date.now()
-          });
-        }
-        if (!getData(SK.alarms)) {
-          saveData(SK.alarms, []);
-        }
-        if (!getData(SK.volunteer)) {
-          saveData(SK.volunteer, {
-            name: VOLUNTEER_NAME, phone: '13777777777', rating: 4.8,
-            totalService: 23, certified: true, volunteerId: VOLUNTEER_ID,
-            area: '武汉市武昌区', bio: '热心公益，擅长陪伴老人和数字辅导'
-          });
-        }
-        if (!getData(SK.authNuanjia)) {
-          saveData(SK.authNuanjia, { status: '未认证', realname: '', idcard: '', idfront: '', idback: '', submitAt: null, subjectId: 'U001' });
-        }
-        if (!getData(SK.authNuanban)) {
-          saveData(SK.authNuanban, { status: '已认证', realname: '张明', idcard: '420106********1234', idfront: '', idback: '', submitAt: Date.now() - 86400000 * 30, subjectId: VOLUNTEER_ID });
-        }
-
-        // === 幂等迁移：为缺失字段补值（对全新种子与既有 v9 数据都安全，多次执行结果一致） ===
-        scPatchOrders();
-        scPatchAuth();
-        scPatchAlarms();
-        // 统一 schema 版本回写，清理旧版本键（仅删键，不动业务数据）
-        localStorage.setItem('sc_schema_version', '10');
-        localStorage.removeItem('sc_data_version');
-        localStorage.removeItem('sc_admin_version');
-      }
-
-      // 订单补字段：volunteerId（按共享暖伴列表反查姓名→ID，一次性迁移，非业务匹配）、createdAt
-      function scPatchOrders() {
-        var orders = getData(SK.orders);
-        if (!orders || !orders.length) return;
-        var vols = getData('sc_volunteers') || [];
-        var nameToId = {};
-        vols.forEach(function (v) { if (v && v.name) nameToId[v.name] = v.id; });
-        var changed = false;
-        orders.forEach(function (o) {
-          if (o.volunteerId === undefined) {
-            o.volunteerId = (o.volunteer && nameToId[o.volunteer]) ? nameToId[o.volunteer] : null;
-            changed = true;
-          }
-          if (o.createdAt === undefined) { o.createdAt = Date.now(); changed = true; }
-        });
-        if (changed) saveData(SK.orders, orders);
-      }
-      // 认证补字段：subjectId；统一状态枚举（旧“已通过”→“已认证”）
-      function scPatchAuth() {
-        var jia = getData(SK.authNuanjia);
-        if (jia) {
-          var c1 = false;
-          if (jia.subjectId === undefined) { jia.subjectId = 'U001'; c1 = true; }
-          if (jia.status === '已通过') { jia.status = '已认证'; c1 = true; }
-          if (c1) saveData(SK.authNuanjia, jia);
-        }
-        var ban = getData(SK.authNuanban);
-        if (ban) {
-          var c2 = false;
-          if (ban.subjectId === undefined) { ban.subjectId = VOLUNTEER_ID; c2 = true; }
-          if (ban.status === '已通过') { ban.status = '已认证'; c2 = true; }
-          if (c2) saveData(SK.authNuanban, ban);
-        }
-        // 后台认证记录补 subjectId / 统一状态（与 web-admin 同源）
-        var recs = getData('sc_auth_records');
-        if (recs && recs.length) {
-          var changed = false, _ji = 0, _bi = 0;
-          recs.forEach(function (r) {
-            if (r.subjectId === undefined) {
-              if (r.role === '暖家') r.subjectId = 'U' + String(++_ji).padStart(3, '0');
-              else if (r.role === '暖伴') r.subjectId = 'V-' + String(++_bi).padStart(3, '0');
-              else r.subjectId = 'SUB-' + r.id;
-              changed = true;
-            }
-            if (r.status === '已通过') { r.status = '已认证'; changed = true; }
-          });
-          if (changed) saveData('sc_auth_records', recs);
-        }
-      }
-      // 报警补字段：createdAt（兼容旧字符串/数字记录，不丢失）
-      function scPatchAlarms() {
-        var alarms = getData(SK.alarms);
-        if (!alarms || !alarms.length) return;
-        var changed = false;
-        alarms.forEach(function (a) {
-          if (a.createdAt === undefined) {
-            if (typeof a.time === 'number') { a.createdAt = a.time; changed = true; }
-            else if (typeof a.time === 'string' && a.time) {
-              var m = a.time.match(/^(\d{1,2}):(\d{2})$/);
-              if (m) { var d = new Date(); d.setHours(+m[1], +m[2], 0, 0); a.createdAt = d.getTime(); changed = true; }
-              else { var dd = new Date(a.time.replace(/-/g, '/')); if (!isNaN(dd.getTime())) { a.createdAt = dd.getTime(); changed = true; } }
-            } else { a.createdAt = Date.now(); changed = true; }
-          }
-        });
-        if (changed) saveData(SK.alarms, alarms);
-      }
-
-      // 报警时间统一格式化（兼容旧字符串/数字记录）
-      function fmtAlarmTime(a, full) {
-        if (!a) return '-';
-        var ts = (a.createdAt != null ? a.createdAt : a.time);
-        if (ts === null || ts === undefined || ts === '') return '-';
-        var n = Number(ts), d;
-        if (!isNaN(n) && n > 0) d = new Date(n);
-        else if (typeof ts === 'string' && /^\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}/.test(ts)) d = new Date(ts.replace(/-/g, '/'));
-        else if (typeof ts === 'string' && /^\d{1,2}:\d{2}$/.test(ts)) return ts;
-        else return String(ts);
-        if (!d || isNaN(d.getTime())) return String(ts);
-        function p(n) { return ('0' + n).slice(-2); }
-        if (full) return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes());
-        return p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes());
+        ScStore.init();
       }
 
       // 共享暖伴列表（sc_volunteers）读写：用于暖伴状态/完成数同步
@@ -1514,6 +1254,7 @@
       }
 
       /* ===== Modal ===== */
+      var _lastFocusedBeforeModal = null;
       function openModal(id) {
         var overlay = document.getElementById(id);
         overlay.style.display = 'flex';
@@ -1527,15 +1268,56 @@
         void overlay.offsetWidth;
         overlay.classList.add('modal-overlay-animate');
         lucide.createIcons();
+        // Save current focus and move focus into modal
+        _lastFocusedBeforeModal = document.activeElement;
+        // Focus first focusable element inside modal
+        var focusables = overlay.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+        if (focusables.length > 0) {
+          setTimeout(function() { focusables[0].focus(); }, 50);
+        }
       }
       function closeModal(id) {
-        document.getElementById(id).style.display = 'none';
+        var overlay = document.getElementById(id);
+        overlay.style.display = 'none';
+        // Restore focus to element that opened the modal
+        if (_lastFocusedBeforeModal && typeof _lastFocusedBeforeModal.focus === 'function') {
+          _lastFocusedBeforeModal.focus();
+          _lastFocusedBeforeModal = null;
+        }
       }
 
+      // ESC closes topmost modal; Tab constrained within modal
       document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') {
           var modals = document.querySelectorAll('.modal-overlay');
-          modals.forEach(function (m) { m.style.display = 'none'; });
+          for (var mi = modals.length - 1; mi >= 0; mi--) {
+            if (modals[mi].style.display !== 'none') {
+              modals[mi].style.display = 'none';
+              if (_lastFocusedBeforeModal && typeof _lastFocusedBeforeModal.focus === 'function') {
+                _lastFocusedBeforeModal.focus();
+                _lastFocusedBeforeModal = null;
+              }
+              break;
+            }
+          }
+        }
+        // Focus trap: keep Tab within the topmost visible modal
+        if (e.key === 'Tab') {
+          var allModals = document.querySelectorAll('.modal-overlay');
+          var topModal = null;
+          for (var ti = allModals.length - 1; ti >= 0; ti--) {
+            if (allModals[ti].style.display !== 'none') { topModal = allModals[ti]; break; }
+          }
+          if (topModal) {
+            var fEls = topModal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+            if (fEls.length === 0) return;
+            var firstEl = fEls[0], lastEl = fEls[fEls.length - 1];
+            if (e.shiftKey && document.activeElement === firstEl) {
+              e.preventDefault(); lastEl.focus();
+            } else if (!e.shiftKey && document.activeElement === lastEl) {
+              e.preventDefault(); firstEl.focus();
+            }
+          }
         }
       });
 
@@ -1557,6 +1339,8 @@
           nuanban.style.display = 'none';
           btnJia.className = btnJia.className.replace('role-inactive', '') + ' role-active';
           btnBan.className = btnBan.className.replace('role-active', '') + ' role-inactive';
+          btnJia.setAttribute('aria-pressed', 'true');
+          btnBan.setAttribute('aria-pressed', 'false');
           descText.textContent = '暖家模式面向老人家庭，提供日常陪伴、跑腿代办、数字辅导等服务，支持一键报警与健康档案管理。';
           mpTitle.textContent = '共享儿女';
         } else {
@@ -1567,6 +1351,8 @@
           nuanban.classList.add('fade-in-up');
           btnBan.className = btnBan.className.replace('role-inactive', '') + ' role-active';
           btnJia.className = btnJia.className.replace('role-active', '') + ' role-inactive';
+          btnBan.setAttribute('aria-pressed', 'true');
+          btnJia.setAttribute('aria-pressed', 'false');
           descText.textContent = '暖伴模式面向志愿者，可浏览并接取附近服务订单，查看收入统计与服务记录，参与培训提升技能。';
           mpTitle.textContent = '暖伴工作台';
         }
@@ -1823,6 +1609,14 @@
         var profile = getData(SK.profile) || {};
 
         var timeStr = dateVal + ' ' + (hourVal || '00') + ':' + (minVal || '00');
+        var _dp = dateVal.split('-');
+        var serviceStartAt = Date.now();
+        if (_dp.length === 3) {
+          var _sy = parseInt(_dp[0], 10), _sm = parseInt(_dp[1], 10) - 1, _sd = parseInt(_dp[2], 10);
+          var _sh = parseInt(hourVal || '0', 10), _si = parseInt(minVal || '0', 10);
+          var _st = new Date(_sy, _sm, _sd, _sh, _si, 0, 0);
+          if (!isNaN(_st.getTime())) serviceStartAt = _st.getTime();
+        }
 
         var newOrder = {
           id: generateOrderId(),
@@ -1831,6 +1625,7 @@
           elderName: profile.name || '匿名用户',
           address: address,
           time: timeStr,
+          serviceStartAt: serviceStartAt,
           duration: duration,
           description: desc || '无特殊说明',
           volunteer: null,
@@ -1858,7 +1653,7 @@
       }
 
       /* ===== Baidu Map (动态加载 + 离线降级) ===== */
-      var MAP_CENTER = { lng: 114.305, lat: 30.593 }; // 武汉武昌区
+      var MAP_CENTER = ScStore.MAP_CENTER; // 武汉演示中心（与 demo-store.js 同源）
       var orderMapInstance = null;
       var detailMapInstance = null;
       var homeMapInstance = null;
@@ -1881,8 +1676,7 @@
         if (!el) return;
         var svg = '';
         if (type === 'home') {
-          var vols = getData('sc_volunteers') || [];
-          var nearby = vols.filter(function(v) { return v && v.status === '在线'; }).slice(0, 3);
+          var nearby = ScStore.getNearbyVolunteerViewModel(3);
           // 用户位置 + 附近暖伴标记
           svg += '<svg viewBox="0 0 100 60" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;display:block;">';
           svg += '<rect x="0" y="0" width="100" height="60" fill="#F5F0EB"/>';
@@ -2056,6 +1850,13 @@
         );
       }
 
+      function refreshHomeMapAndList() {
+        // 刷新地图和附近暖伴列表（同源数据）
+        renderNearbyVolunteers();
+        // 强制重新初始化地图
+        if (homeMapInstance) { try { homeMapInstance = null; } catch(e){} }
+        initHomeMap();
+      }
       function initHomeMap() {
         var container = document.getElementById('home-map-container');
         if (!container) return;
@@ -2067,6 +1868,7 @@
             try {
               homeMapInstance = new BMap.Map(container);
             } catch(e) { showMapFallback('home-map-container', 'home'); return; }
+            // 首次打开不自动索取定位权限，默认使用 ScStore.MAP_CENTER 标注"武汉演示位置"
             var drawHomeMap = function (lng, lat) {
               var point = new BMap.Point(lng, lat);
               homeMapInstance.centerAndZoom(point, 14);
@@ -2074,38 +1876,24 @@
               homeMapInstance.clearOverlays();
               var curMarker = new BMap.Marker(point);
               homeMapInstance.addOverlay(curMarker);
-              var label = new BMap.Label('我的位置', { offset: new BMap.Size(-20, -25) });
+              var label = new BMap.Label('武汉演示位置', { offset: new BMap.Size(-28, -25) });
               label.setStyle({ color: '#fff', background: '#C44D3E', border: 'none', padding: '2px 6px', borderRadius: '4px', fontSize: '11px' });
               curMarker.setLabel(label);
-              // 附近暖伴标记点（从 sc_volunteers 动态读取，使用默认 Marker）
-              var vols = getData('sc_volunteers') || [];
-              var nearby = vols.filter(function(v) { return v && v.status === '在线'; }).slice(0, 3);
+              // 附近暖伴标记点（与列表同源：ScStore.getNearbyVolunteerViewModel）
+              var nearby = ScStore.getNearbyVolunteerViewModel(3);
               var offsets = [{ dLng: 0.004, dLat: 0.003 }, { dLng: -0.006, dLat: -0.005 }, { dLng: 0.010, dLat: -0.007 }];
               nearby.forEach(function (v, i) {
                 var off = offsets[i] || offsets[0];
                 var pt = new BMap.Point(lng + off.dLng, lat + off.dLat);
-                var mk = new BMap.Marker(pt); // 默认 Marker，不依赖外部 sprite
+                var mk = new BMap.Marker(pt);
                 homeMapInstance.addOverlay(mk);
                 var lbl = new BMap.Label(v.name, { offset: new BMap.Size(-20, -25) });
                 lbl.setStyle({ color: '#fff', background: '#5B8A72', border: 'none', padding: '2px 6px', borderRadius: '4px', fontSize: '11px' });
                 mk.setLabel(lbl);
               });
             };
-            if (navigator.geolocation) {
-              navigator.geolocation.getCurrentPosition(
-                function (pos) {
-                  if (typeof BMap.Convertor !== 'undefined' && BMap.Convertor && BMap.Convertor.translate) {
-                    var convertor = new BMap.Convertor();
-                    convertor.translate([new BMap.Point(pos.coords.longitude, pos.coords.latitude)], 1, 5, function (data) {
-                      if (data && data.status === 0 && data.points && data.points[0]) { drawHomeMap(data.points[0].lng, data.points[0].lat); }
-                      else { drawHomeMap(pos.coords.longitude, pos.coords.latitude); }
-                    });
-                  } else { drawHomeMap(pos.coords.longitude, pos.coords.latitude); }
-                },
-                function () { drawHomeMap(MAP_CENTER.lng, MAP_CENTER.lat); },
-                { timeout: 5000, enableHighAccuracy: true }
-              );
-            } else { drawHomeMap(MAP_CENTER.lng, MAP_CENTER.lat); }
+            // 默认使用 ScStore.MAP_CENTER，不索取定位权限
+            drawHomeMap(ScStore.MAP_CENTER.lng, ScStore.MAP_CENTER.lat);
           },
           function () { showMapFallback('home-map-container', 'home'); }
         );
@@ -2175,7 +1963,7 @@
           var addr = (poi.province || '') + (poi.city || '') + (poi.district || '') + (poi.street || '') + (poi.business || '');
           var displayAddr = (poi.district || '') + (poi.street || '') + (poi.business || '');
           if (!displayAddr) displayAddr = poi.address || poi.title || addr;
-          html += '<div onclick="selectAddress(\'' + addr.replace(/'/g, "\\'") + '\', ' + (poi.point ? poi.point.lng + ', ' + poi.point.lat : 'null, null') + ')" style="padding:8px 12px;cursor:pointer;border-bottom:1px solid var(--color-border-light);font-size:13px;color:var(--color-text);transition:background 0.15s;" onmouseover="this.style.background=\'var(--color-bg-muted)\'" onmouseout="this.style.background=\'transparent\'">' +
+          html += '<div role="button" tabindex="0" onclick="selectAddress(\'' + addr.replace(/'/g, "\\'") + '\', ' + (poi.point ? poi.point.lng + ', ' + poi.point.lat : 'null, null') + ')" style="padding:8px 12px;cursor:pointer;border-bottom:1px solid var(--color-border-light);font-size:13px;color:var(--color-text);transition:background 0.15s;" onmouseover="this.style.background=\'var(--color-bg-muted)\'" onmouseout="this.style.background=\'transparent\'">' +
             '<div style="font-weight:500;">' + (poi.title || poi.business || displayAddr) + '</div>' +
             '<div style="font-size:11px;color:var(--color-text-muted);margin-top:2px;">' + displayAddr + '</div>' +
             '</div>';
@@ -2194,7 +1982,7 @@
         }
         var html = '';
         matches.forEach(function (addr) {
-          html += '<div onclick="selectAddress(\'' + addr.replace(/'/g, "\\'") + '\', null, null)" style="padding:8px 12px;cursor:pointer;border-bottom:1px solid var(--color-border-light);font-size:13px;color:var(--color-text);transition:background 0.15s;" onmouseover="this.style.background=\'var(--color-bg-muted)\'" onmouseout="this.style.background=\'transparent\'">' +
+          html += '<div role="button" tabindex="0" onclick="selectAddress(\'' + addr.replace(/'/g, "\\'") + '\', null, null)" style="padding:8px 12px;cursor:pointer;border-bottom:1px solid var(--color-border-light);font-size:13px;color:var(--color-text);transition:background 0.15s;" onmouseover="this.style.background=\'var(--color-bg-muted)\'" onmouseout="this.style.background=\'transparent\'">' +
             '<div style="font-weight:500;">' + addr + '</div>' +
             '</div>';
         });
@@ -2404,6 +2192,34 @@
         return currentRole === 'nuanjia' ? SK.authNuanjia : SK.authNuanban;
       }
 
+      // 从 sc_auth_records 派生当前角色的认证状态（单源，不再独立维护 sc_auth_nuanjia/nuanban 状态）
+      function getAuthFromRecords() {
+        var isNuanjia = currentRole === 'nuanjia';
+        var role = isNuanjia ? '暖家' : '暖伴';
+        var profile = isNuanjia ? (getData(SK.profile) || {}) : (getData(SK.volunteer) || {});
+        var subjectId = isNuanjia ? (profile.userId || 'U001') : (profile.volunteerId || VOLUNTEER_ID);
+        var records = getData(SK.auth) || [];
+        for (var i = 0; i < records.length; i++) {
+          if (records[i].subjectId === subjectId && records[i].role === role) {
+            return records[i];
+          }
+        }
+        return { status: '未认证' };
+      }
+
+      // 获取暖伴认证状态（从 sc_auth_records 派生，不论当前角色）
+      function getNuanbanAuthStatus() {
+        var role = '暖伴';
+        var subjectId = VOLUNTEER_ID;
+        var records = getData(SK.auth) || [];
+        for (var i = 0; i < records.length; i++) {
+          if (records[i].subjectId === subjectId && records[i].role === role) {
+            return records[i];
+          }
+        }
+        return { status: '未认证' };
+      }
+
       function getAuthStatusStyle(status) {
         var styles = {
           '未认证': { bg: 'var(--state-error-bg)', color: 'var(--state-error)' },
@@ -2415,12 +2231,12 @@
       }
 
       function updateAuthDisplay() {
-        var auth = getData(getAuthKey()) || { status: '未认证' };
+        var auth = getAuthFromRecords();
         var descId = currentRole === 'nuanjia' ? 'nuanjia-auth-desc' : 'nuanban-auth-desc';
         var descEl = document.getElementById(descId);
         if (descEl) {
-          var st = getAuthStatusStyle(auth.status);
-          descEl.textContent = auth.status;
+          var st = getAuthStatusStyle(auth.status || '未认证');
+          descEl.textContent = auth.status || '未认证';
           descEl.style.color = st.color;
         }
       }
@@ -2485,16 +2301,17 @@
       }
 
       function openAuthModal() {
-        var auth = getData(getAuthKey()) || { status: '未认证' };
-        document.getElementById('auth-realname').value = auth.realname || '';
-        document.getElementById('auth-idcard').value = auth.idcard || '';
+        var auth = getAuthFromRecords();
+        var savedAuth = getData(getAuthKey()) || {};
+        document.getElementById('auth-realname').value = savedAuth.realname || auth.realName || '';
+        document.getElementById('auth-idcard').value = savedAuth.idcard || auth.idCard || '';
         var frontInput = document.getElementById('auth-idfront');
         var backInput = document.getElementById('auth-idback');
         if (frontInput) { frontInput.value = ''; frontInput.dataset.dataurl = auth.idfront || ''; }
         if (backInput) { backInput.value = ''; backInput.dataset.dataurl = auth.idback || ''; }
         setAuthPreview('auth-idfront-preview', auth.idfront);
         setAuthPreview('auth-idback-preview', auth.idback);
-        // Show current status（含拒绝原因回显）
+        // Show current status from records（含拒绝原因回显）
         var statusDisplay = document.getElementById('auth-status-display');
         if (auth.status && auth.status !== '未认证') {
           var st = getAuthStatusStyle(auth.status);
@@ -2524,8 +2341,11 @@
           showToast('请填写真实姓名');
           return;
         }
-        if (!idcard || idcard.length < 15) {
-          showToast('请填写正确的身份证号');
+        // 身份证格式校验：支持18位（最后一位X）和15位旧版
+        var idcardPattern18 = /^\d{17}[\dXx]$/;
+        var idcardPattern15 = /^\d{15}$/;
+        if (!idcard || (!idcardPattern18.test(idcard) && !idcardPattern15.test(idcard))) {
+          showToast('请填写正确的身份证号（15位或18位）');
           return;
         }
 
@@ -2580,7 +2400,7 @@
           er.idback = idback || '';
           delete er.rejectReason;
         } else {
-          var authId = 'AUTH-' + String(backendRecords.length + 1).padStart(3, '0');
+          var authId = 'AUTH-' + String(Math.max(backendRecords.length, 20) + 1).padStart(3, '0');
           while (backendRecords.some(function (r) { return r.id === authId; })) {
             var num = parseInt(authId.split('-')[1], 10) + 1;
             authId = 'AUTH-' + String(num).padStart(3, '0');
@@ -2625,13 +2445,8 @@
         }
         if (!order) return;
 
-        var statusStyles = {
-          '待接单': { bg: 'var(--state-warning-bg)', color: 'var(--state-warning)' },
-          '进行中': { bg: 'var(--state-info-bg)', color: 'var(--state-info)' },
-          '待确认': { bg: '#F0E6F5', color: '#8B5CA8' },
-          '已完成': { bg: 'var(--state-success-bg)', color: 'var(--state-success)' }
-        };
-        var s = statusStyles[order.status] || { bg: 'var(--color-bg-muted)', color: 'var(--color-text-muted)' };
+        var sParts = ScStore.orderStatusStyle(order.status).split('|');
+        var s = { bg: sParts[0] || 'var(--color-bg-muted)', color: sParts[1] || 'var(--color-text-secondary)' };
 
         var html = '<div class="space-y-3">';
         html += '<div class="flex items-center justify-between">';
@@ -2642,7 +2457,8 @@
         html += '<div style="height:1px; background: var(--color-border-light);"></div>';
         html += '<div class="space-y-2 text-sm" style="color: var(--color-text);">';
         html += '<div class="flex"><span style="color:var(--color-text-muted); width:72px; flex-shrink:0;">服务对象</span><span>' + escapeHtml(order.elderName) + '</span></div>';
-        html += '<div class="flex"><span style="color:var(--color-text-muted); width:72px; flex-shrink:0;">服务时间</span><span>' + escapeHtml(order.time || '未指定') + '</span></div>';
+        html += '<div class="flex"><span style="color:var(--color-text-muted); width:72px; flex-shrink:0;">下单时间</span><span>' + escapeHtml(ScStore.fmtTime(order.createdAt, true)) + '</span></div>';
+        html += '<div class="flex"><span style="color:var(--color-text-muted); width:72px; flex-shrink:0;">服务时间</span><span>' + escapeHtml(ScStore.fmtTime(order.serviceStartAt, true)) + '</span></div>';
         html += '<div class="flex"><span style="color:var(--color-text-muted); width:72px; flex-shrink:0;">服务时长</span><span>' + escapeHtml(order.duration) + '</span></div>';
         html += '<div class="flex"><span style="color:var(--color-text-muted); width:72px; flex-shrink:0;">服务地址</span><span>' + escapeHtml(order.address) + '</span></div>';
         html += '<div class="flex"><span style="color:var(--color-text-muted); width:72px; flex-shrink:0;">需求描述</span><span>' + escapeHtml(order.description) + '</span></div>';
@@ -2657,7 +2473,7 @@
 
         // Action buttons
         if (currentRole === 'nuanban' && order.status === '待接单') {
-          var banAuthDetail = getData(SK.authNuanban);
+          var banAuthDetail = getNuanbanAuthStatus();
           var detailCertified = banAuthDetail && banAuthDetail.status === '已认证';
           if (detailCertified) {
             html += '<button onclick="acceptOrder(\'' + escapeHtml(order.id) + '\')" class="submit-btn">接单</button>';
@@ -2666,6 +2482,15 @@
             if (banAuthDetail && banAuthDetail.status === '待审核') detailLockReason = '实名认证审核中';
             else if (banAuthDetail && banAuthDetail.status === '已拒绝') detailLockReason = '认证已被拒绝，请重新提交';
             html += '<button disabled class="submit-btn" style="background:var(--color-bg-muted);color:var(--color-text-muted);cursor:not-allowed;" title="' + escapeHtml(detailLockReason) + '">' + escapeHtml(detailLockReason) + ' · 暂时无法接单</button>';
+          }
+        } else if (currentRole === 'nuanban' && order.status === '待服务' && order.volunteerId === VOLUNTEER_ID) {
+          // 待服务状态：暖伴可以开始服务
+          var _nowStart = Date.now();
+          var _startAt = order.serviceStartAt || order.createdAt || _nowStart;
+          if (_nowStart >= _startAt - 15 * 60 * 1000) {
+            html += '<button onclick="startService(\'' + escapeHtml(order.id) + '\')" class="submit-btn" style="background: var(--color-primary);">开始服务</button>';
+          } else {
+            html += '<button disabled class="submit-btn" style="background:var(--color-bg-muted);color:var(--color-text-muted);cursor:not-allowed;">服务时间未到，暂不可开始</button>';
           }
         } else if (currentRole === 'nuanban' && order.status === '进行中' && order.volunteerId === VOLUNTEER_ID) {
           // 仅当前暖伴可操作属于自己的进行中订单
@@ -2698,17 +2523,44 @@
         for (var vi = 0; vi < vols.length; vi++) { if (vols[vi].id === VOLUNTEER_ID) { me = vols[vi]; break; } }
         if (!me) { showToast('暖伴信息不存在'); return; }
         if (me.status !== '在线') { showToast('当前状态为' + me.status + '，无法接单'); return; }
-        var banAuth = getData(SK.authNuanban);
+        var banAuth = getNuanbanAuthStatus();
         if (!banAuth || banAuth.status !== '已认证') { showToast('尚未通过实名认证，无法接单'); return; }
         if (!me.skills || me.skills.indexOf(target.type) < 0) { showToast('技能不匹配，无法接单此' + target.type + '订单'); return; }
-        // 接单：订单 → 进行中（保存 volunteerId + 姓名），暖伴 → 服务中
-        target.status = '进行中';
+        // 接单：订单 → 待服务（保存 volunteerId + 姓名 + assignedAt），暖伴状态暂不改变
+        target.status = '待服务';
         target.volunteerId = VOLUNTEER_ID;
         target.volunteer = VOLUNTEER_NAME;
+        target.assignedAt = Date.now();
+        saveData(SK.orders, orders);
+        closeModal('modal-order-detail');
+        showToast('接单成功，请在服务时间到达时开始服务');
+        switchTab(currentTab);
+      }
+
+      // 开始服务：仅待服务状态且当前时间接近 serviceStartAt 时允许开始
+      function startService(orderId) {
+        var orders = getData(SK.orders) || [];
+        var target = null;
+        for (var i = 0; i < orders.length; i++) { if (orders[i].id === orderId) { target = orders[i]; break; } }
+        if (!target) { showToast('订单不存在'); return; }
+        // 二次校验状态和权限
+        if (target.status !== '待服务') { showToast('该订单不在待服务状态，无法开始'); closeModal('modal-order-detail'); switchTab(currentTab); return; }
+        if (target.volunteerId !== VOLUNTEER_ID) { showToast('无权操作他人订单'); return; }
+        // 校验当前时间是否接近服务开始时间（允许提前15分钟开始）
+        var now = Date.now();
+        var startAt = target.serviceStartAt || target.createdAt || now;
+        var earlyThreshold = 15 * 60 * 1000; // 15分钟
+        if (now < startAt - earlyThreshold) {
+          showToast('服务时间未到，请在服务开始前15分钟内开始服务');
+          return;
+        }
+        // 开始服务：订单 → 进行中，暖伴 → 服务中
+        target.status = '进行中';
+        target.startedAt = now;
         saveData(SK.orders, orders);
         setSharedVolunteerStatus(VOLUNTEER_ID, '服务中');
         closeModal('modal-order-detail');
-        showToast('接单成功');
+        showToast('服务已开始');
         switchTab(currentTab);
       }
 
@@ -2735,10 +2587,11 @@
         var target = null;
         for (var i = 0; i < orders.length; i++) { if (orders[i].id === id) { target = orders[i]; break; } }
         if (!target) { showToast('订单不存在'); return; }
+        // 二次校验状态
         if (target.status !== '待确认') { showToast('该订单不在待确认状态'); closeModal('modal-order-detail'); switchTab(currentTab); return; }
-        // 暖家确认：订单 → 已完成，暖伴 completedOrders 仅增加一次（幂等防重复）
+        // 暖家确认：订单 → 已完成，设置 confirmedAt，暖伴 completedOrders 仅增加一次（幂等防重复）
         target.status = '已完成';
-        target.completedAt = Date.now();
+        target.confirmedAt = Date.now();
         saveData(SK.orders, orders);
         if (target.volunteerId) incrementSharedVolunteerCompletedOrders(target.volunteerId);
         closeModal('modal-order-detail');
@@ -2765,7 +2618,7 @@
         html += '<div class="space-y-2">';
         courses.forEach(function (c) {
           var lc = levelColor[c.level];
-          html += '<div class="flex items-center gap-3 p-3 rounded-xl cursor-pointer" style="background: var(--color-bg); border: 1px solid var(--color-border-light);" onclick="showToast(\'已开始学习：' + c.title + '\')">';
+          html += '<div class="flex items-center gap-3 p-3 rounded-xl cursor-pointer" role="button" tabindex="0" style="background: var(--color-bg); border: 1px solid var(--color-border-light);" onclick="showToast(\'已开始学习：' + c.title + '\')">';
           html += '<div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style="background: var(--state-warning-bg);">';
           html += '<i data-lucide="' + c.icon + '" style="width: 20px; height: 20px; color: var(--state-warning);"></i>';
           html += '</div>';
@@ -2809,13 +2662,8 @@
 
       /* ===== Render Helpers ===== */
       function getStatusStyle(status) {
-        var styles = {
-          '待接单': { bg: 'var(--state-warning-bg)', color: 'var(--state-warning)' },
-          '进行中': { bg: 'var(--state-info-bg)', color: 'var(--state-info)' },
-          '待确认': { bg: '#F0E6F5', color: '#8B5CA8' },
-          '已完成': { bg: 'var(--state-success-bg)', color: 'var(--state-success)' }
-        };
-        return styles[status] || { bg: 'var(--color-bg-muted)', color: 'var(--color-text-muted)' };
+        var parts = ScStore.orderStatusStyle(status).split('|');
+        return { bg: parts[0] || 'var(--color-bg-muted)', color: parts[1] || 'var(--color-text-secondary)' };
       }
 
       function getOrderIcon(type) {
@@ -2829,29 +2677,17 @@
         return icons[type] || 'hand-helping';
       }
 
-      function escapeHtml(str) {
-        if (!str) return '';
-        return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-      }
 
       /* ===== Render: Nearby Volunteers (dynamic from sc_volunteers) ===== */
       function renderNearbyVolunteers() {
         var container = document.getElementById('nearby-volunteers');
         if (!container) return;
-        var vols = getData('sc_volunteers') || [];
-        // 只展示适合被用户选择的暖伴：在线/服务中状态（排除待审核）
-        var suitable = vols.filter(function (v) {
-          return v && v.id && v.name && (v.status === '在线' || v.status === '服务中');
-        });
-        if (suitable.length === 0) {
+        // 单一数据源：ScStore.getNearbyVolunteerViewModel 按距离升序返回，含 certificationStatus
+        var top = ScStore.getNearbyVolunteerViewModel(3);
+        if (top.length === 0) {
           container.innerHTML = '<div class="p-3 rounded-xl text-center" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);"><p class="text-xs" style="color: var(--color-text-muted);">附近暂无可用暖伴，请稍后再试</p></div>';
           return;
         }
-        // 按评分降序排列，取前3名
-        suitable.sort(function (a, b) { return (b.rating || 0) - (a.rating || 0); });
-        var top = suitable.slice(0, 3);
-        // 确定性的距离值（基于volunteerId末位数字，非随机）
-        var distances = ['500m', '800m', '1.2km'];
         var avatarColors = [
           { bg: 'var(--state-success-bg)', color: 'var(--state-success)' },
           { bg: 'var(--state-warning-bg)', color: 'var(--state-warning)' },
@@ -2860,16 +2696,20 @@
         var html = '';
         top.forEach(function (v, i) {
           var ac = avatarColors[i % avatarColors.length];
-          var dist = distances[i] || '1.5km';
+          var dist = ScStore.fmtDistance(v.distanceMeters);
           var initial = escapeHtml(v.name.charAt(0));
           var statusBadge = v.status === '服务中'
             ? '<span class="text-xs px-1.5 py-0.5 rounded" style="background:var(--color-primary-light);color:var(--color-primary);">服务中</span>'
             : '<span class="text-xs px-1.5 py-0.5 rounded" style="background:var(--state-success-bg);color:var(--state-success);">在线</span>';
-          html += '<div class="flex items-center gap-3 p-3 rounded-xl cursor-pointer" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" onclick="showToast(\'' + escapeHtml(v.name) + ' · 评分' + (v.rating || 5) + ' · 陪伴' + (v.completedOrders || 0) + '次\')">' +
+          var certBadge = v.certificationStatus === '已认证'
+            ? '<i data-lucide="badge-check" style="width:12px;height:12px;color:var(--state-info);" title="已认证"></i>'
+            : '';
+          html += '<div class="flex items-center gap-3 p-3 rounded-xl cursor-pointer" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" role="button" tabindex="0" onclick="showToast(\'' + escapeHtml(v.name) + ' · 评分' + (v.rating || 5) + ' · 陪伴' + (v.completedOrders || 0) + '次\')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();this.click()}">' +
             '<div class="w-10 h-10 rounded-full shrink-0 flex items-center justify-center" style="background: ' + ac.bg + '; color: ' + ac.color + '; font-weight: 600; font-size: 14px;">' + initial + '</div>' +
             '<div class="flex-1 min-w-0">' +
             '<div class="flex items-center gap-1.5">' +
             '<p class="text-sm font-medium truncate" style="color: var(--color-text);">' + escapeHtml(v.name) + '</p>' +
+            certBadge +
             statusBadge +
             '</div>' +
             '<p class="text-xs truncate" style="color: var(--color-text-muted);">距离 ' + dist + ' · 陪伴 ' + (v.completedOrders || 0) + ' 次</p>' +
@@ -2900,12 +2740,12 @@
         var html = '';
         myOrders.slice(0, 3).forEach(function (o) {
           var st = getStatusStyle(o.status);
-          html += '<div class="p-3 rounded-xl mb-2 cursor-pointer" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" onclick="openOrderDetail(\'' + o.id + '\')">';
+          html += '<div class="p-3 rounded-xl mb-2 cursor-pointer" role="button" tabindex="0" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" onclick="openOrderDetail(\'' + o.id + '\')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();openOrderDetail(\'' + o.id + '\')}">';
           html += '<div class="flex items-center justify-between mb-1">';
           html += '<span class="text-sm font-medium" style="color: var(--color-text);">' + escapeHtml(o.type) + '</span>';
           html += '<span class="text-xs px-2 py-0.5 rounded" style="background: ' + st.bg + '; color: ' + st.color + ';">' + o.status + '</span>';
           html += '</div>';
-          html += '<p class="text-xs" style="color: var(--color-text-muted);">' + (o.time || '未指定时间') + (o.volunteer ? ' · ' + escapeHtml(o.volunteer) : '') + '</p>';
+          html += '<p class="text-xs" style="color: var(--color-text-muted);">' + escapeHtml(ScStore.fmtTime(o.serviceStartAt, true)) + (o.volunteer ? ' · ' + escapeHtml(o.volunteer) : '') + '</p>';
           html += '</div>';
         });
         container.innerHTML = html;
@@ -2929,7 +2769,7 @@
         myOrders.forEach(function (o) {
           var st = getStatusStyle(o.status);
           var icon = getOrderIcon(o.type);
-          html += '<div class="fade-in-up flex items-center gap-3 p-3 rounded-xl cursor-pointer" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" onclick="openOrderDetail(\'' + o.id + '\')">';
+          html += '<div class="fade-in-up flex items-center gap-3 p-3 rounded-xl cursor-pointer" role="button" tabindex="0" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" onclick="openOrderDetail(\'' + o.id + '\')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();openOrderDetail(\'' + o.id + '\')}">';
           html += '<div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style="background: var(--color-primary-light);">';
           html += '<i data-lucide="' + icon + '" style="width: 20px; height: 20px; color: var(--color-primary);"></i>';
           html += '</div>';
@@ -2938,7 +2778,7 @@
           html += '<span class="text-sm font-medium" style="color: var(--color-text);">' + escapeHtml(o.type) + '</span>';
           html += '<span class="text-xs px-1.5 py-0.5 rounded" style="background: ' + st.bg + '; color: ' + st.color + ';">' + o.status + '</span>';
           html += '</div>';
-          html += '<p class="text-xs truncate" style="color: var(--color-text-muted);">' + (o.time || '未指定时间') + ' · ' + escapeHtml(o.address) + '</p>';
+          html += '<p class="text-xs truncate" style="color: var(--color-text-muted);">' + escapeHtml(ScStore.fmtTime(o.serviceStartAt, true)) + ' · ' + escapeHtml(o.address) + '</p>';
           html += '</div>';
           html += '<span class="text-sm font-semibold shrink-0" style="color: var(--color-primary);">' + o.price + '元</span>';
           html += '</div>';
@@ -2980,7 +2820,7 @@
         }
 
         // Check volunteer certification status for UI-level locking
-        var banAuth = getData(SK.authNuanban);
+        var banAuth = getNuanbanAuthStatus();
         var isCertified = banAuth && banAuth.status === '已认证';
         var lockReason = '';
         if (banAuth && banAuth.status === '未认证') lockReason = '尚未提交实名认证';
@@ -2999,7 +2839,7 @@
           html += '<span class="text-sm font-semibold" style="color: var(--color-primary);">' + o.price + ' 元</span>';
           html += '</div>';
           html += '<p class="text-xs mb-1" style="color: var(--color-text-muted);">' + escapeHtml(o.elderName) + ' · ' + escapeHtml(o.address) + '</p>';
-          html += '<p class="text-xs mb-2" style="color: var(--color-text-muted);">' + (o.time || '时间未定') + ' · ' + o.duration + '</p>';
+          html += '<p class="text-xs mb-2" style="color: var(--color-text-muted);">' + escapeHtml(ScStore.fmtTime(o.serviceStartAt, true)) + ' · ' + o.duration + '</p>';
           html += '<div class="flex gap-2">';
           html += '<button onclick="openOrderDetail(\'' + o.id + '\')" class="flex-1 py-2 rounded-lg text-sm font-medium" style="background: var(--color-bg-muted); color: var(--color-text); border: none; cursor: pointer;">详情</button>';
           if (isCertified) {
@@ -3021,7 +2861,7 @@
       /* ===== Render: Nuanban Orders ===== */
       function renderNuanbanOrders() {
         var orders = getData(SK.orders) || [];
-        var ongoing = orders.filter(function (o) { return o.status === '进行中' && o.volunteerId === VOLUNTEER_ID; });
+        var ongoing = orders.filter(function (o) { return (o.status === '待服务' || o.status === '进行中') && o.volunteerId === VOLUNTEER_ID; });
         var completed = orders.filter(function (o) { return o.status === '已完成' && o.volunteerId === VOLUNTEER_ID; });
 
         // Ongoing
@@ -3033,19 +2873,30 @@
             var html = '';
             ongoing.forEach(function (o) {
               var icon = getOrderIcon(o.type);
+              var st = getStatusStyle(o.status);
+              var isWaiting = o.status === '待服务';
+              var canStart = isWaiting && Date.now() >= (o.serviceStartAt || o.createdAt || Date.now()) - 15 * 60 * 1000;
               html += '<div class="fade-in-up p-3 rounded-xl" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);">';
               html += '<div class="flex items-center justify-between mb-1">';
               html += '<div class="flex items-center gap-2">';
-              html += '<i data-lucide="' + icon + '" style="width: 16px; height: 16px; color: var(--state-info);"></i>';
+              html += '<i data-lucide="' + icon + '" style="width: 16px; height: 16px; color: ' + st.color + ';"></i>';
               html += '<span class="text-sm font-medium" style="color: var(--color-text);">' + escapeHtml(o.type) + '</span>';
               html += '</div>';
-              html += '<span class="text-xs px-2 py-0.5 rounded" style="background: var(--state-info-bg); color: var(--state-info);">进行中</span>';
+              html += '<span class="text-xs px-2 py-0.5 rounded" style="background: ' + st.bg + '; color: ' + st.color + ';">' + o.status + '</span>';
               html += '</div>';
               html += '<p class="text-xs mb-1" style="color: var(--color-text-muted);">' + escapeHtml(o.elderName) + ' · ' + escapeHtml(o.address) + '</p>';
-              html += '<p class="text-xs mb-2" style="color: var(--color-text-muted);">' + (o.time || '时间未定') + ' · ' + o.duration + ' · ' + o.price + '元</p>';
+              html += '<p class="text-xs mb-2" style="color: var(--color-text-muted);">' + escapeHtml(ScStore.fmtTime(o.serviceStartAt, true)) + ' · ' + o.duration + ' · ' + o.price + '元</p>';
               html += '<div class="flex gap-2">';
               html += '<button onclick="openOrderDetail(\'' + o.id + '\')" class="flex-1 py-2 rounded-lg text-sm font-medium" style="background: var(--color-bg-muted); color: var(--color-text); border: none; cursor: pointer;">详情</button>';
-              html += '<button onclick="completeOrder(\'' + o.id + '\')" class="flex-1 py-2 rounded-lg text-sm font-medium" style="background: var(--state-success); color: var(--color-text-inverse); border: none; cursor: pointer;">完成服务</button>';
+              if (isWaiting) {
+                if (canStart) {
+                  html += '<button onclick="startService(\'' + o.id + '\')" class="flex-1 py-2 rounded-lg text-sm font-medium" style="background: var(--color-primary); color: var(--color-text-inverse); border: none; cursor: pointer;">开始服务</button>';
+                } else {
+                  html += '<button disabled class="flex-1 py-2 rounded-lg text-sm font-medium" style="background: var(--color-bg-muted); color: var(--color-text-muted); border: none; cursor: not-allowed;">未到服务时间</button>';
+                }
+              } else {
+                html += '<button onclick="completeOrder(\'' + o.id + '\')" class="flex-1 py-2 rounded-lg text-sm font-medium" style="background: var(--state-success); color: var(--color-text-inverse); border: none; cursor: pointer;">完成服务</button>';
+              }
               html += '</div>';
               html += '</div>';
             });
@@ -3062,13 +2913,13 @@
             var html2 = '';
             completed.forEach(function (o) {
               var icon = getOrderIcon(o.type);
-              html2 += '<div class="fade-in-up flex items-center gap-3 p-3 rounded-xl cursor-pointer" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" onclick="openOrderDetail(\'' + o.id + '\')">';
+              html2 += '<div class="fade-in-up flex items-center gap-3 p-3 rounded-xl cursor-pointer" role="button" tabindex="0" style="background: var(--color-bg-card); border: 1px solid var(--color-border-light);" onclick="openOrderDetail(\'' + o.id + '\')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();openOrderDetail(\'' + o.id + '\')}">';
               html2 += '<div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style="background: var(--state-success-bg);">';
               html2 += '<i data-lucide="' + icon + '" style="width: 16px; height: 16px; color: var(--state-success);"></i>';
               html2 += '</div>';
               html2 += '<div class="flex-1 min-w-0">';
               html2 += '<p class="text-sm font-medium truncate" style="color: var(--color-text);">' + escapeHtml(o.type) + '</p>';
-              html2 += '<p class="text-xs truncate" style="color: var(--color-text-muted);">' + escapeHtml(o.elderName) + ' · ' + (o.time || '') + '</p>';
+              html2 += '<p class="text-xs truncate" style="color: var(--color-text-muted);">' + escapeHtml(o.elderName) + ' · ' + escapeHtml(ScStore.fmtTime(o.serviceStartAt, true)) + '</p>';
               html2 += '</div>';
               html2 += '<span class="text-xs px-2 py-0.5 rounded shrink-0" style="background: var(--state-success-bg); color: var(--state-success);">已完成</span>';
               html2 += '</div>';
@@ -3155,6 +3006,7 @@
 
       /* ===== Init ===== */
       initData();
+      ScStore.reconcileOrderStatuses(Date.now());
       switchRole('nuanjia');
       lucide.createIcons();
       // Apply saved font size

@@ -115,12 +115,26 @@
   }
 
   /* --- Enhanced Toast (global helper) --- */
+  // 简单 HTML 转义：防止 toast 消息中的用户输入被当作 HTML 执行（XSS）
+  function escapeToastHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
   window.showEnhancedToast = function (message, type) {
     var existing = document.getElementById('enhanced-toast-container');
     if (!existing) {
       existing = document.createElement('div');
       existing.id = 'enhanced-toast-container';
       existing.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none;';
+      existing.setAttribute('role', 'status');
+      existing.setAttribute('aria-live', 'polite');
+      existing.setAttribute('aria-atomic', 'true');
       document.body.appendChild(existing);
     }
 
@@ -133,7 +147,9 @@
 
     toast.style.cssText = 'display:flex;align-items:center;gap:8px;padding:12px 20px;border-radius:8px;background:' + bg + ';color:#fff;font-size:14px;font-family:var(--font-sans);box-shadow:0 4px 16px rgba(61,46,36,0.15);pointer-events:auto;max-width:320px;';
     toast.className = 'toast-animate';
-    toast.innerHTML = '<span style="white-space:nowrap;">' + message + '</span>';
+    toast.setAttribute('role', 'status');
+    // 消息统一经 escapeToastHtml 转义后再插入，避免 XSS
+    toast.innerHTML = '<span style="white-space:nowrap;">' + escapeToastHtml(message) + '</span>';
     existing.appendChild(toast);
 
     setTimeout(function () {
