@@ -4,6 +4,12 @@
  *
  * 修复：旧定时器泄漏、重复轮询、并发回调问题。
  * 保证失败后稳定降级且可以手动重试。
+ *
+ * Edge 兼容性修复：
+ * - 设置 referrerPolicy 确保 Referer 正确发送，避免 AK 校验失败
+ * - 增加超时时间到 15 秒，适应 Edge 跟踪防护的额外检查延迟
+ * - 增加重试间隔到 1.5 秒，给 Edge 更多时间释放阻止状态
+ * - 添加 failReason 供调用方判断失败原因
  */
 (function (window) {
   'use strict';
@@ -11,10 +17,11 @@
   var AK = 'VeydduHr00O5f7G5GOzxlkZ6jOIaSFsH';
   var CALLBACK_NAME = '__scBaiduMapReady__';
   var SCRIPT_URL = 'https://api.map.baidu.com/api?v=3.0&ak=' + AK + '&callback=' + CALLBACK_NAME;
-  var TIMEOUT_MS = 8000;
-  var MAX_RETRIES = 2;
+  var TIMEOUT_MS = 15000;     // 增加到 15 秒，Edge 跟踪防护可能导致加载变慢
+  var MAX_RETRIES = 3;        // 增加到 3 次重试
+  var RETRY_DELAY_MS = 1500;  // 重试间隔增加到 1.5 秒
   var READY_CHECK_INTERVAL = 100;
-  var READY_CHECK_MAX = 30; // 3 seconds of polling
+  var READY_CHECK_MAX = 50;   // 增加到 5 秒轮询，Edge 中 BMap 初始化可能更慢
 
   var state = 'idle'; // idle | loading | loaded | failed
   var promise = null;
@@ -25,6 +32,7 @@
   var pollTimer = null;
   var retryCount = 0;
   var settled = false; // ensures resolve/reject called exactly once
+  var failReason = '';  // 记录失败原因供调用方使用
 
   function isReady() {
     return typeof window.BMap !== 'undefined' &&
@@ -48,10 +56,11 @@
     if (settled) return;
     settled = true;
     state = 'failed';
+    failReason = reason || 'Baidu Map load failed';
     cleanupTimers();
     cleanupScript();
     if (rejectFn) {
-      rejectFn(new Error(reason || 'Baidu Map load failed'));
+      rejectFn(new Error(failReason));
     }
   }
 
@@ -86,7 +95,7 @@
           cleanupTimers();
           startLoad();
         } else {
-          fail('BMap not available after retries (possible AK domain restriction)');
+          fail('BMap not available after retries (possible AK domain restriction or browser privacy settings)');
         }
       }
     }
@@ -109,6 +118,11 @@
     scriptEl.async = true;
     scriptEl.src = SCRIPT_URL;
 
+    // 关键修复：设置 referrerPolicy 确保 Referer 正确发送
+    // Edge 默认的 strict-origin-when-cross-origin 可能导致百度地图 AK 校验失败
+    // no-referrer-when-downgrade 确保同源和 HTTPS→HTTPS 跨域请求发送完整 Referer
+    try { scriptEl.referrerPolicy = 'no-referrer-when-downgrade'; } catch (e) {}
+
     scriptEl.onload = function () {
       // Script downloaded. If callback hasn't fired yet, start polling as fallback.
       // The callback itself also calls pollForReady, but pollForReady
@@ -128,9 +142,9 @@
         retryCount++;
         cleanupScript();
         cleanupTimers();
-        setTimeout(startLoad, 500);
+        setTimeout(startLoad, RETRY_DELAY_MS);
       } else {
-        fail('Script load error');
+        fail('Script load error (possibly blocked by browser tracking prevention or network issue)');
       }
     };
 
@@ -164,6 +178,7 @@
     state = 'loading';
     retryCount = 0;
     settled = false;
+    failReason = '';
     promise = new Promise(function (resolve, reject) {
       resolveFn = resolve;
       rejectFn = reject;
@@ -179,6 +194,7 @@
     rejectFn = null;
     settled = false;
     retryCount = 0;
+    failReason = '';
     cleanupTimers();
     cleanupScript();
   }
@@ -187,11 +203,16 @@
     return state;
   }
 
+  function getFailReason() {
+    return failReason;
+  }
+
   window.ScBaiduMapLoader = {
     load: load,
     reset: reset,
     isReady: isReady,
     getState: getState,
+    getFailReason: getFailReason,
     AK: AK
   };
 })(window);

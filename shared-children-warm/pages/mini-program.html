@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 确保百度地图 AK 校验能收到完整 Referer，避免 Edge 跟踪防护导致的校验失败 -->
+    <meta name="referrer" content="no-referrer-when-downgrade">
     <title>共享儿女 · 暖陪伴计划</title>
     <style id="theme-vars">
 /* ===== Brand Design Tokens — 共享儿女 · 暖陪伴计划 ===== */
@@ -1670,7 +1672,7 @@
         ScBaiduMapLoader.load().then(onReady).catch(function () { onFail(); });
       }
 
-      /* 离线降级地图（内联 SVG） */
+      /* 离线降级地图（内联 SVG + 重试按钮） */
       function showMapFallback(containerId, type) {
         var el = document.getElementById(containerId);
         if (!el) return;
@@ -1691,7 +1693,7 @@
             svg += '<circle cx="' + pos.x + '" cy="' + pos.y + '" r="3" fill="#5B8A72" stroke="#fff" stroke-width="0.8"/>';
             svg += '<text x="' + pos.x + '" y="' + (pos.y - 4) + '" text-anchor="middle" font-size="2.5" fill="#5B8A72">' + escapeHtml(v.name ? v.name.charAt(0) : '?') + '</text>';
           });
-          svg += '<text x="50" y="56" text-anchor="middle" font-size="3" fill="#A89888" opacity="0.7">服务区域示意图（离线模式）</text>';
+          svg += '<text x="50" y="54" text-anchor="middle" font-size="2.5" fill="#A89888" opacity="0.7">服务区域示意图（离线模式）</text>';
           svg += '</svg>';
         } else if (type === 'order') {
           svg += '<svg viewBox="0 0 100 60" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;display:block;">';
@@ -1699,7 +1701,7 @@
           svg += '<path d="M 10,5 Q 30,20 28,30 T 45,55" stroke="#5B7FA8" stroke-width="2" fill="none" opacity="0.2"/>';
           svg += '<circle cx="50" cy="30" r="4" fill="#D4654A" stroke="#fff" stroke-width="1"/>';
           svg += '<text x="50" y="40" text-anchor="middle" font-size="3" fill="#D4654A">点击下方输入框填写地址</text>';
-          svg += '<text x="50" y="55" text-anchor="middle" font-size="2.5" fill="#A89888" opacity="0.7">选址地图（离线模式）</text>';
+          svg += '<text x="50" y="53" text-anchor="middle" font-size="2.5" fill="#A89888" opacity="0.7">选址地图（离线模式）</text>';
           svg += '</svg>';
         } else { // detail
           svg += '<svg viewBox="0 0 100 60" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;display:block;">';
@@ -1707,10 +1709,27 @@
           svg += '<path d="M 10,5 Q 30,20 28,30 T 45,55" stroke="#5B7FA8" stroke-width="2" fill="none" opacity="0.2"/>';
           svg += '<circle cx="50" cy="30" r="4" fill="#5B7FA8" stroke="#fff" stroke-width="1"/>';
           svg += '<text x="50" y="40" text-anchor="middle" font-size="3" fill="#5B7FA8">服务地址</text>';
-          svg += '<text x="50" y="55" text-anchor="middle" font-size="2.5" fill="#A89888" opacity="0.7">位置示意图（离线模式）</text>';
+          svg += '<text x="50" y="53" text-anchor="middle" font-size="2.5" fill="#A89888" opacity="0.7">位置示意图（离线模式）</text>';
           svg += '</svg>';
         }
-        el.innerHTML = svg;
+        // 添加重试按钮覆盖层
+        var retryHtml = '<div style="position:absolute;bottom:4px;right:4px;z-index:10;">' +
+          '<button onclick="retryMapLoad(\'' + type + '\')" style="font-size:10px;padding:2px 8px;border-radius:4px;border:1px solid var(--color-border);background:var(--color-bg-card);color:var(--color-primary);cursor:pointer;">重试加载地图</button>' +
+          '</div>';
+        el.style.position = 'relative';
+        el.innerHTML = svg + retryHtml;
+      }
+
+      /* 重试加载百度地图 */
+      function retryMapLoad(type) {
+        ScBaiduMapLoader.reset();
+        if (type === 'home') {
+          homeMapInstance = null;
+          initHomeMap();
+        } else if (type === 'order') {
+          orderMapInstance = null;
+          initOrderMap();
+        }
       }
 
       function initOrderMap() {
